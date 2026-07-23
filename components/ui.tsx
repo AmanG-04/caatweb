@@ -1,0 +1,3 @@
+import { cn } from "@/lib/utils";
+export function Button({ className, variant = "primary", ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "outline" }) { return <button className={cn("rounded-full px-5 py-3 text-sm font-bold transition hover:-translate-y-0.5 disabled:opacity-50", variant === "primary" ? "bg-lime text-ink" : "border border-ink/20 bg-white/60", className)} {...props} />; }
+export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) { return <div className={cn("rounded-3xl bg-white p-6 shadow-soft", className)} {...props} />; }

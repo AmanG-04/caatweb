@@ -1,0 +1,5 @@
+import { NextResponse } from "next/server";
+import { getEnv } from "@/lib/cloudflare";
+export const runtime = "edge";
+const MAX = 10 * 1024 * 1024;
+export async function POST(request: Request) { const form = await request.formData(); const file = form.get("file"); if (!(file instanceof File)) return NextResponse.json({success:false,error:{code:"FILE_REQUIRED",message:"A bill file is required."}},{status:400}); const allowed=["application/pdf","image/png","image/jpeg"]; if(!allowed.includes(file.type)||file.size>MAX)return NextResponse.json({success:false,error:{code:"INVALID_FILE",message:"Only PDF, PNG and JPEG files up to 10MB are accepted."}},{status:400}); const objectKey=`bills/${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9._-]/g,"_")}`; const bucket=getEnv().BILLS_BUCKET; if(bucket) await bucket.put(objectKey,await file.arrayBuffer(),{httpMetadata:{contentType:file.type}}); return NextResponse.json({success:true,data:{objectKey,message:bucket?"Stored securely in R2.":"Accepted in development mode; R2 binding is not available."}}); }

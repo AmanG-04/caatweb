@@ -1,0 +1,50 @@
+{
+  "name": "caat-powerbot-solar",
+  "version": "0.1.0",
+  "private": true,
+  "overrides": {
+    "postcss": "$postcss",
+    "sharp": "^0.35.3"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "cloudflare:build": "opennextjs-cloudflare build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "db:migrate": "wrangler d1 migrations apply solar-db --local",
+    "deploy": "npm run cloudflare:build && wrangler deploy"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.4.0",
+    "@radix-ui/react-slot": "^1.1.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
+    "jose": "^6.2.4",
+    "lucide-react": "^1.26.0",
+    "next": "^16.2.11",
+    "pdf-lib": "^1.17.1",
+    "qrcode": "^1.5.4",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-hook-form": "^7.54.0",
+    "recharts": "^3.10.0",
+    "tailwind-merge": "^3.6.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@opennextjs/cloudflare": "^1.20.2",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^26.1.1",
+    "@types/qrcode": "^1.5.6",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "postcss": "^8.5.8",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.10",
+    "wrangler": "^4.113.0"
+  }
+}

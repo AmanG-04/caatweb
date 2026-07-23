@@ -1,0 +1,12 @@
+name = "caat-powerbot"
+compatibility_date = "2026-07-23"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = ".vercel/output/static"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "solar-db"
+database_id = "cf2b908f-d38d-47a2-8e7b-a14ccc21c80b"
+migrations_dir = "db/migrations"
