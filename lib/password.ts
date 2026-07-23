@@ -13,7 +13,8 @@ export async function verifyPassword(password: string, stored: string) {
   const [algorithm, iterations, saltValue, hashValue] = stored.split("$");
   if (algorithm !== "pbkdf2_sha256" || !iterations || !saltValue || !hashValue) return false;
   const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveBits"]);
-  const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", salt: decode(saltValue), iterations: Number(iterations), hash: "SHA-256" }, key, 256);
+  const salt = decode(saltValue);
+  const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", salt: salt.buffer as ArrayBuffer, iterations: Number(iterations), hash: "SHA-256" }, key, 256);
   const actual = new Uint8Array(bits); const expected = decode(hashValue);
   if (actual.length !== expected.length) return false;
   let difference = 0; for (let i = 0; i < actual.length; i++) difference |= actual[i] ^ expected[i];

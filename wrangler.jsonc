@@ -27,9 +27,5 @@
 			"binding": "BILLS_BUCKET",
 			"bucket_name": "caat-powerbot-bills"
 		},
-		{
-			"bucket_name": "caat-powerbot-bills",
-			"binding": "caat_powerbot_bills"
-		}
 	]
 }

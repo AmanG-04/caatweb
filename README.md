@@ -10,6 +10,8 @@ cp .env.example .env.local
 npm run dev
 ```
 
+For local admin login, add `ADMIN_EMAIL` and `ADMIN_PASSWORD` to `.env.local`. The remote D1 admin row is only available when running through Wrangler with the D1 binding. Restart the dev server after changing `.env.local`.
+
 Run the calculation tests with `npm test`. The quote API currently uses the documented development seed in `lib/settings.ts`; production should load the same keys from D1.
 
 ## Cloudflare deployment
