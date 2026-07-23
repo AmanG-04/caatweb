@@ -1,19 +1,35 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "caat-powerbot",
-  "main": ".open-next/worker.js",
-  "compatibility_date": "2026-07-23",
-  "compatibility_flags": ["nodejs_compat"],
-  "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
-  "vars": {
-    "NEXT_PUBLIC_SITE_URL": "https://example.com",
-    "NEXT_PUBLIC_COMPANY_NAME": "caat powerbot"
-  },
-  "d1_databases": [{
-    "binding": "DB",
-    "database_name": "solar-db",
-    "database_id": "cf2b908f-d38d-47a2-8e7b-a14ccc21c80b",
-    "migrations_dir": "db/migrations"
-  }],
-  "r2_buckets": []
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "caat-powerbot",
+	"main": ".open-next/worker.js",
+	"compatibility_date": "2026-07-23",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"assets": {
+		"directory": ".open-next/assets",
+		"binding": "ASSETS"
+	},
+	"vars": {
+		"NEXT_PUBLIC_SITE_URL": "https://example.com",
+		"NEXT_PUBLIC_COMPANY_NAME": "caat powerbot"
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "solar-db",
+			"database_id": "cf2b908f-d38d-47a2-8e7b-a14ccc21c80b",
+			"migrations_dir": "db/migrations"
+		}
+	],
+	"r2_buckets": [
+		{
+			"binding": "BILLS_BUCKET",
+			"bucket_name": "caat-powerbot-bills"
+		},
+		{
+			"bucket_name": "caat-powerbot-bills",
+			"binding": "caat_powerbot_bills"
+		}
+	]
 }
