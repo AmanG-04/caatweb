@@ -25,7 +25,13 @@ Run the calculation tests with `npm test`. The quote API currently uses the docu
 ## Production checklist
 
 - Replace the development admin screen with JWT middleware and hashed credentials.
-- Create an admin password hash with `node scripts/hash-password.mjs "your-password"`, then insert the result into the D1 `admins.password_hash` column.
+- Create an admin password hash with `node scripts/hash-password.mjs "your-password"`, then update D1 safely in PowerShell:
+  ```powershell
+  $hash = node scripts/hash-password.mjs "your-password"
+  $query = "UPDATE admins SET password_hash='$hash', active=1 WHERE email='10amangupta04@gmail.com';"
+  npx wrangler d1 execute solar-db --remote --command $query
+  ```
+- To verify a D1 hash locally without sharing the password, copy the full `password_hash` value and run `node scripts/verify-password.mjs "PASTE_FULL_HASH_HERE"`. Enter the password when prompted; it should print `MATCH`.
 - Load all quote settings from D1 and snapshot them with each quote.
 - Bind R2 for private bill uploads and issue signed URLs only to authorized staff when billing is enabled.
 - Apply the rate-limit migration with `npx wrangler d1 migrations apply solar-db --remote` after adding new migrations.
