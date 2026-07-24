@@ -26,6 +26,21 @@
 		{
 			"binding": "BILLS_BUCKET",
 			"bucket_name": "caat-powerbot-bills"
+		}
+	],
+	"observability": {
+		"enabled": false,
+		"head_sampling_rate": 1,
+		"logs": {
+			"enabled": true,
+			"head_sampling_rate": 1,
+			"persist": true,
+			"invocation_logs": true
 		},
-	]
+		"traces": {
+			"enabled": false,
+			"persist": true,
+			"head_sampling_rate": 1
+		}
+	}
 }
