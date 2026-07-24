@@ -3,5 +3,32 @@ import { z } from "zod";
 import { createAdminToken } from "@/lib/auth";
 import { getEnv } from "@/lib/cloudflare";
 import { verifyPassword } from "@/lib/password";
-const schema=z.object({adminId:z.string().trim().min(1).max(100),password:z.string().min(8)});
-export async function POST(request:Request){const p=schema.safeParse(await request.json());if(!p.success)return NextResponse.json({success:false,error:{code:"VALIDATION_ERROR",message:"Valid admin ID and password are required."}},{status:400});const adminId=p.data.adminId.trim();const env=getEnv();const authMode=env.AUTH_MODE??process.env.AUTH_MODE;const configuredId=env.ADMIN_LOGIN_ID??process.env.ADMIN_LOGIN_ID;const configuredPassword=env.ADMIN_LOGIN_PASSWORD??process.env.ADMIN_LOGIN_PASSWORD;const temporaryPlainMode=authMode==="plain"&&adminId===configuredId&&p.data.password===configuredPassword;const db=env.DB;let admin:{id:string;email:string;role:string;password_hash:string}|null=null;if(db)admin=await db.prepare("SELECT id,email,role,password_hash FROM admins WHERE id=? AND active=1").bind(adminId).first();const hasLocalCredentials=!db&&Boolean((process.env.ADMIN_ID||process.env.ADMIN_EMAIL)&&process.env.ADMIN_PASSWORD);if(!db&&!hasLocalCredentials&&!temporaryPlainMode)return NextResponse.json({success:false,error:{code:"AUTH_NOT_CONFIGURED",message:"Admin authentication is not configured."}},{status:503});let valid=temporaryPlainMode;try{if(!valid)valid=admin?await verifyPassword(p.data.password,admin.password_hash):adminId===(process.env.ADMIN_ID||process.env.ADMIN_EMAIL)?.trim()&&p.data.password===process.env.ADMIN_PASSWORD;}catch{valid=false;}if(!valid)return NextResponse.json({success:false,error:{code:"INVALID_CREDENTIALS",message:"Admin ID or password is incorrect."}},{status:401});const role=admin?.role??"admin";const token=await createAdminToken(admin?.id??adminId,role);const response=NextResponse.json({success:true,data:{admin:{id:admin?.id??adminId,role}}});response.cookies.set("admin_token",token,{httpOnly:true,secure:process.env.NODE_ENV==="production",sameSite:"lax",maxAge:60*60*8,path:"/"});return response;}
+import { consumeRateLimit } from "@/lib/rate-limit";
+
+const schema = z.object({ adminId: z.string().trim().min(1).max(100), password: z.string().min(8) });
+
+export async function POST(request: Request) {
+  const rate = await consumeRateLimit(request, "admin-login", 10, 600);
+  if (!rate.allowed) return NextResponse.json({ success: false, error: { code: "RATE_LIMITED", message: "Too many login attempts. Try again later." } }, { status: 429, headers: { "Retry-After": String(Math.max(1, rate.reset - Math.floor(Date.now() / 1000))) } });
+  const p = schema.safeParse(await request.json());
+  if (!p.success) return NextResponse.json({ success: false, error: { code: "VALIDATION_ERROR", message: "Valid admin ID and password are required." } }, { status: 400 });
+  const adminId = p.data.adminId.trim();
+  const env = getEnv();
+  const authMode = env.AUTH_MODE ?? process.env.AUTH_MODE;
+  const configuredId = env.ADMIN_LOGIN_ID ?? process.env.ADMIN_LOGIN_ID;
+  const configuredPassword = env.ADMIN_LOGIN_PASSWORD ?? process.env.ADMIN_LOGIN_PASSWORD;
+  const temporaryPlainMode = authMode === "plain" && adminId === configuredId && p.data.password === configuredPassword;
+  const db = env.DB;
+  let admin: { id: string; email: string; role: string; password_hash: string } | null = null;
+  if (db) admin = await db.prepare("SELECT id,email,role,password_hash FROM admins WHERE id=? AND active=1").bind(adminId).first();
+  const hasLocalCredentials = !db && Boolean((process.env.ADMIN_ID || process.env.ADMIN_EMAIL) && process.env.ADMIN_PASSWORD);
+  if (!db && !hasLocalCredentials && !temporaryPlainMode) return NextResponse.json({ success: false, error: { code: "AUTH_NOT_CONFIGURED", message: "Admin authentication is not configured." } }, { status: 503 });
+  let valid = temporaryPlainMode;
+  try { if (!valid) valid = admin ? await verifyPassword(p.data.password, admin.password_hash) : adminId === (process.env.ADMIN_ID || process.env.ADMIN_EMAIL)?.trim() && p.data.password === process.env.ADMIN_PASSWORD; } catch { valid = false; }
+  if (!valid) return NextResponse.json({ success: false, error: { code: "INVALID_CREDENTIALS", message: "Admin ID or password is incorrect." } }, { status: 401 });
+  const role = admin?.role ?? "admin";
+  const token = await createAdminToken(admin?.id ?? adminId, role);
+  const response = NextResponse.json({ success: true, data: { admin: { id: admin?.id ?? adminId, role } } });
+  response.cookies.set("admin_token", token, { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", maxAge: 60 * 60 * 8, path: "/" });
+  return response;
+}

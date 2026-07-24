@@ -1,2 +1,2 @@
 import type { MetadataRoute } from "next";
-export default function sitemap(): MetadataRoute.Sitemap { return [{ url: "https://example.com", lastModified: new Date() }, { url: "https://example.com/quote", lastModified: new Date() }]; }
+export default function sitemap(): MetadataRoute.Sitemap { const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://caat-powerbot.10amangupta04.workers.dev"; return [{ url: siteUrl, lastModified: new Date() }, { url: `${siteUrl}/quote`, lastModified: new Date() }]; }
