@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { inr } from "@/lib/utils";
 import { getEnv } from "@/lib/cloudflare";
 
 export const runtime = "nodejs";
@@ -10,7 +9,7 @@ function pdfText(value: string) { return value.replaceAll("\\", "\\\\").replaceA
 function pdfInr(value: number) { return `INR ${Math.round(value).toLocaleString("en-IN")}`; }
 
 function createPdf(lines: Array<{ value: string; x: number; y: number; size: number; bold?: boolean }>) {
-  const content = ["q 0.06 0.16 0.16 rg 0 760 595 82 re f Q", "q 0.85 0.95 0.42 rg 0 0 595 8 re f Q", "q 0.96 0.97 0.95 rg 36 520 523 105 re f Q", "q 0.96 0.97 0.95 rg 36 230 523 210 re f Q", "q 0.06 0.46 0.43 RG 36 450 m 559 450 l S 36 215 m 559 215 l S Q", ...lines.map(line => `BT /${line.bold ? "F2" : "F1"} ${line.size} Tf ${line.x} ${line.y} Td (${pdfText(line.value)}) Tj ET`)].join("\n");
+  const content = ["q 0.06 0.16 0.16 rg 0 760 595 82 re f Q", "q 0.85 0.95 0.42 rg 0 0 595 8 re f Q", "q 0.96 0.97 0.95 rg 36 620 523 105 re f Q", "q 0.96 0.97 0.95 rg 36 450 523 145 re f Q", "q 0.96 0.97 0.95 rg 36 165 523 95 re f Q", "q 0.06 0.46 0.43 RG 36 605 m 559 605 l S 36 435 m 559 435 l S 36 145 m 559 145 l S Q", "1 1 1 rg", ...lines.slice(0, 4).map(line => `BT /${line.bold ? "F2" : "F1"} ${line.size} Tf ${line.x} ${line.y} Td (${pdfText(line.value)}) Tj ET`), "0.06 0.16 0.16 rg", ...lines.slice(4).map(line => `BT /${line.bold ? "F2" : "F1"} ${line.size} Tf ${line.x} ${line.y} Td (${pdfText(line.value)}) Tj ET`)].join("\n");
   const objects = [
     "<< /Type /Catalog /Pages 2 0 R >>",
     "<< /Type /Pages /Kids [6 0 R] /Count 1 >>",
@@ -37,23 +36,28 @@ export async function POST(request: Request) {
     const lines = [
       { value: "CAAT PowerBot LLP", x: 40, y: 805, size: 22, bold: true }, { value: "SOLAR QUOTATION", x: 40, y: 785, size: 9 },
       { value: `Quotation ID  ${quote.id ?? "estimate"}`, x: 375, y: 805, size: 9 }, { value: "ESTIMATE", x: 485, y: 785, size: 9, bold: true },
-      { value: "CUSTOMER DETAILS", x: 48, y: 600, size: 10, bold: true }, { value: customer.name ?? "Solar customer", x: 48, y: 578, size: 13, bold: true },
-      { value: `${customer.email ?? ""}  |  ${customer.phone ?? ""}`, x: 48, y: 558, size: 9 },
-      { value: "SYSTEM RECOMMENDATION", x: 48, y: 530, size: 10, bold: true }, { value: `${quote.systemSizeKw ?? "-"} kW solar system`, x: 48, y: 570, size: 18, bold: true },
-      { value: `${quote.panelsRequired ?? "-"} panels   |   ${quote.roofAreaSqFt ?? "-"} sq ft roof area`, x: 300, y: 570, size: 10 },
-      { value: "INVESTMENT & SAVINGS", x: 48, y: 425, size: 10, bold: true },
-      { value: "Estimated system cost", x: 48, y: 398, size: 10 }, { value: pdfInr(quote.grossCost ?? 0), x: 420, y: 398, size: 10, bold: true },
-      { value: "Government subsidy", x: 48, y: 373, size: 10 }, { value: `- ${pdfInr(quote.subsidy ?? 0)}`, x: 420, y: 373, size: 10 },
-      { value: "Estimated net cost", x: 48, y: 348, size: 11, bold: true }, { value: pdfInr(quote.netCost ?? 0), x: 420, y: 348, size: 11, bold: true },
-      { value: "Monthly savings", x: 48, y: 305, size: 10 }, { value: pdfInr(quote.monthlySavings ?? 0), x: 420, y: 305, size: 10, bold: true },
-      { value: "Annual savings", x: 48, y: 280, size: 10 }, { value: pdfInr(quote.annualSavings ?? 0), x: 420, y: 280, size: 10, bold: true },
-      { value: "25-year savings", x: 48, y: 255, size: 10 }, { value: pdfInr(quote.twentyFiveYearSavings ?? 0), x: 420, y: 255, size: 10, bold: true },
-      { value: "Payback period", x: 48, y: 190, size: 10 }, { value: `${quote.paybackYears ?? "-"} years`, x: 420, y: 190, size: 10, bold: true },
-      { value: `CO2 offset: ${(quote.co2OffsetKg ?? 0).toLocaleString("en-IN")} kg per year`, x: 48, y: 165, size: 10 },
+      { value: "CUSTOMER DETAILS", x: 48, y: 700, size: 10, bold: true }, { value: customer.name ?? "Solar customer", x: 48, y: 675, size: 13, bold: true },
+      { value: `${customer.email ?? ""}  |  ${customer.phone ?? ""}`, x: 48, y: 653, size: 9 },
+      { value: "SYSTEM RECOMMENDATION", x: 48, y: 570, size: 10, bold: true }, { value: `${quote.systemSizeKw ?? "-"} kW solar system`, x: 48, y: 535, size: 18, bold: true },
+      { value: `${quote.panelsRequired ?? "-"} panels   |   ${quote.roofAreaSqFt ?? "-"} sq ft roof area`, x: 300, y: 538, size: 10 },
+      { value: "INVESTMENT & SAVINGS", x: 48, y: 405, size: 10, bold: true },
+      { value: "Estimated system cost", x: 48, y: 378, size: 10 }, { value: pdfInr(quote.grossCost ?? 0), x: 420, y: 378, size: 10, bold: true },
+      { value: "Government subsidy", x: 48, y: 353, size: 10 }, { value: `- ${pdfInr(quote.subsidy ?? 0)}`, x: 420, y: 353, size: 10 },
+      { value: "Estimated net cost", x: 48, y: 328, size: 11, bold: true }, { value: pdfInr(quote.netCost ?? 0), x: 420, y: 328, size: 11, bold: true },
+      { value: "Monthly savings", x: 48, y: 285, size: 10 }, { value: pdfInr(quote.monthlySavings ?? 0), x: 420, y: 285, size: 10, bold: true },
+      { value: "Annual savings", x: 48, y: 260, size: 10 }, { value: pdfInr(quote.annualSavings ?? 0), x: 420, y: 260, size: 10, bold: true },
+      { value: "25-year savings", x: 48, y: 235, size: 10 }, { value: pdfInr(quote.twentyFiveYearSavings ?? 0), x: 420, y: 235, size: 10, bold: true },
+      { value: "Payback period", x: 48, y: 205, size: 10 }, { value: `${quote.paybackYears ?? "-"} years`, x: 420, y: 205, size: 10, bold: true },
+      { value: `CO2 offset: ${(quote.co2OffsetKg ?? 0).toLocaleString("en-IN")} kg per year`, x: 48, y: 185, size: 10 },
       { value: `View quotation: ${siteUrl}/quote/result?id=${quote.id ?? "estimate"}`, x: 48, y: 48, size: 7 },
       { value: "Estimate only. Final pricing, design and subsidy eligibility are confirmed after site survey.", x: 48, y: 28, size: 7 },
     ];
     const bytes = createPdf(lines);
+    const bucket = getEnv().BILLS_BUCKET;
+    if (bucket && quote.id) {
+      try { await bucket.put(`quotes/${quote.id}.pdf`, bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer, { httpMetadata: { contentType: "application/pdf", contentDisposition: `attachment; filename="caat-powerbot-${quote.id}.pdf"` } }); }
+      catch (storageError) { console.error("quote_pdf_storage_failed", { quoteId: quote.id, error: storageError instanceof Error ? storageError.message : String(storageError) }); }
+    }
     return new Response(bytes, { headers: { "Content-Type": "application/pdf", "Content-Disposition": `attachment; filename="caat-powerbot-${quote.id ?? "quotation"}.pdf"`, "Content-Length": String(bytes.byteLength) } });
   } catch (error) {
     console.error("pdf_generation_failed", { error: error instanceof Error ? error.message : String(error) });

@@ -11,6 +11,8 @@ body { margin: 0; background: var(--cream); color: var(--ink); font-family: Aria
 .scroll-reveal.is-visible { opacity: 1; transform: translateY(0); }
 .step-panel { animation: step-in .42s cubic-bezier(.22,1,.36,1); }
 .calculating-orb { animation: calculating-pulse 1.5s ease-in-out infinite; }
+.calculating-progress { width: 0; animation: calculating-progress-fill 3s linear forwards; }
 @keyframes step-in { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }
 @keyframes calculating-pulse { 0%, 100% { transform: scale(.92); opacity: .7; } 50% { transform: scale(1.08); opacity: 1; } }
+@keyframes calculating-progress-fill { from { width: 0; } to { width: 100%; } }
 @media (prefers-reduced-motion: reduce) { .scroll-reveal, .step-panel, .calculating-orb { animation: none; transition: none; transform: none; opacity: 1; } }
