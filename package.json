@@ -9,13 +9,15 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "typecheck": "tsc --noEmit",
     "cloudflare:build": "opennextjs-cloudflare build",
     "start": "next start",
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest",
     "db:migrate": "wrangler d1 migrations apply solar-db --local",
-    "deploy": "npm run cloudflare:build && wrangler deploy"
+    "deploy": "npm run cloudflare:build && wrangler deploy",
+    "verify": "npm test && npm run typecheck && npm run build"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",

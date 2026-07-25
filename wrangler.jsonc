@@ -11,8 +11,8 @@
 		"binding": "ASSETS"
 	},
 	"vars": {
-		"NEXT_PUBLIC_SITE_URL": "https://caat-powerbot.10amangupta04.workers.dev",
-		"NEXT_PUBLIC_COMPANY_NAME": "caat powerbot"
+		"NEXT_PUBLIC_SITE_URL": "https://caatpowerbot.com",
+		"NEXT_PUBLIC_COMPANY_NAME": "CAAT PowerBot LLP"
 	},
 	"d1_databases": [
 		{

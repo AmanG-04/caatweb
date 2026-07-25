@@ -16,11 +16,27 @@ Run the calculation tests with `npm test`. The quote API currently uses the docu
 
 ## Cloudflare deployment
 
-1. Create a D1 database named `solar-db` and an R2 bucket named `caat-powerbot-bills`.
-2. Replace `database_id` in `wrangler.toml`.
-3. Apply migrations with `npx wrangler d1 migrations apply solar-db --remote`.
-4. Configure `JWT_SECRET` and provider secrets in Pages/Worker environment variables.
-5. Build with `npm run cloudflare:build` and deploy with `npm run deploy` using the OpenNext Cloudflare adapter.
+1. Install and authenticate Wrangler: `npm install` followed by `npx wrangler login`.
+2. Create D1 database `solar-db` and R2 bucket `caat-powerbot-bills`, then update the database ID in `wrangler.jsonc` if needed.
+3. Apply all migrations to production: `npx wrangler d1 migrations apply solar-db --remote`.
+4. Add the required Worker secret: `npx wrangler secret put JWT_SECRET` and enter a long random value.
+5. If using the temporary login override, also add `AUTH_MODE=plain`, `ADMIN_LOGIN_ID`, and `ADMIN_LOGIN_PASSWORD` as Worker secrets.
+6. Verify and deploy: `npm run verify` followed by `npm run deploy`.
+7. Test `/`, `/quote`, `/admin`, a lead submission, and an R2 upload on the deployed URL.
+
+For Git-connected Cloudflare deployments, push the same changes to the configured branch. Cloudflare runs the configured build and deploy commands automatically. Do not commit `.env.local`, `.dev.vars`, JWT secrets, or R2 credentials.
+
+### Database migrations
+
+Migrations are additive and live in `db/migrations`. Run them locally with `npm run db:migrate`; run them remotely with `npx wrangler d1 migrations apply solar-db --remote`. The current migrations create the application tables, rate limits, and settings audit history.
+
+### Production verification
+
+```bash
+npm ci
+npm run verify
+npm audit --audit-level=high
+```
 
 ## Production checklist
 
