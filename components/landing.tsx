@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowUpRight, Check, MapPin, Phone, Sun, Zap } from "lucide-react";
 import logo from "../companyinfo/caatlogo.webp";
 import { Button, Card } from "./ui";
+import { ScrollEffects } from "./scroll-effects";
 
 const company = {
   legalName: "CAAT PowerBot LLP",
@@ -19,7 +20,7 @@ const benefits = [
 ];
 
 export function Landing() {
-  return <main>
+  return <main><ScrollEffects />
     <nav className="container-wide flex items-center justify-between gap-6 py-5">
       <Link href="/" className="flex items-center gap-3" aria-label="CAAT PowerBot home">
         <Image src={logo} alt="CAAT PowerBot logo" width={48} height={48} className="h-11 w-11 object-contain" priority />

@@ -3,7 +3,14 @@
 
 :root { --ink: #102a2a; --cream: #f7f8f2; }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-y: scroll; scrollbar-gutter: stable; }
 body { margin: 0; background: var(--cream); color: var(--ink); font-family: Arial, Helvetica, sans-serif; }
 .container-wide { width: min(1180px, calc(100% - 40px)); margin-inline: auto; }
 .grid-lines { background-image: linear-gradient(rgba(16,42,42,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(16,42,42,.06) 1px, transparent 1px); background-size: 44px 44px; }
+.scroll-reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s cubic-bezier(.22,1,.36,1); }
+.scroll-reveal.is-visible { opacity: 1; transform: translateY(0); }
+.step-panel { animation: step-in .42s cubic-bezier(.22,1,.36,1); }
+.calculating-orb { animation: calculating-pulse 1.5s ease-in-out infinite; }
+@keyframes step-in { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes calculating-pulse { 0%, 100% { transform: scale(.92); opacity: .7; } 50% { transform: scale(1.08); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .scroll-reveal, .step-panel, .calculating-orb { animation: none; transition: none; transform: none; opacity: 1; } }
