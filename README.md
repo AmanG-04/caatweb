@@ -1,6 +1,6 @@
 # caat powerbot
 
-Solar quotation platform for an Indian EPC company, built with Next.js 15, TypeScript, Cloudflare Pages/Workers, D1, and R2.
+Solar estimate platform for an Indian EPC company, built with Next.js 15, TypeScript, Cloudflare Pages/Workers, D1, and R2.
 
 ## Local development
 
@@ -51,7 +51,7 @@ npm audit --audit-level=high
 - Emergency temporary login override: set Worker secrets `AUTH_MODE=plain`, `ADMIN_LOGIN_ID`, and `ADMIN_LOGIN_PASSWORD`. This bypasses D1 password verification without storing the password in D1. Remove all three secrets immediately after access is restored.
 - Load all quote settings from D1 and snapshot them with each quote.
 - Bind R2 for private bill uploads and issue signed URLs only to authorized staff when billing is enabled.
-- Generated quotation PDFs are stored privately in the same R2 bucket under `quotes/<quote-id>.pdf`; a temporary R2 write failure does not block the customer download.
+- Generated estimate PDFs are stored privately in the same R2 bucket under `quotes/<quote-id>.pdf`; a temporary R2 write failure does not block the customer download.
 - Apply the rate-limit migration with `npx wrangler d1 migrations apply solar-db --remote` after adding new migrations.
 - Apply the settings audit migration with `npx wrangler d1 migrations apply solar-db --remote` before using the settings editor in production. Only users with the `admin` role can change quote settings; every change is recorded in `settings_audit`.
 - Add a real CAPTCHA, email provider, and WhatsApp provider through adapters.

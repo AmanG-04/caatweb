@@ -19,7 +19,7 @@ export async function POST(request: Request) {
   if (db && !allowDuplicate) {
     const existing = await db.prepare("SELECT q.id,q.lead_id,q.result_json,q.created_at,c.name,c.email,c.phone FROM quotes q JOIN leads l ON l.id=q.lead_id JOIN customers c ON c.id=l.customer_id WHERE lower(c.email)=lower(?) OR c.phone=? ORDER BY q.created_at DESC LIMIT 1")
       .bind(d.email, d.phone).first<ExistingQuote>();
-    if (existing) return NextResponse.json({ success: false, error: { code: "DUPLICATE_QUOTE", message: "A quote already exists for this phone number or email address.", existingQuote: { id: existing.id, name: existing.name, createdAt: existing.created_at, result: JSON.parse(existing.result_json) } } }, { status: 409 });
+    if (existing) return NextResponse.json({ success: false, error: { code: "DUPLICATE_QUOTE", message: "An estimate already exists for this phone number or email address.", existingQuote: { id: existing.id, name: existing.name, createdAt: existing.created_at, result: JSON.parse(existing.result_json) } } }, { status: 409 });
   }
 
   const settings = await loadQuoteSettings();

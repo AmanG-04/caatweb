@@ -34,8 +34,8 @@ export async function POST(request: Request) {
     const quote = input.quote ?? {}; const customer = input.customer ?? {};
     const siteUrl = getEnv().NEXT_PUBLIC_SITE_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? "https://caat-powerbot.10amangupta04.workers.dev";
     const lines = [
-      { value: "CAAT PowerBot LLP", x: 40, y: 805, size: 22, bold: true }, { value: "SOLAR QUOTATION", x: 40, y: 785, size: 9 },
-      { value: `Quotation ID  ${quote.id ?? "estimate"}`, x: 375, y: 805, size: 9 }, { value: "ESTIMATE", x: 485, y: 785, size: 9, bold: true },
+      { value: "CAAT PowerBot LLP", x: 40, y: 805, size: 22, bold: true }, { value: "SOLAR ESTIMATE", x: 40, y: 785, size: 9 },
+      { value: `Estimate ID  ${quote.id ?? "estimate"}`, x: 375, y: 805, size: 9 }, { value: "ESTIMATE", x: 485, y: 785, size: 9, bold: true },
       { value: "CUSTOMER DETAILS", x: 48, y: 700, size: 10, bold: true }, { value: customer.name ?? "Solar customer", x: 48, y: 675, size: 13, bold: true },
       { value: `${customer.email ?? ""}  |  ${customer.phone ?? ""}`, x: 48, y: 653, size: 9 },
       { value: "SYSTEM RECOMMENDATION", x: 48, y: 570, size: 10, bold: true }, { value: `${quote.systemSizeKw ?? "-"} kW solar system`, x: 48, y: 535, size: 18, bold: true },
@@ -49,7 +49,7 @@ export async function POST(request: Request) {
       { value: "25-year savings", x: 48, y: 235, size: 10 }, { value: pdfInr(quote.twentyFiveYearSavings ?? 0), x: 420, y: 235, size: 10, bold: true },
       { value: "Payback period", x: 48, y: 205, size: 10 }, { value: `${quote.paybackYears ?? "-"} years`, x: 420, y: 205, size: 10, bold: true },
       { value: `CO2 offset: ${(quote.co2OffsetKg ?? 0).toLocaleString("en-IN")} kg per year`, x: 48, y: 185, size: 10 },
-      { value: `View quotation: ${siteUrl}/quote/result?id=${quote.id ?? "estimate"}`, x: 48, y: 48, size: 7 },
+      { value: `View estimate: ${siteUrl}/quote/result?id=${quote.id ?? "estimate"}`, x: 48, y: 48, size: 7 },
       { value: "Estimate only. Final pricing, design and subsidy eligibility are confirmed after site survey.", x: 48, y: 28, size: 7 },
     ];
     const bytes = createPdf(lines);
@@ -58,9 +58,9 @@ export async function POST(request: Request) {
       try { await bucket.put(`quotes/${quote.id}.pdf`, bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer, { httpMetadata: { contentType: "application/pdf", contentDisposition: `attachment; filename="caat-powerbot-${quote.id}.pdf"` } }); }
       catch (storageError) { console.error("quote_pdf_storage_failed", { quoteId: quote.id, error: storageError instanceof Error ? storageError.message : String(storageError) }); }
     }
-    return new Response(bytes, { headers: { "Content-Type": "application/pdf", "Content-Disposition": `attachment; filename="caat-powerbot-${quote.id ?? "quotation"}.pdf"`, "Content-Length": String(bytes.byteLength) } });
+    return new Response(bytes, { headers: { "Content-Type": "application/pdf", "Content-Disposition": `attachment; filename="caat-powerbot-${quote.id ?? "estimate"}.pdf"`, "Content-Length": String(bytes.byteLength) } });
   } catch (error) {
     console.error("pdf_generation_failed", { error: error instanceof Error ? error.message : String(error) });
-    return NextResponse.json({ success: false, error: { code: "PDF_GENERATION_FAILED", message: "The quotation PDF could not be generated." } }, { status: 500 });
+    return NextResponse.json({ success: false, error: { code: "PDF_GENERATION_FAILED", message: "The estimate PDF could not be generated." } }, { status: 500 });
   }
 }

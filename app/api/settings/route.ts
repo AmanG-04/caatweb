@@ -21,7 +21,7 @@ export async function GET(request: Request) {
 export async function PATCH(request: Request) {
   const admin = await requireAdmin(request);
   if (!admin) return NextResponse.json({ success: false, error: { code: "UNAUTHORIZED", message: "Admin login required." } }, { status: 401 });
-  if (admin.role !== "admin") return NextResponse.json({ success: false, error: { code: "FORBIDDEN", message: "Only administrators can change quote settings." } }, { status: 403 });
+  if (admin.role !== "admin") return NextResponse.json({ success: false, error: { code: "FORBIDDEN", message: "Only administrators can change estimate settings." } }, { status: 403 });
 
   let raw: unknown;
   try { raw = await request.json(); } catch { return NextResponse.json({ success: false, error: { code: "INVALID_JSON", message: "Request body must be valid JSON." } }, { status: 400 }); }

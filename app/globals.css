@@ -22,6 +22,12 @@ body { margin: 0; background: var(--cream); color: var(--ink); font-family: Aria
 .flow-bulb { animation: flow-bulb 14s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
 .flow-window-frame { animation: flow-window 14s ease-in-out infinite; }
 .flow-energy-dot { animation: flow-dot 14s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.reference-columns::before, .reference-columns::after { content: ""; position: absolute; inset-inline: 0; z-index: 2; height: 100px; pointer-events: none; }
+.reference-columns::before { top: 0; background: linear-gradient(var(--cream), transparent); }
+.reference-columns::after { bottom: 0; background: linear-gradient(transparent, var(--cream)); }
+.reference-column { display: flex; flex-direction: column; gap: 1.25rem; animation: reference-scroll 42s linear infinite; }
+.reference-column-slow { animation-duration: 50s; animation-direction: reverse; }
+@keyframes reference-scroll { from { transform: translateY(0); } to { transform: translateY(calc(-50% - .625rem)); } }
 @keyframes step-in { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }
 @keyframes calculating-pulse { 0%, 100% { transform: scale(.92); opacity: .7; } 50% { transform: scale(1.08); opacity: 1; } }
 @keyframes calculating-progress-fill { from { width: 0; } to { width: 100%; } }
@@ -31,4 +37,4 @@ body { margin: 0; background: var(--cream); color: var(--ink); font-family: Aria
 @keyframes flow-bulb { 0%, 46% { opacity: .45; transform: scale(.92); filter: none; } 46.01%, 86% { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 12px #d9f56b); } 86.01%, 100% { opacity: .45; transform: scale(.92); filter: none; } }
 @keyframes flow-window { 0%, 46% { fill: #071d20; } 46.01%, 86% { fill: #143e40; } 86.01%, 100% { fill: #071d20; } }
 @media (max-width: 700px) { .solar-flow { opacity: .28; } }
-@media (prefers-reduced-motion: reduce) { .scroll-reveal, .step-panel, .calculating-orb, .flow-rays path, .flow-sun, .flow-electricity, .flow-bulb, .flow-window-frame, .flow-energy-dot { animation: none; transition: none; } }
+@media (prefers-reduced-motion: reduce) { .scroll-reveal, .step-panel, .calculating-orb, .flow-rays path, .flow-sun, .flow-electricity, .flow-bulb, .flow-window-frame, .flow-energy-dot, .reference-column { animation: none; transition: none; } }
