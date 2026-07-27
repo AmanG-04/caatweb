@@ -23,8 +23,8 @@ body { margin: 0; background: var(--cream); color: var(--ink); font-family: Aria
 .flow-window-frame { animation: flow-window 14s ease-in-out infinite; }
 .flow-energy-dot { animation: flow-dot 14s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
 .reference-columns::before, .reference-columns::after { content: ""; position: absolute; inset-inline: 0; z-index: 2; height: 100px; pointer-events: none; }
-.reference-columns::before { top: 0; background: linear-gradient(var(--cream), transparent); }
-.reference-columns::after { bottom: 0; background: linear-gradient(transparent, var(--cream)); }
+.reference-columns::before { top: 0; background: linear-gradient(#fff, transparent); }
+.reference-columns::after { bottom: 0; background: linear-gradient(transparent, #fff); }
 .reference-column { display: flex; flex-direction: column; gap: 1.25rem; animation: reference-scroll 42s linear infinite; }
 .reference-column-slow { animation-duration: 50s; animation-direction: reverse; }
 @keyframes reference-scroll { from { transform: translateY(0); } to { transform: translateY(calc(-50% - .625rem)); } }

@@ -55,7 +55,7 @@ export function ClientReferences() {
           <h2 className="mt-3 text-4xl font-black tracking-tight md:text-5xl">Real systems. Real places. Real work.</h2>
           <p className="mt-5 leading-7 text-ink/60">A selection of solar, storage, and hybrid power projects delivered by CAAT PowerBot across Delhi NCR.</p>
         </div>
-        <div className="reference-columns relative mt-12 grid max-h-[760px] grid-cols-1 gap-5 overflow-hidden md:grid-cols-2 lg:grid-cols-3">
+        <div className="reference-columns bg-white mt-12 grid max-h-[760px] grid-cols-1 gap-5 overflow-hidden md:grid-cols-2 lg:grid-cols-3">
           {columns.map((column, columnIndex) => (
             <div key={columnIndex} className={`reference-column ${columnIndex === 1 ? "reference-column-slow" : ""} ${columnIndex === 2 ? "hidden lg:block" : ""}`}>
               {[...column, ...column].map((reference, index) => <ReferenceCard key={`${reference.client}-${index}`} reference={reference} />)}
