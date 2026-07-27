@@ -27,9 +27,8 @@ body { margin: 0; background: var(--cream); color: var(--ink); font-family: Aria
 @keyframes calculating-progress-fill { from { width: 0; } to { width: 100%; } }
 @keyframes flow-ray { 0%, 8% { stroke-dashoffset: 150; opacity: 0; } 14% { opacity: .9; } 40% { stroke-dashoffset: -520; opacity: .9; } 46%, 100% { stroke-dashoffset: -520; opacity: 0; } }
 @keyframes flow-sun { 0%, 8%, 46%, 100% { transform: scale(.98); opacity: .9; } 14%, 25% { transform: scale(1.08); opacity: 1; } 40% { transform: scale(1.02); opacity: .95; } }
-@keyframes flow-electricity { 0%, 46% { stroke-dashoffset: 0; opacity: 0; } 46.01% { stroke-dashoffset: 0; opacity: .9; } 86% { stroke-dashoffset: -256; opacity: .9; } 86.01%, 100% { stroke-dashoffset: -256; opacity: 0; } }
+@keyframes flow-electricity { 0%, 46% { stroke-dashoffset: 0; opacity: 0; } 46.01% { stroke-dashoffset: 0; opacity: .9; } 86% { stroke-dashoffset: -1; opacity: .9; } 86.01%, 100% { stroke-dashoffset: -1; opacity: 0; } }
 @keyframes flow-bulb { 0%, 46% { opacity: .45; transform: scale(.92); filter: none; } 46.01%, 86% { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 12px #d9f56b); } 86.01%, 100% { opacity: .45; transform: scale(.92); filter: none; } }
 @keyframes flow-window { 0%, 46% { fill: #071d20; } 46.01%, 86% { fill: #143e40; } 86.01%, 100% { fill: #071d20; } }
-@keyframes flow-dot { 0%, 46% { opacity: .2; transform: scale(.7); } 46.01%, 86% { opacity: 1; transform: scale(1.15); } 86.01%, 100% { opacity: .2; transform: scale(.7); } }
 @media (max-width: 700px) { .solar-flow { opacity: .28; } }
 @media (prefers-reduced-motion: reduce) { .scroll-reveal, .step-panel, .calculating-orb, .flow-rays path, .flow-sun, .flow-electricity, .flow-bulb, .flow-window-frame, .flow-energy-dot { animation: none; transition: none; } }
