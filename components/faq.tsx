@@ -22,7 +22,7 @@ const faqs = [
   },
   {
     q: "What is the payback period?",
-    a: "For a typical residential system after subsidy, 3–4 years is realistic at current Maharashtra tariffs; commercial systems paying higher tariffs often see 3 years or less. The panels are warrantied for 25 years of performance, so everything after payback is effectively free electricity. We give you the payback calculation for your actual bill before you commit.",
+    a: "For a typical residential system after subsidy, 3–4 years is realistic at current Delhi NCR tariffs; commercial systems paying higher tariffs often see 3 years or less. The panels are warrantied for 25 years of performance, so everything after payback is effectively free electricity. We give you the payback calculation for your actual bill before you commit.",
   },
   {
     q: "Will my panels work during a power cut?",
@@ -121,5 +121,4 @@ export default function FAQ() {
     </section>
   );
 }
-
 

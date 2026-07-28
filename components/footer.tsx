@@ -131,8 +131,7 @@ export default function Footer() {
               </li>
             </ul>
             <p className="mt-5 max-w-[220px] text-xs leading-relaxed text-white/40">
-              Mon–Sat, 9 am – 7 pm IST. Site surveys across Mumbai, Thane and
-              Pune.
+              Mon–Sat, 9 am – 7 pm IST. Site surveys across Delhi NCR.
             </p>
           </div>
         </div>
@@ -153,5 +152,4 @@ export default function Footer() {
     </footer>
   );
 }
-
 

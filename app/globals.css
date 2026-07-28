@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @config "../tailwind.config.ts";
 
-:root { --ink: #102a2a; --cream: #f7f8f2; --color-gold: #f5b72e; --color-gold-soft: #ffd87a; --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace; }
+:root { --ink: #102a2a; --cream: #f7f8f2; --color-gold: #d8f36a; --color-gold-soft: #edffad; --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace; }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; overflow-y: auto; }
 body { margin: 0; background: var(--cream); color: var(--ink); font-family: Arial, Helvetica, sans-serif; }
@@ -22,18 +22,18 @@ body { margin: 0; background: var(--cream); color: var(--ink); font-family: Aria
 .landing-nav > a:last-child { border-radius: 999px; box-shadow: 0 8px 20px rgba(216,243,106,.32); transition: transform .2s ease, box-shadow .2s ease; }
 .landing-nav > a:last-child:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 12px 26px rgba(216,243,106,.48); }
 @keyframes landing-nav-enter { from { opacity: 0; transform: translateY(-18px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
-.bg-night { background-color: #0e1128; }
-.bg-dusk\/50 { background-color: rgba(25,29,69,.5); }
-.text-gold { color: #f5b72e; }
-.text-violet { color: #8b4fc0; }
-.text-ink-soft { color: #4a4f6e; }
-.text-ink-soft\/70 { color: rgba(74,79,110,.7); }
-.bg-paper { background-color: #f7f5f1; }
-.bg-paper-dim { background-color: #efece4; }
-.text-gold\/70 { color: rgba(245,183,46,.7); }
+.bg-night { background-color: #102a2a; }
+.bg-dusk\/50 { background-color: rgba(15,118,110,.5); }
+.text-gold { color: #d8f36a; }
+.text-violet { color: #0f766e; }
+.text-ink-soft { color: #52706d; }
+.text-ink-soft\/70 { color: rgba(82,112,109,.7); }
+.bg-paper { background-color: #f7f8f2; }
+.bg-paper-dim { background-color: #edf1e7; }
+.text-gold\/70 { color: rgba(216,243,106,.7); }
 .text-white\/60 { color: rgba(255,255,255,.6); }
 .text-white\/40 { color: rgba(255,255,255,.4); }
-.border-gold\/40 { border-color: rgba(245,183,46,.4); }
+.border-gold\/40 { border-color: rgba(216,243,106,.4); }
 @keyframes dash-flow { to { stroke-dashoffset: -48; } }
 .energy-dash { stroke-dasharray: 6 10; animation: dash-flow 1.6s linear infinite; }
 .brand-marquee { overflow: hidden; border-block: 1px solid rgba(15,118,110,.12); background: #102a2a; color: #f7f8f2; }

@@ -50,9 +50,9 @@ export default function SolarScene() {
   const sunX = 90 + ((hour - 5) / 14) * 780;
   const sunY = 400 - d * 300;
 
-  const skyTop = lerpColor("#0b0e24", "#333c8f", d);
-  const skyHorizonBase = lerpColor("#151938", "#7f90dd", d);
-  const skyHorizon = lerpColor(skyHorizonBase, "#8b4fc0", duskiness * 0.4);
+  const skyTop = lerpColor("#082d2c", "#0f766e", d);
+  const skyHorizonBase = lerpColor("#0b3d3b", "#73b9ae", d);
+  const skyHorizon = lerpColor(skyHorizonBase, "#2fa6ad", duskiness * 0.4);
 
   const generation = Math.round(d * 5 * 10) / 10;
   const onSolar = d > 0.12;
@@ -62,10 +62,10 @@ export default function SolarScene() {
   const particleOpacity = reducedMotion ? 0 : d;
 
   // Line-work color shifts slightly lighter in daylight
-  const line = lerpColor("#4a5494", "#8a96d8", d);
-  const lineSoft = lerpColor("#343d75", "#6774bd", d);
-  const wall = lerpColor("#12152e", "#1c2150", d);
-  const glass = "#10132b";
+  const line = lerpColor("#327975", "#95d0c5", d);
+  const lineSoft = lerpColor("#245b58", "#67aaa1", d);
+  const wall = lerpColor("#0c3938", "#155b57", d);
+  const glass = "#082d2c";
 
   return (
     <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-night shadow-2xl shadow-black/40">
@@ -81,13 +81,13 @@ export default function SolarScene() {
             <stop offset="1" stopColor={skyHorizon} />
           </linearGradient>
           <radialGradient id="sunGlow">
-            <stop offset="0" stopColor="#ffd87a" stopOpacity="0.75" />
-            <stop offset="0.4" stopColor="#f5b72e" stopOpacity="0.25" />
-            <stop offset="1" stopColor="#f5b72e" stopOpacity="0" />
+            <stop offset="0" stopColor="#edffad" stopOpacity="0.75" />
+            <stop offset="0.4" stopColor="#d8f36a" stopOpacity="0.25" />
+            <stop offset="1" stopColor="#d8f36a" stopOpacity="0" />
           </radialGradient>
           <linearGradient id="panelFace" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#1d2452" />
-            <stop offset="1" stopColor="#12162f" />
+            <stop offset="0" stopColor="#0e5553" />
+            <stop offset="1" stopColor="#082d2c" />
           </linearGradient>
           <filter id="softGlow" x="-80%" y="-80%" width="260%" height="260%">
             <feGaussianBlur stdDeviation="3" result="blur" />
@@ -115,18 +115,18 @@ export default function SolarScene() {
         {/* Sun */}
         <g style={{ opacity: clamp(d * 3, 0, 1) }}>
           <circle cx={sunX} cy={sunY} r={95} fill="url(#sunGlow)" />
-          <circle cx={sunX} cy={sunY} r={21} fill="#ffd87a" />
-          <circle cx={sunX} cy={sunY} r={16} fill="#f5b72e" />
+          <circle cx={sunX} cy={sunY} r={21} fill="#edffad" />
+          <circle cx={sunX} cy={sunY} r={16} fill="#d8f36a" />
         </g>
 
         {/* Distant skyline — simple line silhouettes */}
-        <g stroke={lineSoft} strokeWidth="1.2" fill="#0f1230" opacity="0.75">
+        <g stroke={lineSoft} strokeWidth="1.2" fill="#082d2c" opacity="0.75">
           <path d="M 20 472 V 396 H 96 V 472" />
           <path d="M 118 472 V 356 H 172 V 472" />
           <path d="M 196 472 V 412 H 286 V 472" />
           <path d="M 306 472 V 380 H 352 V 472" />
         </g>
-        <g fill="#f5b72e" opacity={(1 - d) * 0.4}>
+        <g fill="#d8f36a" opacity={(1 - d) * 0.4}>
           <rect x="132" y="372" width="7" height="7" rx="1" />
           <rect x="150" y="372" width="7" height="7" rx="1" />
           <rect x="132" y="392" width="7" height="7" rx="1" />
@@ -135,7 +135,7 @@ export default function SolarScene() {
         </g>
 
         {/* Ground */}
-        <rect y="472" width="960" height="88" fill={lerpColor("#0a0c1e", "#1b2154", d)} />
+        <rect y="472" width="960" height="88" fill={lerpColor("#062827", "#15534f", d)} />
         <line x1="0" y1="472" x2="960" y2="472" stroke={lineSoft} strokeWidth="1.5" />
 
         {/* ---- House: architectural line-work, flat RCC roof ---- */}
@@ -170,7 +170,7 @@ export default function SolarScene() {
                   <line key={ox} x1={px + ox} y1={145} x2={px + ox} y2={167} stroke={line} strokeWidth="0.6" opacity="0.7" />
                 ))}
                 <line x1={px + 1} y1={156} x2={px + 77} y2={156} stroke={line} strokeWidth="0.6" opacity="0.7" />
-                <rect x={px} y={144} width={78} height={24} rx="2" fill="#ffd87a" opacity={d * 0.18} />
+                <rect x={px} y={144} width={78} height={24} rx="2" fill="#d8f36a" opacity={d * 0.18} />
               </g>
             </g>
           );
@@ -189,7 +189,7 @@ export default function SolarScene() {
         ].map(([x, y], i) => (
           <g key={i}>
             <rect x={x} y={y} width={44} height={74} fill={glass} stroke={line} strokeWidth="1.5" />
-            <rect x={x} y={y} width={44} height={74} fill="#f5b72e" opacity={windowGlow} />
+            <rect x={x} y={y} width={44} height={74} fill="#d8f36a" opacity={windowGlow} />
             <line x1={x + 22} y1={y} x2={x + 22} y2={y + 74} stroke={line} strokeWidth="0.9" />
             <line x1={x} y1={y + 26} x2={x + 44} y2={y + 26} stroke={line} strokeWidth="0.9" />
             {/* sill */}
@@ -200,7 +200,7 @@ export default function SolarScene() {
         {/* Balcony on first floor right */}
         <g stroke={line} strokeWidth="1.3" fill="none" opacity="0.85">
           <rect x="742" y="252" width="58" height="66" fill={glass} />
-          <rect x="742" y="252" width="58" height="66" fill="#f5b72e" opacity={windowGlow * 0.7} />
+          <rect x="742" y="252" width="58" height="66" fill="#d8f36a" opacity={windowGlow * 0.7} />
           <line x1="771" y1="252" x2="771" y2="318" />
           <line x1="734" y1="318" x2="808" y2="318" strokeWidth="2" />
           {[742, 754, 766, 778, 790, 800].map((x) => (
@@ -211,7 +211,7 @@ export default function SolarScene() {
         {/* Door: slim entrance with canopy */}
         <g>
           <rect x="742" y="398" width="46" height="74" fill={glass} stroke={line} strokeWidth="1.5" />
-          <rect x="742" y="398" width="46" height="74" fill="#f5b72e" opacity={windowGlow * 0.45} />
+          <rect x="742" y="398" width="46" height="74" fill="#d8f36a" opacity={windowGlow * 0.45} />
           <line x1="736" y1="394" x2="794" y2="394" stroke={line} strokeWidth="2.5" />
         </g>
 
@@ -228,8 +228,8 @@ export default function SolarScene() {
 
         {/* Inverter + battery wall unit */}
         <g>
-          <rect x="822" y="352" width="28" height="44" rx="3" fill="#0d1026" stroke={line} strokeWidth="1.5" />
-          <circle cx="836" cy="362" r="3" fill={onSolar ? "#6ee7a0" : "#f5b72e"} filter="url(#softGlow)" />
+          <rect x="822" y="352" width="28" height="44" rx="3" fill="#062827" stroke={line} strokeWidth="1.5" />
+          <circle cx="836" cy="362" r="3" fill={onSolar ? "#d8f36a" : "#edffad"} filter="url(#softGlow)" />
           {[0, 1, 2, 3].map((i) => (
             <rect
               key={i}
@@ -238,7 +238,7 @@ export default function SolarScene() {
               width={3.6}
               height={9}
               rx={0.8}
-              fill={i < batterySegments ? "#f5b72e" : "#262c5c"}
+              fill={i < batterySegments ? "#d8f36a" : "#1c5b57"}
             />
           ))}
           <line x1="827" y1="388" x2="845" y2="388" stroke={line} strokeWidth="0.8" opacity="0.7" />
@@ -247,7 +247,7 @@ export default function SolarScene() {
         {/* Energy particles: panels → inverter */}
         <g opacity={particleOpacity}>
           {[0, 1, 2, 3, 4].map((i) => (
-            <circle key={i} r="3.2" fill="#ffd87a" filter="url(#softGlow)">
+            <circle key={i} r="3.2" fill="#edffad" filter="url(#softGlow)">
               <animateMotion dur="2.4s" repeatCount="indefinite" begin={`${-i * 0.48}s`}>
                 <mpath href="#energyPath" />
               </animateMotion>
@@ -257,7 +257,7 @@ export default function SolarScene() {
         {/* Energy particles: inverter → house (from battery after dark) */}
         <g opacity={reducedMotion ? 0 : 0.85}>
           {[0, 1].map((i) => (
-            <circle key={i} r="2.8" fill="#f5b72e" filter="url(#softGlow)">
+            <circle key={i} r="2.8" fill="#d8f36a" filter="url(#softGlow)">
               <animateMotion dur="1.8s" repeatCount="indefinite" begin={`${-i * 0.9}s`}>
                 <mpath href="#housePath" />
               </animateMotion>
@@ -337,4 +337,3 @@ export default function SolarScene() {
     </div>
   );
 }
-
