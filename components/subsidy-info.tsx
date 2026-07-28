@@ -33,7 +33,7 @@ function StepArrow() {
 export default function SubsidyInfo() {
   return (
     <section id="subsidy" className="bg-paper-dim py-20 sm:py-28">
-      <div className="mx-auto max-w-none 2xl:px-16 px-5 sm:px-8">
+      <div className="container-wide">
         <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-2 lg:gap-16">
           {/* Left: plain-language explanation */}
           <Reveal>
@@ -118,5 +118,4 @@ export default function SubsidyInfo() {
     </section>
   );
 }
-
 

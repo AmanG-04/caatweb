@@ -8,7 +8,7 @@ const steps = [
 
 export function ProjectTimeline() {
   return (
-    <section id="project-process" className="project-timeline">
+    <section id="process" className="project-timeline">
       <div className="container-wide">
         <p className="project-timeline-kicker">How a project runs</p>
         <h2>Survey to switch-on, handled.</h2>

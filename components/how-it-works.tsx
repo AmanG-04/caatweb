@@ -147,7 +147,7 @@ export default function HowItWorks() {
 
   return (
     <section id="how-it-works" className="bg-night py-20 sm:py-28">
-      <div className="mx-auto max-w-none 2xl:px-16 px-5 sm:px-8">
+      <div className="container-wide">
         <motion.div
           initial={reduced ? false : { opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -216,5 +216,4 @@ export default function HowItWorks() {
     </section>
   );
 }
-
 
