@@ -4,7 +4,8 @@ import { getEnv } from "@/lib/cloudflare";
 import { requireAdmin } from "@/lib/auth";
 import { settingsSchema } from "@/lib/validation";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 async function readSettings(): Promise<Record<string, unknown>> {
   const db = getEnv().DB;

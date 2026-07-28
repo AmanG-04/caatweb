@@ -19,16 +19,17 @@ export async function POST(request: Request) {
   try {
     const contentLength = Number(request.headers.get("content-length") ?? 0);
     if (contentLength > MAX + 100000) return NextResponse.json({ success: false, error: { code: "PAYLOAD_TOO_LARGE", message: "Upload must be smaller than 10MB." } }, { status: 413 });
+    const form = await request.formData();
+    const uploadKind = form.get("kind") === "site-photo" ? "site-photo" : "bill";
     const rate = await consumeRateLimit(request, "bill-upload", 5, 600);
     if (!rate.allowed) return NextResponse.json({ success: false, error: { code: "RATE_LIMITED", message: "Too many upload attempts. Please try again later." } }, { status: 429, headers: { "Retry-After": String(Math.max(1, rate.reset - Math.floor(Date.now() / 1000))) } });
-    const form = await request.formData();
     const file = form.get("file");
-    if (!(file instanceof File)) return NextResponse.json({ success: false, error: { code: "FILE_REQUIRED", message: "A bill file is required." } }, { status: 400 });
+    if (!(file instanceof File)) return NextResponse.json({ success: false, error: { code: "FILE_REQUIRED", message: `${uploadKind === "site-photo" ? "A site photo" : "A bill file"} is required.` } }, { status: 400 });
     const detectedMime = await detectMime(file);
-    const allowed = ["application/pdf", "image/png", "image/jpeg"];
+    const allowed = uploadKind === "site-photo" ? ["image/png", "image/jpeg"] : ["application/pdf", "image/png", "image/jpeg"];
     if (!detectedMime || !allowed.includes(file.type) || detectedMime !== file.type || file.size > MAX) return NextResponse.json({ success: false, error: { code: "INVALID_FILE", message: "Only valid PDF, PNG and JPEG files up to 10MB are accepted." } }, { status: 400 });
     const extension = detectedMime === "application/pdf" ? "pdf" : detectedMime === "image/png" ? "png" : "jpg";
-    const objectKey = `bills/${crypto.randomUUID()}.${extension}`;
+    const objectKey = `${uploadKind === "site-photo" ? "site-photos" : "bills"}/${crypto.randomUUID()}.${extension}`;
     const bucket = getEnv().BILLS_BUCKET;
     if (!bucket) return NextResponse.json({ success: false, error: { code: "STORAGE_UNAVAILABLE", message: "File storage is not configured." } }, { status: 503 });
     await bucket.put(objectKey, await file.arrayBuffer(), { httpMetadata: { contentType: detectedMime } });

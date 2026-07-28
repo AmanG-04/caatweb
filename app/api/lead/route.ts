@@ -14,6 +14,7 @@ export async function POST(request: Request) {
   const parsed = quoteFormSchema.safeParse(raw);
   if (!parsed.success) return NextResponse.json({ success: false, error: { code: "VALIDATION_ERROR", message: "Please check the highlighted fields.", fields: parsed.error.flatten().fieldErrors } }, { status: 400 });
   const d = parsed.data;
+  if (!d.billObjectKey) return NextResponse.json({ success: false, error: { code: "BILL_REQUIRED", message: "Please upload your electricity bill." } }, { status: 400 });
   const db = getEnv().DB;
 
   if (db && !allowDuplicate) {
@@ -23,12 +24,12 @@ export async function POST(request: Request) {
   }
 
   const settings = await loadQuoteSettings();
-  const quote = calculateQuote({ ...settings, monthlyBill: d.monthlyBill, monthlyUnits: d.monthlyUnits, propertyType: d.propertyType, roofType: d.roofType });
+  const quote = calculateQuote({ ...settings, tariff: d.pricePerUnit, monthlyUnits: d.monthlyUnits, propertyType: d.propertyType, roofType: d.roofType });
   const leadId = crypto.randomUUID(); const quoteId = crypto.randomUUID();
   if (db) {
     const customerId = crypto.randomUUID();
     await db.prepare("INSERT INTO customers (id,name,phone,email,city,state,pincode) VALUES (?,?,?,?,?,?,?)").bind(customerId, d.name, d.phone, d.email, d.city, d.state, d.pincode).run();
-    await db.prepare("INSERT INTO leads (id,customer_id,property_type,roof_type,ownership,monthly_bill,monthly_units,provider,bill_object_key) VALUES (?,?,?,?,?,?,?,?,?)").bind(leadId, customerId, d.propertyType, d.roofType, d.ownership, d.monthlyBill, d.monthlyUnits ?? null, d.provider, d.billObjectKey ?? null).run();
+    await db.prepare("INSERT INTO leads (id,customer_id,property_type,roof_type,ownership,system_type,battery_required,monthly_bill,monthly_units,provider,bill_object_key,site_photo_object_key) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)").bind(leadId, customerId, d.propertyType, d.roofType, d.ownership, d.systemType, d.batteryRequired === "yes" ? 1 : 0, 0, d.monthlyUnits, d.provider ?? null, d.billObjectKey ?? null, d.sitePhotoObjectKey ?? null).run();
     await db.prepare("INSERT INTO quotes (id,lead_id,engine_version,settings_snapshot,result_json) VALUES (?,?,?,?,?)").bind(quoteId, leadId, "template-v1", JSON.stringify(settings), JSON.stringify(quote)).run();
   }
   return NextResponse.json({ success: true, data: { leadId, quote: { id: quoteId, ...quote } } });

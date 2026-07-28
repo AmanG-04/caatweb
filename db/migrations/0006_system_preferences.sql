@@ -1,0 +1,2 @@
+ALTER TABLE leads ADD COLUMN system_type TEXT NOT NULL DEFAULT 'on_grid';
+ALTER TABLE leads ADD COLUMN battery_required INTEGER NOT NULL DEFAULT 0;

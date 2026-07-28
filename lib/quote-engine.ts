@@ -2,7 +2,7 @@ import type { QuoteInput, QuoteResult } from "./types";
 
 /** Versioned, intentionally transparent template model. All commercial values come from settings. */
 export function calculateQuote(input: QuoteInput): QuoteResult {
-  const units = input.monthlyUnits ?? input.monthlyBill / input.tariff;
+  const units = input.monthlyUnits;
   const systemSizeKw = Math.max(1, Math.ceil((units / 120) * 10) / 10);
   const panelsRequired = Math.ceil((systemSizeKw * 1000) / input.panelWattage);
   const roofAreaSqFt = Math.ceil(systemSizeKw * input.roofAreaPerKw);
@@ -11,7 +11,8 @@ export function calculateQuote(input: QuoteInput): QuoteResult {
   const grossCost = baseCost + gstAmount;
   const subsidy = Math.min(systemSizeKw * input.subsidyPerKw, input.subsidyCap);
   const netCost = Math.max(0, grossCost - subsidy);
-  const monthlySavings = Math.min(input.monthlyBill, units * input.tariff * 0.92);
+  const estimatedMonthlyBill = units * input.tariff;
+  const monthlySavings = estimatedMonthlyBill * 0.92;
   const annualSavings = monthlySavings * 12;
   let twentyFiveYearSavings = 0;
   for (let year = 0; year < 25; year++) twentyFiveYearSavings += annualSavings * Math.pow(1 + input.annualTariffIncrease, year) * Math.pow(1 - input.annualDegradation, year);
