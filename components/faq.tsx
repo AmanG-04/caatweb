@@ -3,7 +3,7 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useState } from "react";
 
-const faqs = [
+export const faqs = [
   {
     q: "How much subsidy do I actually get?",
     a: "Under PM Surya Ghar: Muft Bijli Yojana, residential systems get ₹30,000 per kW for the first 2 kW and ₹18,000 for the third kW — a maximum of ₹78,000 for 3 kW and above. The subsidy lands directly in your bank account after commissioning. We prepare and file the application on the national portal as part of every residential project.",
@@ -121,4 +121,3 @@ export default function FAQ() {
     </section>
   );
 }
-

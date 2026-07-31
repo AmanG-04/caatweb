@@ -70,7 +70,7 @@ export default function SolarScene() {
   return (
     <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-night shadow-2xl shadow-black/40">
       <svg
-        viewBox="0 0 960 560"
+        viewBox="0 0 960 475"
         className="block w-full"
         role="img"
         aria-label="Animated technical illustration: the sun crosses the sky, rooftop solar panels feed an inverter and battery, and the house lights stay on from stored solar after dark"
@@ -101,7 +101,7 @@ export default function SolarScene() {
         </defs>
 
         {/* Sky */}
-        <rect width="960" height="472" fill="url(#sky)" />
+        <rect width="990" height="592" fill="url(#sky)" />
 
         {/* Stars */}
         <g opacity={1 - d}>
@@ -135,13 +135,13 @@ export default function SolarScene() {
         </g>
 
         {/* Ground */}
-        <rect y="472" width="960" height="88" fill={lerpColor("#062827", "#15534f", d)} />
-        <line x1="0" y1="472" x2="960" y2="472" stroke={lineSoft} strokeWidth="1.5" />
+        {/* <rect y="472" width="960" height="88" fill={lerpColor("#062827", "#15534f", d)} />
+        <line x1="0" y1="472" x2="960" y2="472" stroke={lineSoft} strokeWidth="2.5" /> */}
 
         {/* ---- House: architectural line-work, flat RCC roof ---- */}
         {/* Compound wall + gate hint */}
-        <line x1="430" y1="472" x2="530" y2="472" stroke={lineSoft} strokeWidth="1" />
-        <path d="M 440 472 V 448 H 528" fill="none" stroke={lineSoft} strokeWidth="1.5" opacity="0.7" />
+        {/* <line x1="430" y1="472" x2="530" y2="472" stroke={lineSoft} strokeWidth="1" /> */}
+        {/* <path d="M 440 472 V 448 H 528" fill="none" stroke={lineSoft} strokeWidth="1.5" opacity="0.7" /> */}
 
         {/* Main volume */}
         <rect x="548" y="212" width="332" height="260" fill={wall} stroke={line} strokeWidth="2" />
@@ -163,13 +163,13 @@ export default function SolarScene() {
           return (
             <g key={i}>
               <line x1={px + 12} y1={182} x2={px + 12} y2={158} stroke={line} strokeWidth="2" />
-              <line x1={px + 64} y1={182} x2={px + 60} y2={170} stroke={line} strokeWidth="2" />
-              <g transform={`rotate(-16 ${px + 38} 156)`}>
+              <line x1={px + 64} y1={182} x2={px + 64} y2={150} stroke={line} strokeWidth="2" />
+              <g transform={`rotate(-8 ${px + 15} 156)`}>
                 <rect x={px} y={144} width={78} height={24} rx="2" fill="url(#panelFace)" stroke={line} strokeWidth="1.5" />
                 {[13, 26, 39, 52, 65].map((ox) => (
                   <line key={ox} x1={px + ox} y1={145} x2={px + ox} y2={167} stroke={line} strokeWidth="0.6" opacity="0.7" />
                 ))}
-                <line x1={px + 1} y1={156} x2={px + 77} y2={156} stroke={line} strokeWidth="0.6" opacity="0.7" />
+                <line x1={px + 1} y1={156} x2={px + 77} y2={156} stroke={line} strokeWidth="1" opacity="0.7" />
                 <rect x={px} y={144} width={78} height={24} rx="2" fill="#d8f36a" opacity={d * 0.18} />
               </g>
             </g>
@@ -185,19 +185,19 @@ export default function SolarScene() {
 
         {/* Windows: slim, architectural, subtle warm glow when powered */}
         {[
-          [572, 244], [660, 244], [572, 372], [660, 372],
+          [572, 244], [660, 244], [572, 372], [660, 372], [742,244]
         ].map(([x, y], i) => (
           <g key={i}>
             <rect x={x} y={y} width={44} height={74} fill={glass} stroke={line} strokeWidth="1.5" />
             <rect x={x} y={y} width={44} height={74} fill="#d8f36a" opacity={windowGlow} />
             <line x1={x + 22} y1={y} x2={x + 22} y2={y + 74} stroke={line} strokeWidth="0.9" />
-            <line x1={x} y1={y + 26} x2={x + 44} y2={y + 26} stroke={line} strokeWidth="0.9" />
+            <line x1={x} y1={y + 36} x2={x + 44} y2={y + 36} stroke={line} strokeWidth="0.9" />
             {/* sill */}
-            <line x1={x - 4} y1={y + 74} x2={x + 48} y2={y + 74} stroke={line} strokeWidth="2" />
+            <line x1={x - 4} y1={y + 74} x2={x + 48} y2={y + 74} stroke={line} strokeWidth="3" />
           </g>
         ))}
 
-        {/* Balcony on first floor right */}
+        {/* Balcony on first floor right
         <g stroke={line} strokeWidth="1.3" fill="none" opacity="0.85">
           <rect x="742" y="252" width="58" height="66" fill={glass} />
           <rect x="742" y="252" width="58" height="66" fill="#d8f36a" opacity={windowGlow * 0.7} />
@@ -206,7 +206,7 @@ export default function SolarScene() {
           {[742, 754, 766, 778, 790, 800].map((x) => (
             <line key={x} x1={x} y1={318} x2={x} y2={304} strokeWidth="0.9" />
           ))}
-        </g>
+        </g> */}
 
         {/* Door: slim entrance with canopy */}
         <g>
@@ -216,14 +216,14 @@ export default function SolarScene() {
         </g>
 
         {/* AC unit — small technical detail */}
-        <g stroke={line} strokeWidth="1.2" fill={wall} opacity="0.9">
+        {/* <g stroke={line} strokeWidth="1.2" fill={wall} opacity="0.9">
           <rect x="562" y="322" width="26" height="14" rx="2" />
           <line x1="566" y1="326" x2="584" y2="326" />
           <line x1="566" y1="330" x2="584" y2="330" />
-        </g>
+        </g> */}
 
         {/* Conduit runs */}
-        <path d="M 655 176 L 655 208 L 836 208 L 836 352" fill="none" stroke={line} strokeWidth="1.8" strokeLinejoin="round" opacity="0.9" />
+        <path d="M 655 182 L 655 208 L 836 208 L 836 352" fill="none" stroke={line} strokeWidth="1.8" strokeLinejoin="round" opacity="0.9" />
         <path d="M 836 396 L 836 428 L 770 428" fill="none" stroke={line} strokeWidth="1.8" strokeLinejoin="round" opacity="0.9" />
 
         {/* Inverter + battery wall unit */}
@@ -269,16 +269,16 @@ export default function SolarScene() {
         <g fontFamily="var(--font-mono)" fontSize="11" letterSpacing="0.12em" fill="#ffffff">
           <g opacity="0.8">
             <line x1="600" y1="112" x2="600" y2="140" stroke="#ffffff" strokeWidth="1" opacity="0.35" />
-            <text x="600" y="102" textAnchor="middle">5 kW ARRAY</text>
+            <text x="600" y="102" textAnchor="middle">solar panel</text>
           </g>
           <g opacity="0.8">
             <line x1="855" y1="118" x2="855" y2="146" stroke="#ffffff" strokeWidth="1" opacity="0.35" />
-            <text x="872" y="108" textAnchor="end">SOLAR WATER HEATER</text>
+            <text x="872" y="108" textAnchor="end">solar water heater</text>
           </g>
           <g opacity="0.8">
             <line x1="812" y1="374" x2="770" y2="374" stroke="#ffffff" strokeWidth="1" opacity="0.35" />
-            <text x="764" y="370" textAnchor="end">INVERTER</text>
-            <text x="764" y="384" textAnchor="end">+ BATTERY</text>
+            <text x="774" y="370" textAnchor="end">inverter</text>
+            <text x="774" y="384" textAnchor="end">& battery</text>
           </g>
         </g>
       </svg>
