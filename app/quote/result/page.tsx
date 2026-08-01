@@ -21,7 +21,11 @@ type Q = {
   paybackYears: number;
   irr: number;
 };
-type Customer = { name?: string; email?: string; phone?: string };
+type Customer = {
+  name?: string; email?: string; phone?: string; address?: string; city?: string; state?: string; pincode?: string;
+  propertyType?: string; roofType?: string; ownership?: string; systemType?: string; batteryRequired?: string;
+  monthlyUnits?: number; pricePerUnit?: number; provider?: string;
+};
 export default function Result() {
   const [q, setQ] = useState<Q | null>(null);
   const [loaded, setLoaded] = useState(false);

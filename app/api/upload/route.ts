@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     if (contentLength > MAX + 100000) return NextResponse.json({ success: false, error: { code: "PAYLOAD_TOO_LARGE", message: "Upload must be smaller than 10MB." } }, { status: 413 });
     const form = await request.formData();
     const uploadKind = form.get("kind") === "site-photo" ? "site-photo" : "bill";
-    const rate = await consumeRateLimit(request, "bill-upload", 5, 600);
+    const rate = await consumeRateLimit(request, uploadKind === "site-photo" ? "site-photo-upload" : "bill-upload", 12, 600);
     if (!rate.allowed) return NextResponse.json({ success: false, error: { code: "RATE_LIMITED", message: "Too many upload attempts. Please try again later." } }, { status: 429, headers: { "Retry-After": String(Math.max(1, rate.reset - Math.floor(Date.now() / 1000))) } });
     const file = form.get("file");
     if (!(file instanceof File)) return NextResponse.json({ success: false, error: { code: "FILE_REQUIRED", message: `${uploadKind === "site-photo" ? "A site photo" : "A bill file"} is required.` } }, { status: 400 });

@@ -30,6 +30,25 @@ type Duplicate = {
   result: Record<string, unknown>;
 };
 
+type ApiResult = {
+  success?: boolean;
+  data?: { objectKey?: string; quote?: { id?: string } & Record<string, unknown> };
+  error?: { code?: string; message?: string; existingQuote?: Duplicate };
+};
+
+async function readApiResult(response: Response, fallbackMessage: string): Promise<ApiResult> {
+  const body = await response.text();
+  if (!body.trim()) {
+    throw new Error(response.ok ? fallbackMessage : `${fallbackMessage} (HTTP ${response.status}).`);
+  }
+
+  try {
+    return JSON.parse(body) as ApiResult;
+  } catch {
+    throw new Error(response.ok ? fallbackMessage : `${fallbackMessage} (HTTP ${response.status}).`);
+  }
+}
+
 export default function QuotePage() {
   const [step, setStep] = useState(0);
   const [validatedStep, setValidatedStep] = useState(-1);
@@ -76,9 +95,10 @@ export default function QuotePage() {
           method: "POST",
           body: form,
         });
-        const uploadResult = await uploadResponse.json();
+        const uploadResult = await readApiResult(uploadResponse, "Bill upload did not return a valid response");
         if (!uploadResponse.ok)
           throw new Error(uploadResult.error?.message ?? "Bill upload failed");
+        if (!uploadResult.data?.objectKey) throw new Error("Bill upload did not return a file reference.");
         billObjectKey = uploadResult.data.objectKey;
       }
       if (sitePhoto) {
@@ -89,11 +109,12 @@ export default function QuotePage() {
           method: "POST",
           body: form,
         });
-        const uploadResult = await uploadResponse.json();
+        const uploadResult = await readApiResult(uploadResponse, "Site photo upload did not return a valid response");
         if (!uploadResponse.ok)
           throw new Error(
             uploadResult.error?.message ?? "Site photo upload failed",
           );
+        if (!uploadResult.data?.objectKey) throw new Error("Site photo upload did not return a file reference.");
         sitePhotoObjectKey = uploadResult.data.objectKey;
       }
       const response = await fetch("/api/lead", {
@@ -106,8 +127,9 @@ export default function QuotePage() {
           allowDuplicate,
         }),
       });
-      const result = await response.json();
+      const result = await readApiResult(response, "Estimate service did not return a valid response");
       if (response.status === 409 && result.error?.code === "DUPLICATE_QUOTE") {
+        if (!result.error.existingQuote) throw new Error("The existing estimate could not be loaded.");
         setDuplicate(result.error.existingQuote);
         setPendingData(data);
         setCalculating(false);
@@ -115,11 +137,12 @@ export default function QuotePage() {
       }
       if (!response.ok)
         throw new Error(result.error?.message ?? "Unable to create estimate");
+      if (!result.data?.quote?.id) throw new Error("The estimate service did not return an estimate ID.");
       localStorage.setItem(
         "solar_quote",
         JSON.stringify({ ...data, quote: result.data?.quote }),
       );
-      router.push(`/quote/result?id=${result.data?.quote?.id ?? "demo"}`);
+      router.push(`/quote/result?id=${result.data.quote.id}`);
     } catch (submissionError) {
       setError(
         submissionError instanceof Error
