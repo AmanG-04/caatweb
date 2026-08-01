@@ -10,6 +10,7 @@ import {
 } from "@/lib/validation";
 import { Button, Card } from "@/components/ui";
 import { ArrowLeft, ArrowRight, Check, Sun, Upload } from "lucide-react";
+import { SiteHeader } from "@/components/site-header";
 
 const labels = [
   "About you",
@@ -164,17 +165,12 @@ export default function QuotePage() {
     router.push(`/quote/result?id=${duplicate.id}`);
   };
   return (
-    <main className="quote-flow relative min-h-screen overflow-hidden py-8">
+    <main className="quote-flow quote-shell relative min-h-screen overflow-hidden py-4">
       <div className="relative z-10">
+      <SiteHeader context="Solar savings estimate" />
       <div className="container-wide">
-        <div className="flex items-center justify-between gap-4">
-          <a href="/" className="text-lg font-black">
-            CAAT PowerBot <span className="text-teal">LLP</span>
-          </a>
-          <span className="text-xs font-bold uppercase tracking-[.14em] text-ink/50">Solar savings estimate</span>
-        </div>
-        <div className="mx-auto max-w-2xl py-16">
-          <div className="mb-10 flex min-h-8 items-center justify-between" aria-label={`Step ${step + 1} of ${labels.length}: ${labels[step]}`}>
+        <div className="quote-content mx-auto max-w-2xl py-5">
+          <div className="quote-stepper mb-6 flex min-h-8 items-center justify-between" aria-label={`Step ${step + 1} of ${labels.length}: ${labels[step]}`}>
             {labels.map((label, index) => (
               <div
                 key={label}
