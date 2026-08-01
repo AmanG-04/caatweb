@@ -18,7 +18,7 @@ const labels = [
   "Your energy",
 ];
 const ranges = [
-  ["name", "phone", "email", "city", "state", "pincode"],
+  ["name", "phone", "email", "address", "city", "state", "pincode"],
   ["propertyType", "roofType", "ownership"],
   ["systemType", "batteryRequired"],
   ["monthlyUnits", "pricePerUnit", "provider"],
@@ -144,13 +144,14 @@ export default function QuotePage() {
     <main className="quote-flow relative min-h-screen overflow-hidden py-8">
       <div className="relative z-10">
       <div className="container-wide">
-        <div className="h-8">
-          <a href="/" className="font-black">
+        <div className="flex items-center justify-between gap-4">
+          <a href="/" className="text-lg font-black">
             CAAT PowerBot <span className="text-teal">LLP</span>
           </a>
+          <span className="text-xs font-bold uppercase tracking-[.14em] text-ink/50">Solar savings estimate</span>
         </div>
         <div className="mx-auto max-w-2xl py-16">
-          <div className="mb-10 flex min-h-8 items-center justify-between">
+          <div className="mb-10 flex min-h-8 items-center justify-between" aria-label={`Step ${step + 1} of ${labels.length}: ${labels[step]}`}>
             {labels.map((label, index) => (
               <div
                 key={label}
@@ -167,10 +168,19 @@ export default function QuotePage() {
           </div>
           {/* Previous form card retained for reference: <Card> */}
           <Card className="quote-form-panel">
-            <form onSubmit={handleSubmit((data) => submit(data))}>
+            <form
+              onSubmit={handleSubmit(
+                (data) => submit(data),
+                () => {
+                  setValidatedStep(3);
+                  setError("Please check the highlighted fields.");
+                },
+              )}
+            >
               <div key={step} className="step-panel">
                 <h1 className="text-3xl font-black">{labels[step]}</h1>
-                <p className="mt-2 min-h-6 text-ink/60">
+                <p className="mt-2 text-xs font-bold uppercase tracking-[.14em] text-lime/80">Step {step + 1} of {labels.length}</p>
+                <p className="mt-2 min-h-6 text-cream/75">
                   {step === 0
                     ? "Let’s start with the basics."
                     : step === 1
@@ -199,6 +209,13 @@ export default function QuotePage() {
                         label="Email"
                         error={fieldError("email")}
                         {...register("email")}
+                      />
+                      <Input
+                        required
+                        label="Address"
+                        wrapperClassName="sm:col-span-2"
+                        error={fieldError("address")}
+                        {...register("address")}
                       />
                       <Input
                         required
@@ -349,6 +366,7 @@ export default function QuotePage() {
                         required
                         type="number"
                         label="Average monthly units"
+                        error={fieldError("monthlyUnits")}
                         {...register("monthlyUnits")}
                       />
                       <Input
@@ -401,7 +419,7 @@ export default function QuotePage() {
                     Continue <ArrowRight className="ml-2 inline" size={16} />
                   </Button>
                 ) : (
-                  <Button disabled={isSubmitting || calculating}>
+                  <Button type="submit" disabled={isSubmitting || calculating}>
                     Calculate my savings{" "}
                     <ArrowRight className="ml-2 inline" size={16} />
                   </Button>

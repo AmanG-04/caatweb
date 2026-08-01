@@ -39,15 +39,15 @@ export default function FAQ() {
       <div className="mx-auto max-w-none 2xl:px-16 px-5 sm:px-8">
         <div className="grid gap-10 lg:grid-cols-[1fr_1.6fr] lg:gap-16">
           <div>
-            <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-violet">
+            <p className="section-kicker">
               Straight answers
             </p>
-            <h2 className="mt-4 font-display text-4xl font-bold tracking-tight text-ink sm:text-5xl">
+            <h2 className="section-title !text-4xl sm:!text-5xl">
               Questions every roof owner asks.
             </h2>
-            <p className="mt-4 max-w-md text-ink-soft">
-              The same six questions come up at almost every site survey. Here
-              are the honest answers, before you even call us.
+            <p className="section-copy max-w-md !text-base">
+              The same six questions come up in most solar conversations. Here
+              are the clear answers before you contact us.
             </p>
           </div>
 
@@ -64,7 +64,7 @@ export default function FAQ() {
                     onClick={() => setOpen(isOpen ? null : i)}
                     className="flex w-full items-center justify-between gap-4 py-5 text-left sm:py-6"
                   >
-                    <span className="font-display text-base font-bold tracking-tight text-ink sm:text-lg">
+                    <span className="text-base font-black tracking-tight text-ink sm:text-lg">
                       {faq.q}
                     </span>
                     <motion.span

@@ -8,6 +8,7 @@ const validLead = {
 
 describe("validation", () => {
   it("accepts a valid Indian quote request", () => expect(quoteFormSchema.safeParse(validLead).success).toBe(true));
+  it("requires the customer address", () => expect(quoteFormSchema.safeParse({ ...validLead, address: "" }).success).toBe(false));
   it("requires average monthly units and price per unit", () => expect(quoteFormSchema.safeParse({ ...validLead, monthlyUnits: "", pricePerUnit: "" }).success).toBe(false));
   it("rejects invalid Indian phone and PIN code", () => {
     const result = quoteFormSchema.safeParse({ ...validLead, phone: "1234567890", pincode: "011001" });

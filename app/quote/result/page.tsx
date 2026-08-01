@@ -1,9 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight, Leaf, PanelsTopLeft, WalletCards } from "lucide-react";
-import { Button, Card } from "@/components/ui";
+import { ArrowUpRight, Leaf, MessageCircle, PanelsTopLeft, WalletCards } from "lucide-react";
+import { Button, buttonStyles, Card } from "@/components/ui";
 import { inr } from "@/lib/utils";
+import { site } from "@/lib/site";
 type Q = {
   id?: string;
   systemSizeKw: number;
@@ -23,6 +24,7 @@ type Q = {
 type Customer = { name?: string; email?: string; phone?: string };
 export default function Result() {
   const [q, setQ] = useState<Q | null>(null);
+  const [loaded, setLoaded] = useState(false);
   const [customer, setCustomer] = useState<Customer>({});
   const [downloading, setDownloading] = useState(false);
   const [error, setError] = useState("");
@@ -33,6 +35,7 @@ export default function Result() {
       setQ(value.quote);
       setCustomer(value);
     }
+    setLoaded(true);
   }, []);
   const downloadPdf = async () => {
     if (!q) return;
@@ -67,27 +70,40 @@ export default function Result() {
       setDownloading(false);
     }
   };
+  if (!loaded)
+    return (
+      <div className="container-wide py-20">Loading your solar estimate…</div>
+    );
   if (!q)
     return (
-      <div className="container-wide py-20">Loading your solar snapshot…</div>
+      <main className="grid min-h-screen place-items-center bg-paper p-5">
+        <Card className="max-w-lg border border-ink/10 p-8 text-center sm:p-10">
+          <p className="section-kicker">Solar estimate</p>
+          <h1 className="mt-5 text-3xl font-black tracking-tight">No estimate found on this device.</h1>
+          <p className="mt-4 leading-7 text-ink/65">Complete the calculator first and your result will appear here.</p>
+          <Link href="/quote" className={buttonStyles("primary", "mt-7 gap-2")}>
+            Calculate my savings <ArrowUpRight size={16} />
+          </Link>
+        </Card>
+      </main>
     );
   return (
     <main className="quote-flow relative min-h-screen overflow-hidden py-8">
       <div className="relative z-10">
       <div className="container-wide">
-        <Link href="/" className="font-black">
-          caat <span className="text-teal">powerbot</span>.
+        <Link href="/" className="text-lg font-black">
+          CAAT <span className="text-teal">PowerBot LLP</span>
         </Link>
         <div className="py-16">
-          <p className="font-bold uppercase tracking-[.18em] text-teal">
+          <p className="section-kicker">
             Your solar snapshot
           </p>
-          <h1 className="mt-3 max-w-2xl text-5xl font-black tracking-tight">
+          <h1 className="section-title">
             A brighter bill starts here.
           </h1>
-          <p className="mt-4 text-ink/60">
-            This estimate is based on the information you shared. A site survey
-            will validate the final design.
+          <p className="section-copy">
+            This estimate is based on the information you shared. A final site
+            assessment will validate the design before installation.
           </p>
           <div className="mt-10 grid gap-4 md:grid-cols-3">
             <Card className="bg-ink text-cream">
@@ -150,13 +166,19 @@ export default function Result() {
               </div>
             </Card>
           </div>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Button onClick={downloadPdf} disabled={downloading}>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <a
+              href={site.whatsapp("Hi CAAT Powerbot, I'd like to discuss my solar estimate.")}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={buttonStyles("primary", "gap-2")}
+            >
+              <MessageCircle size={17} /> Discuss estimate on WhatsApp
+            </a>
+            <Button variant="outline" onClick={downloadPdf} disabled={downloading}>
               {downloading ? "Creating PDF…" : "Download PDF"}{" "}
               <ArrowUpRight className="ml-1 inline" size={16} />
             </Button>
-            <Button variant="outline">Book free survey</Button>
-            <Button variant="outline">WhatsApp estimate</Button>
           </div>
           {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
         </div>

@@ -149,18 +149,18 @@ export default function HowItWorks() {
     <section id="how-it-works" className="bg-night py-20 sm:py-28">
       <div className="container-wide">
         <motion.div
-          initial={reduced ? false : { opacity: 0, y: 28 }}
+          initial={false}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">
+          <p className="section-kicker section-kicker-dark">
             The physics, simply
           </p>
-          <h2 className="mt-4 max-w-2xl font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">
+          <h2 className="section-title section-title-light">
             From sunlight to switchboard.
           </h2>
-          <p className="mt-4 max-w-xl text-white/60">
+          <p className="section-copy section-copy-light">
             No black box. Four stages between the sun and your ceiling fan —
             here is exactly what each one does.
           </p>
@@ -176,7 +176,7 @@ export default function HowItWorks() {
                 </>
               )}
               <motion.div
-                initial={reduced ? false : { opacity: 0, y: 24 }}
+                initial={false}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{
@@ -192,7 +192,7 @@ export default function HowItWorks() {
                 <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.22em] text-gold/70">
                   0{i + 1}
                 </p>
-                <h3 className="mt-1 font-display text-lg font-bold tracking-tight text-white">
+                <h3 className="mt-1 text-lg font-black tracking-tight text-white">
                   {step.title}
                 </h3>
                 <p className="mt-2 text-sm leading-relaxed text-white/60">
@@ -204,7 +204,7 @@ export default function HowItWorks() {
         </div>
 
         <motion.p
-          initial={reduced ? false : { opacity: 0 }}
+          initial={false}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.7, delay: 0.5 }}
@@ -216,4 +216,3 @@ export default function HowItWorks() {
     </section>
   );
 }
-

@@ -50,10 +50,10 @@ export function ClientReferences() {
   return (
     <section id="references" className="reference-section overflow-hidden bg-white py-24">
       <div className="container-wide">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="font-bold uppercase tracking-[.18em] text-teal">Client references</p>
-          <h2 className="mt-3 text-4xl font-black tracking-tight md:text-5xl">Real systems. Real places. Real work.</h2>
-          <p className="mt-5 leading-7 text-ink/60">A selection of solar, storage, and hybrid power projects delivered by CAAT PowerBot across Delhi NCR.</p>
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="section-kicker">Client references</p>
+          <h2 className="section-title mx-auto">Real systems. Real places. Real work.</h2>
+          <p className="section-copy mx-auto">A selection of solar, storage, and hybrid power projects delivered by CAAT PowerBot across Delhi NCR.</p>
         </div>
         <div className="reference-columns bg-white mt-12 grid max-h-[760px] grid-cols-1 gap-5 overflow-hidden md:grid-cols-2 lg:grid-cols-3">
           {columns.map((column, columnIndex) => (

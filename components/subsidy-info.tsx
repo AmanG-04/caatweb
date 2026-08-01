@@ -1,4 +1,7 @@
 import Reveal from "@/components/Reveal";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
+import { buttonStyles } from "@/components/ui";
 
 const subsidyRows: { capacity: string; amount: string }[] = [
   { capacity: "1 kW", amount: "₹30,000" },
@@ -37,10 +40,10 @@ export default function SubsidyInfo() {
         <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-2 lg:gap-16">
           {/* Left: plain-language explanation */}
           <Reveal>
-            <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-violet">
+            <p className="section-kicker">
               Government Subsidy
             </p>
-            <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-ink sm:text-4xl">
+            <h2 className="section-title !text-3xl sm:!text-5xl">
               PM Surya Ghar: Muft Bijli Yojana, decoded.
             </h2>
             <div className="mt-6 space-y-4 text-base leading-relaxed text-ink-soft">
@@ -86,12 +89,9 @@ export default function SubsidyInfo() {
                 Residential, per PM Surya Ghar rates. Subject to government
                 revision.
               </p>
-              <a
-                href="#estimate"
-                className="mt-6 inline-flex items-center gap-2 rounded-full bg-gold px-5 py-2.5 text-sm font-semibold text-ink transition-colors duration-200 hover:bg-gold-soft"
-              >
-                Check your subsidy in the calculator ↑
-              </a>
+              <Link href="/quote" className={buttonStyles("primary", "mt-6 gap-2")}>
+                Check my estimated subsidy <ArrowUpRight size={16} />
+              </Link>
             </div>
           </Reveal>
         </div>
@@ -118,4 +118,3 @@ export default function SubsidyInfo() {
     </section>
   );
 }
-

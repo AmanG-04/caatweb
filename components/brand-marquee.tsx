@@ -24,7 +24,7 @@ function BrandSet() {
 
 export function BrandMarquee() {
   return (
-    <section className="brand-marquee" aria-label="OUR PRODUCTS">
+    <section className="brand-marquee" aria-label="Products and services">
       <div className="brand-marquee-track">
         <BrandSet />
         <BrandSet />

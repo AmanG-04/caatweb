@@ -1,14 +1,14 @@
 import Image from "next/image";
 import logo from "../companyinfo/caatlogo.webp";
-import { site } from "@/lib/site";
+import { defaultWhatsappMessage, site } from "@/lib/site";
 
 const quickLinks = [
   { label: "Services", href: "#services" },
   { label: "How solar works", href: "#how-it-works" },
-  { label: "Savings estimate", href: "#estimate" },
+  { label: "Savings estimate", href: "/quote" },
   { label: "Our process", href: "#process" },
   { label: "FAQ", href: "#faq" },
-  { label: "Book a visit", href: "#book-visit" },
+  { label: "Free online consultation", href: site.whatsapp(defaultWhatsappMessage), external: true },
 ];
 
 const serviceList = [
@@ -62,8 +62,8 @@ export default function Footer() {
               </span>
             </div>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/60">
-              Solar EPC for homes, housing societies and industry — survey to
-              switch-on, then years of care after it.
+              Solar EPC for homes, housing societies and industry — from
+              estimate to switch-on, with support after installation.
             </p>
           </div>
 
@@ -76,6 +76,8 @@ export default function Footer() {
                 <li key={link.href}>
                   <a
                     href={link.href}
+                    target={link.external ? "_blank" : undefined}
+                    rel={link.external ? "noopener noreferrer" : undefined}
                     className="text-sm text-white/70 transition-colors hover:text-gold-soft"
                   >
                     {link.label}
@@ -105,12 +107,12 @@ export default function Footer() {
             <ul className="mt-5 space-y-3">
               <li>
                 <a
-                  href={site.whatsapp()}
+                  href={site.whatsapp(defaultWhatsappMessage)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-white/70 transition-colors hover:text-gold-soft"
                 >
-                  WhatsApp us
+                  Free online consultation
                 </a>
               </li>
               <li>
@@ -131,7 +133,7 @@ export default function Footer() {
               </li>
             </ul>
             <p className="mt-5 max-w-[220px] text-xs leading-relaxed text-white/40">
-              Mon–Sat, 9 am – 7 pm IST. Site surveys across Delhi NCR.
+              Mon–Fri, 10 am – 5 pm IST. Free online consultations via WhatsApp.
             </p>
           </div>
         </div>
@@ -152,4 +154,3 @@ export default function Footer() {
     </footer>
   );
 }
-

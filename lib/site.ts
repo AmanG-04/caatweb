@@ -8,5 +8,4 @@ export const site = {
 };
 
 export const defaultWhatsappMessage =
-  "Hi CAAT Powerbot, I'd like a free site survey for rooftop solar.";
-
+  "Hi CAAT Powerbot, I'd like a free online consultation for rooftop solar.";

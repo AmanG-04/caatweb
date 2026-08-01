@@ -28,7 +28,7 @@ export async function POST(request: Request) {
   const leadId = crypto.randomUUID(); const quoteId = crypto.randomUUID();
   if (db) {
     const customerId = crypto.randomUUID();
-    await db.prepare("INSERT INTO customers (id,name,phone,email,city,state,pincode) VALUES (?,?,?,?,?,?,?)").bind(customerId, d.name, d.phone, d.email, d.city, d.state, d.pincode).run();
+    await db.prepare("INSERT INTO customers (id,name,phone,email,address,city,state,pincode) VALUES (?,?,?,?,?,?,?,?)").bind(customerId, d.name, d.phone, d.email, d.address, d.city, d.state, d.pincode).run();
     await db.prepare("INSERT INTO leads (id,customer_id,property_type,roof_type,ownership,system_type,battery_required,monthly_bill,monthly_units,provider,bill_object_key,site_photo_object_key) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)").bind(leadId, customerId, d.propertyType, d.roofType, d.ownership, d.systemType, d.batteryRequired === "yes" ? 1 : 0, 0, d.monthlyUnits, d.provider ?? null, d.billObjectKey ?? null, d.sitePhotoObjectKey ?? null).run();
     await db.prepare("INSERT INTO quotes (id,lead_id,engine_version,settings_snapshot,result_json) VALUES (?,?,?,?,?)").bind(quoteId, leadId, "template-v1", JSON.stringify(settings), JSON.stringify(quote)).run();
   }
