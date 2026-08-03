@@ -32,9 +32,24 @@
 		"staging": {
 			"name": "caat-powerbot-staging",
 			"vars": {
+				"NEXT_PUBLIC_SITE_URL": "https://caat-powerbot-staging.10amangupta04.workers.dev",
 				"NEXT_PUBLIC_COMPANY_NAME": "CAAT PowerBot LLP",
 				"ENVIRONMENT": "staging"
-			}
+			},
+			"d1_databases": [
+				{
+					"binding": "DB",
+					"database_name": "caat-powerbot-staging",
+					"database_id": "6bcb2039-fdfb-4dde-b3b1-a1e4e13a7002",
+					"migrations_dir": "db/migrations"
+				}
+			],
+			"r2_buckets": [
+				{
+					"binding": "BILLS_BUCKET",
+					"bucket_name": "caat-powerbot-bills-staging"
+				}
+			]
 		}
 	},
 	"observability": {
