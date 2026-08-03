@@ -1,6 +1,6 @@
 "use client";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useRef, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import {
@@ -37,6 +37,12 @@ type ApiResult = {
   error?: { code?: string; message?: string; existingQuote?: Duplicate };
 };
 
+type PincodeLookupResult = {
+  success?: boolean;
+  data?: { city?: string; state?: string };
+  error?: { message?: string };
+};
+
 async function readApiResult(response: Response, fallbackMessage: string): Promise<ApiResult> {
   const body = await response.text();
   if (!body.trim()) {
@@ -59,11 +65,16 @@ export default function QuotePage() {
   const [error, setError] = useState("");
   const [duplicate, setDuplicate] = useState<Duplicate | null>(null);
   const [pendingData, setPendingData] = useState<QuoteFormData | null>(null);
+  const [pincodeMessage, setPincodeMessage] = useState("");
+  const lastAutofilledPincode = useRef("");
   const router = useRouter();
   const {
     register,
     handleSubmit,
     trigger,
+    control,
+    getValues,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<QuoteFormInput, unknown, QuoteFormData>({
     resolver: zodResolver(quoteFormSchema),
@@ -75,6 +86,48 @@ export default function QuotePage() {
       batteryRequired: "no",
     },
   });
+  const pincode = useWatch({ control, name: "pincode" });
+  const systemType = useWatch({ control, name: "systemType" });
+  const batteryRequired = useWatch({ control, name: "batteryRequired" });
+
+  useEffect(() => {
+    if (systemType !== "hybrid") setValue("batteryRequired", "no", { shouldValidate: true });
+  }, [setValue, systemType]);
+
+  useEffect(() => {
+    const normalizedPincode = String(pincode ?? "").replace(/\D/g, "").slice(0, 6);
+    if (normalizedPincode.length !== 6) {
+      setPincodeMessage("");
+      return;
+    }
+
+    const controller = new AbortController();
+    const timeout = window.setTimeout(async () => {
+      setPincodeMessage("Looking up city and state…");
+      try {
+        const response = await fetch(`/api/pincode/${normalizedPincode}`, { signal: controller.signal });
+        const result = await response.json() as PincodeLookupResult;
+        if (!response.ok || !result.success || !result.data?.city || !result.data.state) {
+          setPincodeMessage(result.error?.message ?? "Please enter city and state manually.");
+          return;
+        }
+
+        const shouldReplaceAutofill = lastAutofilledPincode.current !== normalizedPincode;
+        if (shouldReplaceAutofill || !getValues("city")) setValue("city", result.data.city, { shouldValidate: true, shouldDirty: true });
+        if (shouldReplaceAutofill || !getValues("state")) setValue("state", result.data.state, { shouldValidate: true, shouldDirty: true });
+        lastAutofilledPincode.current = normalizedPincode;
+        setPincodeMessage("City and state filled from the PIN code. You can edit them if needed.");
+      } catch (lookupError) {
+        if (lookupError instanceof DOMException && lookupError.name === "AbortError") return;
+        setPincodeMessage("City and state lookup is unavailable. Please enter them manually.");
+      }
+    }, 450);
+
+    return () => {
+      controller.abort();
+      window.clearTimeout(timeout);
+    };
+  }, [getValues, pincode, setValue]);
   const next = async () => {
     const valid = await trigger(ranges[step]);
     if (valid) setStep((current) => Math.min(3, current + 1));
@@ -252,8 +305,11 @@ export default function QuotePage() {
                         required
                         label="Pincode"
                         error={fieldError("pincode")}
-                        {...register("pincode")}
+                        inputMode="numeric"
+                        maxLength={6}
+                        {...register("pincode", { onChange: (event) => { event.target.value = event.target.value.replace(/\D/g, "").slice(0, 6); } })}
                       />
+                      {pincodeMessage && <p className="sm:col-span-2 -mt-1 text-xs leading-5 text-cream/75" role="status">{pincodeMessage}</p>}
                     </>
                   )}
                   {step === 1 && (
@@ -336,7 +392,7 @@ export default function QuotePage() {
                           ].map(([value, title, description]) => (
                             <label
                               key={value}
-                              className="cursor-pointer rounded-2xl border border-ink/15 bg-white p-4 has-[:checked]:border-teal has-[:checked]:ring-2 has-[:checked]:ring-teal/15"
+                              className={`cursor-pointer rounded-2xl border p-4 transition-colors ${systemType === value ? "border-lime bg-teal/70 text-white ring-2 ring-lime/35" : "border-white/25 bg-night/55 text-cream hover:border-lime/60"}`}
                             >
                               <input
                                 className="sr-only"
@@ -344,15 +400,15 @@ export default function QuotePage() {
                                 value={value}
                                 {...register("systemType")}
                               />
-                              <span className="block font-bold">{title}</span>
-                              <span className="mt-2 block text-xs leading-5 text-ink/55">
+                              <span className="block font-bold text-cream">{title}</span>
+                              <span className="mt-2 block text-xs leading-5 text-cream/75">
                                 {description}
                               </span>
                             </label>
                           ))}
                         </div>
                       </div>
-                      <div>
+                      {systemType === "hybrid" && <div>
                         <p className="mb-3 text-sm font-bold">
                           Battery backup required?
                           <sup className="ml-1 text-red-500">*</sup>
@@ -364,19 +420,19 @@ export default function QuotePage() {
                           ].map(([value, title]) => (
                             <label
                               key={value}
-                              className="flex cursor-pointer items-center gap-3 rounded-2xl border border-ink/15 bg-white p-4 has-[:checked]:border-teal has-[:checked]:ring-2 has-[:checked]:ring-teal/15"
+                              className={`flex cursor-pointer items-center gap-3 rounded-2xl border p-4 transition-colors ${batteryRequired === value ? "border-lime bg-teal/70 text-white ring-2 ring-lime/35" : "border-white/25 bg-night/55 text-cream hover:border-lime/60"}`}
                             >
                               <input
-                                className="accent-teal"
+                                className="accent-lime"
                                 type="radio"
                                 value={value}
                                 {...register("batteryRequired")}
                               />
-                              <span className="font-bold">{title}</span>
+                              <span className="font-bold text-cream">{title}</span>
                             </label>
                           ))}
                         </div>
-                      </div>
+                      </div>}
                     </div>
                   )}
                   {step === 3 && (
