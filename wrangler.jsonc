@@ -28,6 +28,15 @@
 			"bucket_name": "caat-powerbot-bills"
 		}
 	],
+	"env": {
+		"staging": {
+			"name": "caat-powerbot-staging",
+			"vars": {
+				"NEXT_PUBLIC_COMPANY_NAME": "CAAT PowerBot LLP",
+				"ENVIRONMENT": "staging"
+			}
+		}
+	},
 	"observability": {
 		"enabled": false,
 		"head_sampling_rate": 1,
