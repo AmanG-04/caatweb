@@ -3,11 +3,13 @@ import logo from "../companyinfo/caatlogo.webp";
 import { defaultWhatsappMessage, site } from "@/lib/site";
 
 const quickLinks = [
-  { label: "Services", href: "#services" },
-  { label: "How solar works", href: "#how-it-works" },
+  { label: "Residential solar", href: "/residential-solar" },
+  { label: "Commercial solar", href: "/commercial-solar" },
+  { label: "Solar subsidy guidance", href: "/solar-subsidy-delhi-ncr" },
+  { label: "Solar panel cost", href: "/solar-panel-cost" },
+  { label: "Projects", href: "/projects" },
+  { label: "Contact", href: "/contact" },
   { label: "Savings estimate", href: "/quote" },
-  { label: "Our process", href: "#process" },
-  { label: "FAQ", href: "#faq" },
   { label: "Free online consultation", href: site.whatsapp(defaultWhatsappMessage), external: true },
 ];
 
