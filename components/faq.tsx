@@ -35,7 +35,7 @@ export default function FAQ() {
   const reduced = useReducedMotion();
 
   return (
-    <section id="faq" className="bg-paper py-20 sm:py-28">
+    <section id="faq" className="bg-paper py-20 sm:py-8">
       <div className="mx-auto max-w-none 2xl:px-16 px-5 sm:px-8">
         <div className="grid gap-10 lg:grid-cols-[1fr_1.6fr] lg:gap-16">
           <div>

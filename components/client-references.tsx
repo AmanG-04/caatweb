@@ -48,14 +48,14 @@ function ReferenceCard({ reference }: { reference: Reference }) {
 
 export function ClientReferences() {
   return (
-    <section id="references" className="reference-section overflow-hidden bg-white py-24">
+    <section id="references" className="reference-section overflow-hidden bg-paper py-14">
       <div className="container-wide">
         <div className="mx-auto max-w-3xl text-center">
           <p className="section-kicker">Client references</p>
           <h2 className="section-title mx-auto">Real systems. Real places. Real work.</h2>
           <p className="section-copy mx-auto">A selection of solar, storage, and hybrid power projects delivered by CAAT PowerBot across Delhi NCR.</p>
         </div>
-        <div className="reference-columns bg-white mt-12 grid max-h-[760px] grid-cols-1 gap-5 overflow-hidden md:grid-cols-2 lg:grid-cols-3">
+        <div className="reference-columns mt-12 grid max-h-[760px] grid-cols-1 gap-5 overflow-hidden md:grid-cols-2 lg:grid-cols-3">
           {columns.map((column, columnIndex) => (
             <div key={columnIndex} className={`reference-column ${columnIndex === 1 ? "reference-column-slow" : ""} ${columnIndex === 2 ? "hidden lg:block" : ""}`}>
               {[...column, ...column].map((reference, index) => <ReferenceCard key={`${reference.client}-${index}`} reference={reference} />)}

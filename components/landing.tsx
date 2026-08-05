@@ -73,7 +73,7 @@ export function Landing() {
       <LeadCta />
       <HowItWorks />
 
-      <section id="about" className="bg-paper py-20 sm:py-28">
+      <section id="about" className="bg-paper py-20 sm:py-18">
         <div className="container-wide grid gap-10 md:grid-cols-[.7fr_1.3fr] md:items-center">
           <div className="rounded-[2rem] border border-ink/10 bg-white p-8 shadow-soft">
             <Image src={logo} alt="CAAT PowerBot" width={260} height={260} className="mx-auto h-44 w-44 object-contain md:h-52 md:w-52" />
