@@ -21,20 +21,20 @@ export function Landing() {
   return (
     <main className="">
       <SiteHeader fixed />
-      <div className="h-10" aria-hidden="true" />
+      <div className="h-16 sm:h-10" aria-hidden="true" />
 
       <section className="hero-flow relative overflow-hidden">
-        <div className="container-wide relative z-10 grid min-h-[590px] items-center gap-15 py-14 lg:grid-cols-[.86fr_1.14fr] lg:py-2">
+        <div className="container-wide relative z-10 grid items-center gap-9 py-8 sm:gap-12 sm:py-12 lg:min-h-[590px] lg:gap-15 lg:grid-cols-[.86fr_1.14fr] lg:py-2">
           <div className="hero-copy">
             {/* <p className="section-kicker">Delhi NCR rooftop solar</p> */}
-            <h1 className="hero-copy-title mt-6 max-w-2xl text-[2.65rem] font-black leading-[1.01] tracking-[-.05em] sm:text-5xl md:text-6xl">
+            <h1 className="hero-copy-title mt-0 max-w-2xl text-[2.35rem] font-black leading-[1.01] tracking-[-.05em] sm:text-5xl lg:text-6xl">
               Access to green energy,<br />
               <span className="hero-title-highlight">made simple.</span>
             </h1>
-            <p className="hero-copy-body mt-6 max-w-xl text-base leading-7 text-ink/70 sm:text-lg sm:leading-8">
+            <p className="hero-copy-body mt-5 max-w-xl text-base leading-7 text-ink/70 sm:mt-6 sm:text-lg sm:leading-8">
               Take the next step towards energy independence with CAAT PowerBot. Install solar panels and harness the sun&apos;s energy for your home or business.
             </p>
-            <div className="hero-copy-actions mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <div className="hero-copy-actions mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:flex-wrap">
               {/* <Link href="/quote" className={buttonStyles("primary", "gap-2 px-6")}>
                 Calculate my savings <ArrowUpRight size={17} />
               </Link> */}
@@ -59,7 +59,7 @@ export function Landing() {
         <BrandMarquee />
       </div>
 
-      <section id="services" className="bg-paper py-20 sm:py-18">
+      <section id="services" className="bg-paper py-14 sm:py-18">
         <div className="container-wide">
           <p className="section-kicker">Why CAAT PowerBot</p>
           <h2 className="section-title">One team for the estimate, installation and aftercare.</h2>
@@ -73,7 +73,7 @@ export function Landing() {
       <LeadCta />
       <HowItWorks />
 
-      <section id="about" className="bg-paper py-20 sm:py-18">
+      <section id="about" className="bg-paper py-14 sm:py-18">
         <div className="container-wide grid gap-10 md:grid-cols-[.7fr_1.3fr] md:items-center">
           <div className="rounded-[2rem] border border-ink/10 bg-white p-8 shadow-soft">
             <Image src={logo} alt="CAAT PowerBot" width={260} height={260} className="mx-auto h-44 w-44 object-contain md:h-52 md:w-52" />

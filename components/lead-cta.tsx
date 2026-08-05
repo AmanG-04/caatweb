@@ -5,7 +5,7 @@ import { defaultWhatsappMessage, site } from "@/lib/site";
 
 export default function LeadCta() {
   return (
-    <section className="bg-paper px-5 py-16 sm:px-8 sm:py-20" aria-labelledby="lead-cta-title">
+    <section className="bg-paper px-5 py-14 sm:px-8 sm:py-20" aria-labelledby="lead-cta-title">
       <div className="container-wide overflow-hidden rounded-[2rem] bg-night px-6 py-10 text-white shadow-[0_28px_80px_rgba(16,42,42,.2)] sm:px-10 lg:flex lg:items-center lg:justify-between lg:gap-12 lg:px-14 lg:py-12">
         <div className="max-w-2xl">
           <p className="section-kicker section-kicker-dark">Your next step</p>

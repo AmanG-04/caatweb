@@ -36,7 +36,7 @@ function StepArrow({ index }: { index: number }) {
 
 export default function SubsidyInfo() {
   return (
-    <section id="subsidy" className="bg-paper py-20 sm:py-18">
+    <section id="subsidy" className="bg-paper py-14 sm:py-18">
       <div className="container-wide">
         <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-2 lg:gap-16">
           {/* Left: plain-language explanation */}

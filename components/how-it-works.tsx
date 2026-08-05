@@ -146,7 +146,7 @@ export default function HowItWorks() {
   const reduced = useReducedMotion();
 
   return (
-    <section id="how-it-works" className="bg-night py-20 sm:py-18">
+    <section id="how-it-works" className="bg-night py-14 sm:py-18">
       <div className="container-wide">
         <motion.div
           initial={false}
