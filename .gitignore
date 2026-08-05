@@ -18,3 +18,5 @@ tmp/
 
 a.txt
 .ui*
+.vscode
+
