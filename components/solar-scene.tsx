@@ -271,10 +271,10 @@ export default function SolarScene() {
             <line x1="600" y1="112" x2="600" y2="140" stroke="#ffffff" strokeWidth="1" opacity="0.35" />
             <text x="600" y="102" textAnchor="middle">solar panel</text>
           </g>
-          <g opacity="0.8">
+          {/* <g opacity="0.8">
             <line x1="855" y1="118" x2="855" y2="146" stroke="#ffffff" strokeWidth="1" opacity="0.35" />
             <text x="872" y="108" textAnchor="end">solar water heater</text>
-          </g>
+          </g> */}
           <g opacity="0.8">
             <line x1="812" y1="374" x2="770" y2="374" stroke="#ffffff" strokeWidth="1" opacity="0.35" />
             <text x="774" y="370" textAnchor="end">inverter</text>
@@ -285,13 +285,13 @@ export default function SolarScene() {
 
       {/* Readout */}
       <div className="pointer-events-none absolute left-4 top-4 rounded-xl border border-white/15 bg-night/70 px-4 py-3 font-mono text-[11px] tracking-widest text-white/90 backdrop-blur sm:left-6 sm:top-6 sm:text-xs">
-        <div className="text-gold-soft">{formatTime(hour)}</div>
-        <div className="mt-1">
+        {/* <div className="text-gold-soft">{formatTime(hour)}</div> */}
+        {/* <div className="mt-1">
           GENERATING&nbsp;
           <span className="text-gold">{generation.toFixed(1)} kW</span>
-        </div>
+        </div> */}
         <div className="mt-1 text-white/60">
-          HOUSE ON {onSolar ? "SOLAR" : "STORED SOLAR"}
+          HOUSE ON {onSolar ? "SOLAR" : "BATTERY"}
         </div>
       </div>
 
@@ -314,7 +314,7 @@ export default function SolarScene() {
             </svg>
           )}
         </button>
-        <span className="font-mono text-[10px] tracking-widest text-white/50">5 AM</span>
+        <span className="font-mono text-[10px] tracking-widest text-white/50">MORNING</span>
         <input
           type="range"
           min={5}
@@ -332,7 +332,7 @@ export default function SolarScene() {
           }}
           className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-white/20 accent-gold"
         />
-        <span className="font-mono text-[10px] tracking-widest text-white/50">7 PM</span>
+        <span className="font-mono text-[10px] tracking-widest text-white/50">EVENING</span>
       </div>
     </div>
   );

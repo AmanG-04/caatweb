@@ -24,9 +24,9 @@ export function Landing() {
       <div className="landing-header-space" aria-hidden="true" />
 
       <section className="hero-flow relative overflow-hidden">
-        <div className="container-wide relative z-10 grid min-h-[590px] items-center gap-10 py-14 lg:grid-cols-[.86fr_1.14fr] lg:py-16">
+        <div className="container-wide relative z-10 grid min-h-[590px] items-center gap-15 py-14 lg:grid-cols-[.86fr_1.14fr] lg:py-2">
           <div>
-            <p className="section-kicker">Delhi NCR rooftop solar</p>
+            {/* <p className="section-kicker">Delhi NCR rooftop solar</p> */}
             <h1 className="mt-6 max-w-2xl text-[2.65rem] font-black leading-[1.01] tracking-[-.05em] sm:text-5xl md:text-6xl">
               Access to green energy,<br />
               <span className="hero-title-highlight">made simple.</span>
