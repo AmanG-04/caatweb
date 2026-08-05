@@ -64,6 +64,10 @@ body { margin: 0; overflow-x: hidden; background: var(--cream); color: var(--ink
 .border-gold\/40 { border-color: rgba(216,243,106,.4); }
 @keyframes dash-flow { to { stroke-dashoffset: -48; } }
 .energy-dash { stroke-dasharray: 6 10; animation: dash-flow 1.6s linear infinite; }
+.subsidy-step-arrow { color: #0f766e; animation: subsidy-arrow-nudge 2.8s ease-in-out infinite; }
+.subsidy-step-arrow path { stroke-dasharray: 4 3; animation: subsidy-arrow-flow 2.8s ease-in-out infinite; }
+@keyframes subsidy-arrow-nudge { 0%, 100% { transform: translateX(0); opacity: .5; } 45%, 55% { transform: translateX(.3rem); opacity: 1; } }
+@keyframes subsidy-arrow-flow { 0%, 100% { stroke-dashoffset: 0; } 50% { stroke-dashoffset: -14; } }
 .brand-marquee { overflow: hidden; border-block: 1px solid rgba(15,118,110,.12); background: #102a2a; color: #f7f8f2; }
 .brand-marquee-track { display: flex; width: max-content; animation: brand-marquee 28s linear infinite; }
 .brand-marquee-set { display: flex; align-items: center; min-width: max-content; }
@@ -157,4 +161,4 @@ body { margin: 0; overflow-x: hidden; background: var(--cream); color: var(--ink
 @media (max-width: 700px) { .solar-flow { opacity: .28; } }
 @media (max-width: 700px) { .solar-readout { transform: scale(.85); transform-origin: top left; } .solar-controls { gap: .45rem; padding-inline: .65rem; } }
 @media (min-width: 640px) { .quote-form-panel { border-width: 10px; } }
-@media (prefers-reduced-motion: reduce) { .scroll-reveal, .step-panel, .calculating-orb, .flow-rays path, .flow-sun, .flow-electricity, .flow-bulb, .flow-window-frame, .flow-energy-dot, .reference-column, .brand-marquee-track, .energy-dash, .site-header, .hero-title-highlight { animation: none; transition: none; } .hero-title-highlight { background-position: 50% 50%; } }
+@media (prefers-reduced-motion: reduce) { .scroll-reveal, .step-panel, .calculating-orb, .flow-rays path, .flow-sun, .flow-electricity, .flow-bulb, .flow-window-frame, .flow-energy-dot, .reference-column, .brand-marquee-track, .energy-dash, .subsidy-step-arrow, .subsidy-step-arrow path, .site-header, .hero-title-highlight { animation: none; transition: none; } .hero-title-highlight { background-position: 50% 50%; } }
