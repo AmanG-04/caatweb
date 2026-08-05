@@ -25,16 +25,16 @@ export function Landing() {
 
       <section className="hero-flow relative overflow-hidden">
         <div className="container-wide relative z-10 grid min-h-[590px] items-center gap-15 py-14 lg:grid-cols-[.86fr_1.14fr] lg:py-2">
-          <div>
+          <div className="hero-copy">
             {/* <p className="section-kicker">Delhi NCR rooftop solar</p> */}
-            <h1 className="mt-6 max-w-2xl text-[2.65rem] font-black leading-[1.01] tracking-[-.05em] sm:text-5xl md:text-6xl">
+            <h1 className="hero-copy-title mt-6 max-w-2xl text-[2.65rem] font-black leading-[1.01] tracking-[-.05em] sm:text-5xl md:text-6xl">
               Access to green energy,<br />
               <span className="hero-title-highlight">made simple.</span>
             </h1>
-            <p className="mt-6 max-w-xl text-base leading-7 text-ink/70 sm:text-lg sm:leading-8">
+            <p className="hero-copy-body mt-6 max-w-xl text-base leading-7 text-ink/70 sm:text-lg sm:leading-8">
               Take the next step towards energy independence with CAAT PowerBot. Install solar panels and harness the sun&apos;s energy for your home or business.
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <div className="hero-copy-actions mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               {/* <Link href="/quote" className={buttonStyles("primary", "gap-2 px-6")}>
                 Calculate my savings <ArrowUpRight size={17} />
               </Link> */}
@@ -48,7 +48,7 @@ export function Landing() {
               </a>
             </div>
           </div>
-          <div className="min-w-0">
+          <div className="hero-scene min-w-0">
             <SolarScene />
             <p className="mt-3 text-center font-mono text-[10px] font-bold tracking-[.16em] text-teal/60">DRAG THE TIMELINE · WATCH THE SUN CHARGE THE HOUSE</p>
           </div>

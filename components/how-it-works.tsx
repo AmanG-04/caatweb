@@ -97,7 +97,7 @@ const steps = [
   {
     icon: IconInverter,
     title: "Inverter converts",
-    text: "The inverter turns DC into 230 V AC — the same current every appliance in your home runs on.",
+    text: "The inverter turns DC into 230 V AC — the same voltage every appliance in your home runs on.",
   },
   {
     icon: IconHome,
@@ -146,7 +146,7 @@ export default function HowItWorks() {
   const reduced = useReducedMotion();
 
   return (
-    <section id="how-it-works" className="bg-night py-20 sm:py-28">
+    <section id="how-it-works" className="bg-night py-20 sm:py-18">
       <div className="container-wide">
         <motion.div
           initial={false}
@@ -155,7 +155,7 @@ export default function HowItWorks() {
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
         >
           <p className="section-kicker section-kicker-dark">
-            The physics, simply
+            How it works
           </p>
           <h2 className="section-title section-title-light">
             From sunlight to switchboard.
