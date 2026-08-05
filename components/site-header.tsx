@@ -24,7 +24,7 @@ export function SiteHeader({ context, fixed = false }: SiteHeaderProps) {
         <Link href="/projects">Projects</Link>
         <Link href="/contact">Contact</Link>
       </div>
-      {context ? <span className="site-header-context text-xs font-bold uppercase tracking-[.14em] text-ink/50">{context}</span> : <div className="flex shrink-0 items-center gap-2"><a href={site.whatsapp(defaultWhatsappMessage)} target="_blank" rel="noopener noreferrer" className={buttonStyles("outline", "min-h-10 gap-1.5 px-3 text-xs sm:min-h-11 sm:px-4 sm:text-sm")}><MessageCircle size={15} /><span className="sm:hidden">Consult</span><span className="hidden sm:inline">onsultation</span></a><Link href="/quote" className={buttonStyles("primary", "site-header-cta min-h-10 gap-1.5 px-3 text-xs sm:min-h-11 sm:px-4 sm:text-sm")}><span className="sm:hidden">Estimate</span><span className="hidden sm:inline">Get estimate</span><ArrowUpRight size={15} /></Link></div>}
+      {context ? <span className="site-header-context text-xs font-bold uppercase tracking-[.14em] text-ink/50">{context}</span> : <div className="flex shrink-0 items-center gap-2"><a href={site.whatsapp(defaultWhatsappMessage)} target="_blank" rel="noopener noreferrer" className={buttonStyles("outline", "min-h-10 gap-1.5 px-3 text-xs sm:min-h-11 sm:px-4 sm:text-sm")}><MessageCircle size={15} /><span className="sm:hidden">Consult</span><span className="hidden sm:inline">Consultation</span></a><Link href="/quote" className={buttonStyles("primary", "site-header-cta min-h-10 gap-1.5 px-3 text-xs sm:min-h-11 sm:px-4 sm:text-sm")}><span className="sm:hidden">Estimate</span><span className="hidden sm:inline">Get estimate</span><ArrowUpRight size={15} /></Link></div>}
     </nav>
   );
 }
