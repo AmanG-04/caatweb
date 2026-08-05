@@ -38,14 +38,14 @@ export function Landing() {
               {/* <Link href="/quote" className={buttonStyles("primary", "gap-2 px-6")}>
                 Calculate my savings <ArrowUpRight size={17} />
               </Link> */}
-              <a
+              {/* <a
                 href={site.whatsapp(defaultWhatsappMessage)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={buttonStyles("outline", "gap-2 px-6")}
               >
                 <MessageCircle size={17} /> Free online consultation
-              </a>
+              </a> */}
             </div>
           </div>
           <div className="hero-scene min-w-0">
