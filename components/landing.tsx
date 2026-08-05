@@ -21,7 +21,7 @@ export function Landing() {
   return (
     <main className="grid-lines">
       <SiteHeader fixed />
-      <div className="landing-header-space" aria-hidden="true" />
+      <div className="h-10" aria-hidden="true" />
 
       <section className="hero-flow relative overflow-hidden">
         <div className="container-wide relative z-10 grid min-h-[590px] items-center gap-15 py-14 lg:grid-cols-[.86fr_1.14fr] lg:py-2">
@@ -35,9 +35,9 @@ export function Landing() {
               Take the next step towards energy independence with CAAT PowerBot. Install solar panels and harness the sun&apos;s energy for your home or business.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <Link href="/quote" className={buttonStyles("primary", "gap-2 px-6")}>
+              {/* <Link href="/quote" className={buttonStyles("primary", "gap-2 px-6")}>
                 Calculate my savings <ArrowUpRight size={17} />
-              </Link>
+              </Link> */}
               <a
                 href={site.whatsapp(defaultWhatsappMessage)}
                 target="_blank"
@@ -54,8 +54,10 @@ export function Landing() {
           </div>
         </div>
       </section>
-
-      <BrandMarquee />
+      
+      <div className="-mt-8 sm:-mt-12">
+        <BrandMarquee />
+      </div>
 
       <section id="services" className="bg-paper py-20 sm:py-28">
         <div className="container-wide">
@@ -80,9 +82,9 @@ export function Landing() {
             <p className="section-kicker">About CAAT PowerBot</p>
             <h2 className="section-title">Practical power solutions built around your property.</h2>
             <p className="section-copy">CAAT PowerBot LLP helps homes and businesses in Delhi NCR design and install rooftop solar systems, maintain them, and navigate the steps from assessment through commissioning.</p>
-            <Link href="/quote" className={buttonStyles("primary", "mt-7 gap-2 px-6")}>
+            {/* <Link href="/quote" className={buttonStyles("primary", "mt-7 gap-2 px-6")}>
               Start my estimate <ArrowUpRight size={17} />
-            </Link>
+            </Link> */}
           </div>
         </div>
       </section>
