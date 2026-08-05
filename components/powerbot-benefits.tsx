@@ -3,10 +3,10 @@
 import type { PointerEvent } from "react";
 
 const benefits = [
-  "Bill-based system sizing and savings estimate",
-  "Residential, commercial and industrial rooftop systems",
-  "Subsidy and net-metering support",
-  "Installation, monitoring and maintenance",
+  "Using only the best materials and products from the best companies",
+  "Engineering you can trust",
+  "Personalised to your needs",
+  "Transparent communication throughout",
 ];
 
 function setFillOrigin(event: PointerEvent<HTMLElement>) {
