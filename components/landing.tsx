@@ -19,7 +19,7 @@ import { PowerbotBenefits } from "./powerbot-benefits";
 
 export function Landing() {
   return (
-    <main className="grid-lines">
+    <main className="">
       <SiteHeader fixed />
       <div className="h-10" aria-hidden="true" />
 
@@ -59,7 +59,7 @@ export function Landing() {
         <BrandMarquee />
       </div>
 
-      <section id="services" className="bg-paper py-20 sm:py-28">
+      <section id="services" className="bg-paper py-20 sm:py-18">
         <div className="container-wide">
           <p className="section-kicker">Why CAAT PowerBot</p>
           <h2 className="section-title">One team for the estimate, installation and aftercare.</h2>

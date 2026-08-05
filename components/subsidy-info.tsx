@@ -36,7 +36,7 @@ function StepArrow({ index }: { index: number }) {
 
 export default function SubsidyInfo() {
   return (
-    <section id="subsidy" className="bg-paper-dim py-20 sm:py-28">
+    <section id="subsidy" className="bg-paper-dim py-20 sm:py-18">
       <div className="container-wide">
         <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-2 lg:gap-16">
           {/* Left: plain-language explanation */}
@@ -59,17 +59,17 @@ export default function SubsidyInfo() {
                 the final inspection end-to-end, so you never chase paperwork or
                 stand in a queue at the electricity office.
               </p>
-              <p>
+              {/* <p>
                 Housing societies benefit too: common-area systems (lifts, pumps,
                 lighting) get <strong className="font-semibold text-ink">₹18,000 per kW</strong>{" "}
                 of subsidy for capacities up to 500 kW.
-              </p>
+              </p> */}
             </div>
           </Reveal>
 
           {/* Right: subsidy table card */}
           <Reveal delay={0.15}>
-            <div className="rounded-3xl border border-ink/10 bg-paper p-7 sm:p-8">
+            <div className="rounded-3xl border border-ink/10 bg-paper p-7 sm:p-13">
               <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-violet">
                 Residential Subsidy
               </p>
@@ -90,9 +90,9 @@ export default function SubsidyInfo() {
                 Residential, per PM Surya Ghar rates. Subject to government
                 revision.
               </p>
-              <Link href="/quote" className={buttonStyles("primary", "mt-6 gap-2")}>
+              {/* <Link href="/quote" className={buttonStyles("primary", "mt-6 gap-2")}>
                 Check my estimated subsidy <ArrowUpRight size={16} />
-              </Link>
+              </Link> */}
             </div>
           </Reveal>
         </div>
