@@ -1,5 +1,3 @@
-"use client";
-
 import { defaultWhatsappMessage, site } from "@/lib/site";
 
 export default function FloatingWhatsApp() {

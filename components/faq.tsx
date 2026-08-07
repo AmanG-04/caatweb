@@ -5,7 +5,7 @@ import { useState } from "react";
 export const faqs = [
   {
     q: "How much subsidy do I actually get?",
-    a: "Under PM Surya Ghar: Muft Bijli Yojana, residential systems get ₹30,000 per kW for the first 2 kW and ₹18,000 for the third kW — a maximum of ₹78,000 for 3 kW and above. The subsidy lands directly in your bank account after commissioning. We prepare and file the application on the national portal as part of every residential project.",
+    a: "The applicable amount depends on the current programme rules, your system capacity and approval. See our solar subsidy guidance page for the current residential rates and full process; we prepare and file the application as part of every residential project.",
   },
   {
     q: "How much roof space do I need?",
@@ -21,7 +21,7 @@ export const faqs = [
   },
   {
     q: "What is the payback period?",
-    a: "For a typical residential system after subsidy, 3–4 years is realistic at current Delhi NCR tariffs; commercial systems paying higher tariffs often see 3 years or less. The panels are warrantied for 25 years of performance, so everything after payback is effectively free electricity. We give you the payback calculation for your actual bill before you commit.",
+    a: "For a typical residential system after subsidy, 3–4 years is realistic at current Delhi NCR tariffs; commercial systems paying higher tariffs often see 3 years or less. The panels are warrantied for 30 years of performance, so everything after payback is effectively free electricity. We give you the payback calculation for your actual bill before you commit.",
   },
   {
     q: "Will my panels work during a power cut?",
@@ -37,9 +37,7 @@ export default function FAQ() {
       <div className="mx-auto max-w-none 2xl:px-16 px-5 sm:px-8">
         <div className="grid gap-10 lg:grid-cols-[1fr_1.6fr] lg:gap-16">
           <div>
-            <p className="section-kicker">
-              Straight answers
-            </p>
+            <p className="section-kicker">Straight answers</p>
             <h2 className="section-title !text-4xl sm:!text-5xl">
               Questions every roof owner asks.
             </h2>
@@ -52,6 +50,7 @@ export default function FAQ() {
           <div className="divide-y divide-ink/10 rounded-3xl border border-ink/10 bg-white px-6 sm:px-8">
             {faqs.map((faq, i) => {
               const isOpen = open === i;
+
               return (
                 <div key={faq.q}>
                   <button
@@ -65,10 +64,7 @@ export default function FAQ() {
                     <span className="text-base font-black tracking-tight text-ink sm:text-lg">
                       {faq.q}
                     </span>
-                    <span
-                      className={`shrink-0 text-violet transition-transform duration-300 motion-reduce:transition-none ${isOpen ? "rotate-180" : ""}`}
-                      aria-hidden="true"
-                    >
+                    <span className={`faq-chevron shrink-0 text-violet ${isOpen ? "is-open" : ""}`} aria-hidden="true">
                       <svg
                         width="20"
                         height="20"
@@ -83,17 +79,19 @@ export default function FAQ() {
                       </svg>
                     </span>
                   </button>
-                  {isOpen && (
-                    <div
-                      id={`faq-panel-${i}`}
-                      role="region"
-                      aria-labelledby={`faq-button-${i}`}
-                    >
+                  <div
+                    id={`faq-panel-${i}`}
+                    role="region"
+                    aria-labelledby={`faq-button-${i}`}
+                    aria-hidden={!isOpen}
+                    className={`faq-answer${isOpen ? " is-open" : ""}`}
+                  >
+                    <div className="faq-answer-inner">
                       <p className="pb-6 pr-8 text-sm leading-relaxed text-ink-soft">
                         {faq.a}
                       </p>
                     </div>
-                  )}
+                  </div>
                 </div>
               );
             })}

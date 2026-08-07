@@ -1,8 +1,6 @@
 import Image from "next/image";
-import Link from "next/link";
-import { ArrowUpRight, MessageCircle } from "lucide-react";
 import logo from "../companyinfo/caatlogo-512.webp";
-import { buttonStyles, Card } from "./ui";
+import { Card } from "./ui";
 import { ClientReferences } from "./client-references";
 import SolarScene from "./solar-scene";
 import { BrandMarquee } from "./brand-marquee";
@@ -13,7 +11,6 @@ import FloatingWhatsApp from "./floating-whatsapp";
 import { ProjectTimeline } from "./project-timeline";
 import Footer from "./footer";
 import LeadCta from "./lead-cta";
-import { defaultWhatsappMessage, site } from "@/lib/site";
 import { SiteHeader } from "./site-header";
 import { PowerbotBenefits } from "./powerbot-benefits";
 
@@ -24,29 +21,16 @@ export function Landing() {
       <div className="h-16 sm:h-10" aria-hidden="true" />
 
       <section className="hero-flow relative overflow-hidden">
-        <div className="container-wide relative z-10 grid items-center gap-9 py-8 sm:gap-12 sm:py-12 lg:min-h-[590px] lg:gap-15 lg:grid-cols-[.86fr_1.14fr] lg:py-2">
+        <div className="container-wide relative z-10 grid items-center gap-6 py-8 sm:gap-10 sm:py-12 lg:min-h-[590px] lg:gap-15 lg:grid-cols-[.86fr_1.14fr] lg:py-2">
           <div className="hero-copy">
             {/* <p className="section-kicker">Delhi NCR rooftop solar</p> */}
-            <h1 className="hero-copy-title mt-0 max-w-2xl text-[2.35rem] font-black leading-[1.01] tracking-[-.05em] sm:text-5xl lg:text-6xl">
-              Access to green energy,<br />
-              <span className="hero-title-highlight">made simple.</span>
+            <h1 className="hero-copy-title mt-0 max-w-2xl text-[2.25rem] font-black leading-[1.01] tracking-[-.05em] sm:text-5xl lg:text-5xl">
+              Premium Solar Solutions.<br />
+              <span className="hero-title-highlight">Built to Perform.</span>
             </h1>
-            <p className="hero-copy-body mt-5 max-w-xl text-base leading-7 text-ink/70 sm:mt-6 sm:text-lg sm:leading-8">
-              Take the next step towards energy independence with CAAT PowerBot. Install solar panels and harness the sun&apos;s energy for your home or business.
+            <p className="hero-copy-body mt-6 max-w-xl text-sm leading-7 text-ink/70 sm:mt-6 sm:text-base sm:leading-8">
+              At CAAT PowerBot, we deliver high-performance solar solutions engineered for maximum efficiency, reliability, and long-term savings. Every project is executed with precision using quality components and industry best practices.
             </p>
-            <div className="hero-copy-actions mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:flex-wrap">
-              {/* <Link href="/quote" className={buttonStyles("primary", "gap-2 px-6")}>
-                Calculate my savings <ArrowUpRight size={17} />
-              </Link> */}
-              {/* <a
-                href={site.whatsapp(defaultWhatsappMessage)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={buttonStyles("outline", "gap-2 px-6")}
-              >
-                <MessageCircle size={17} /> Free online consultation
-              </a> */}
-            </div>
           </div>
           <div className="hero-scene min-w-0">
             <SolarScene />
@@ -55,20 +39,20 @@ export function Landing() {
         </div>
       </section>
       
-      <div className="-mt-8 sm:-mt-12">
+      <div className="-mt-1 sm:-mt-12">
         <BrandMarquee />
       </div>
 
       <section id="services" className="bg-paper py-14 sm:py-18">
         <div className="container-wide">
           <p className="section-kicker">Why CAAT PowerBot</p>
-          <h2 className="section-title">One team for the estimate, installation and aftercare.</h2>
-          <p className="section-copy">Start with the numbers that matter, then move forward with clear support across design, paperwork, installation and maintenance.</p>
+          <h2 className="section-title">One Trusted Partner. From Consultation to Lifetime Support</h2>
+          {/* <p className="section-copy">Start with the numbers that matter, then move forward with clear support across design, paperwork, installation and maintenance.</p> */}
           <PowerbotBenefits />
         </div>
       </section>
-      <SubsidyInfo />
       <ProjectTimeline />
+      <SubsidyInfo />
       <ClientReferences />
       <LeadCta />
       <HowItWorks />
@@ -82,9 +66,6 @@ export function Landing() {
             <p className="section-kicker">About CAAT PowerBot</p>
             <h2 className="section-title">Practical power solutions built around your property.</h2>
             <p className="section-copy">CAAT PowerBot LLP helps homes and businesses in Delhi NCR design and install rooftop solar systems, maintain them, and navigate the steps from assessment through commissioning.</p>
-            {/* <Link href="/quote" className={buttonStyles("primary", "mt-7 gap-2 px-6")}>
-              Start my estimate <ArrowUpRight size={17} />
-            </Link> */}
           </div>
         </div>
       </section>

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRight, CheckCircle2, MessageCircle } from "lucide-react";
+import type { ReactNode } from "react";
 import Footer from "@/components/footer";
 import { SiteHeader } from "@/components/site-header";
 import { buttonStyles, Card } from "@/components/ui";
@@ -12,9 +13,10 @@ type SeoPageProps = {
   benefits: string[];
   sections: Array<{ title: string; body: string }>;
   faq?: Array<{ question: string; answer: string }>;
+  supplementaryContent?: ReactNode;
 };
 
-export function SeoPage({ eyebrow, title, description, benefits, sections, faq = [] }: SeoPageProps) {
+export function SeoPage({ eyebrow, title, description, benefits, sections, faq = [], supplementaryContent }: SeoPageProps) {
   return (
     <main className="grid-lines min-h-screen">
       <SiteHeader fixed />
@@ -54,6 +56,8 @@ export function SeoPage({ eyebrow, title, description, benefits, sections, faq =
           ))}
         </div>
       </section>
+
+      {supplementaryContent && <section className="bg-white py-16 sm:py-24"><div className="container-wide">{supplementaryContent}</div></section>}
 
       {faq.length > 0 && <section className="bg-white py-16 sm:py-24"><div className="container-wide max-w-5xl"><p className="section-kicker">Common questions</p><h2 className="section-title">Answers before you decide.</h2><div className="mt-10 divide-y divide-ink/10 rounded-3xl border border-ink/10">{faq.map((item) => <details key={item.question} className="group p-6"><summary className="cursor-pointer list-none pr-8 text-lg font-black tracking-tight marker:hidden">{item.question}</summary><p className="mt-4 max-w-3xl leading-7 text-ink/70">{item.answer}</p></details>)}</div></div></section>}
 

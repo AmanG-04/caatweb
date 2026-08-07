@@ -3,11 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 
 const steps = [
-  ["01", "Free online consultation", "Share your electricity bill, property details and goals with our solar team on WhatsApp/Estimate Generator. We assess your needs, answer questions and outline the right next steps.", "DAY 0 · ONLINE"],
-  ["02", "System design & transparent estimate", "You get a line-item estimate: panel make and wattage, inverter model, structure spec, wiring, and a generation estimate for your exact roof. No lump-sum mystery pricing.", "2–3 DAYS"],
-  ["03", "Installation & commissioning", "After your approval, Structure, panels, inverter, earthing and cabling go up — typically in a few days, with your roof left clean. Then the DISCOM inspects, the net meter goes in, and we switch on.", "DEPENDING ON QUOTE"],
-  ["04", "Subsidy & net-metering paperwork", "We file your PM Surya Ghar subsidy application and the net-metering request with your DISCOM, and follow up until both are sanctioned. You sign; we chase.", "2–4 WEEKS · WE HANDLE IT"],
-  ["05", "Monitoring, cleaning & AMC", "You watch generation live on the inverter app. We come back on schedule for cleaning and health checks, so year five performs like year one.", "ONGOING"],
+  ["01", "Online consultation", "Share your electricity bill, property details and goals with our expert on WhatsApp/Estimate Generator. We assess your needs, answer questions and outline the right solution with estimate.", "DAY 0 · ONLINE"],
+  ["02", "Site visit & Design finalization", "After estimate approval, site is visited and a firm quotation is agreed upon. It encapsulates panel make and wattage, inverter model, structure spec, wiring, and a generation estimate for your exact roof. NO ASSUMPTIONS.", "2–3 DAYS"],
+  ["03", "Supply, Installation & commissioning", "After Payment - Structure, panels, inverter, earthing and cabling are installed - typically in a few days, with your roof left clean. Then the DISCOM inspects, the net meter goes in, and we switch on.", "DEPENDING ON SYSTEM RATING"],
+  ["04", "Subsidy & net-metering paperwork", "If applicable, we file your PM Surya Ghar subsidy application and the net-metering request with your DISCOM, and follow up until both are sanctioned. You sign; we chase.", "2–4 WEEKS · WE HANDLE IT"],
+  ["05", "After-sales support", "You watch real generation live on the inverter app. If any issues arise, our support team is available to assist you promptly.", "ONGOING"],
 ] as const;
 
 export function ProjectTimeline() {
@@ -20,6 +20,7 @@ export function ProjectTimeline() {
   const [activeStep, setActiveStep] = useState(0);
 
   const setCurrentStep = (step: number) => {
+    if (activeStepRef.current === step) return;
     activeStepRef.current = step;
     setActiveStep(step);
   };
