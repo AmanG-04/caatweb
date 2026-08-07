@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, ChevronDown, MessageCircle } from "lucide-react";
-import logo from "../companyinfo/caatlogo.webp";
+import logo from "../companyinfo/caatlogo-96.webp";
 import { defaultWhatsappMessage, site } from "@/lib/site";
 import { buttonStyles } from "./ui";
 
@@ -13,7 +13,7 @@ type SiteHeaderProps = {
 export function SiteHeader({ context, fixed = false }: SiteHeaderProps) {
   return (
     <nav className={`site-header container-wide z-50 flex items-center justify-between gap-3 bg-cream/95 py-3 backdrop-blur-md sm:gap-6 sm:py-4 ${fixed ? "site-header-fixed" : ""}`} aria-label="Primary navigation">
-      <Link href="/" className="flex min-w-0 items-center gap-2 sm:gap-2.5" aria-label="CAAT PowerBot home">
+      <Link href="/" className="flex min-w-0 items-center gap-2 sm:gap-2.5" aria-label="CAAT PowerBot LLP home">
         <Image src={logo} alt="CAAT PowerBot logo" width={48} height={48} className="h-8 w-8 shrink-0 object-contain sm:h-11 sm:w-11" priority />
         <span className="truncate text-[13px] font-black tracking-tight sm:text-lg">CAAT PowerBot <span className="hidden text-teal sm:inline">LLP</span></span>
       </Link>

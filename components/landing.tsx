@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, MessageCircle } from "lucide-react";
-import logo from "../companyinfo/caatlogo.webp";
+import logo from "../companyinfo/caatlogo-512.webp";
 import { buttonStyles, Card } from "./ui";
 import { ClientReferences } from "./client-references";
 import SolarScene from "./solar-scene";
@@ -50,7 +50,7 @@ export function Landing() {
           </div>
           <div className="hero-scene min-w-0">
             <SolarScene />
-            <p className="mt-3 text-center font-mono text-[10px] font-bold tracking-[.16em] text-teal/60">DRAG THE TIMELINE · WATCH THE SUN CHARGE THE HOUSE</p>
+            <p className="mt-3 text-center font-mono text-[10px] font-bold tracking-[.16em] text-teal">DRAG THE TIMELINE · WATCH THE SUN CHARGE THE HOUSE</p>
           </div>
         </div>
       </section>
@@ -74,7 +74,7 @@ export function Landing() {
       <HowItWorks />
 
       <section id="about" className="bg-paper py-14 sm:py-18">
-        <div className="container-wide grid gap-10 md:grid-cols-[.7fr_1.3fr] md:items-center">
+        <div className="container-wide grid gap-6 md:gap-10 md:grid-cols-[.7fr_1.3fr] md:items-center">
           <div className="rounded-[2rem] border border-ink/10 bg-white p-8 shadow-soft">
             <Image src={logo} alt="CAAT PowerBot" width={260} height={260} className="mx-auto h-44 w-44 object-contain md:h-52 md:w-52" />
           </div>

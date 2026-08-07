@@ -1,6 +1,5 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useState } from "react";
 
 export const faqs = [
@@ -32,7 +31,6 @@ export const faqs = [
 
 export default function FAQ() {
   const [open, setOpen] = useState<number | null>(0);
-  const reduced = useReducedMotion();
 
   return (
     <section id="faq" className="bg-paper py-14 sm:py-8">
@@ -67,10 +65,8 @@ export default function FAQ() {
                     <span className="text-base font-black tracking-tight text-ink sm:text-lg">
                       {faq.q}
                     </span>
-                    <motion.span
-                      animate={{ rotate: isOpen ? 180 : 0 }}
-                      transition={{ duration: reduced ? 0 : 0.3 }}
-                      className="shrink-0 text-violet"
+                    <span
+                      className={`shrink-0 text-violet transition-transform duration-300 motion-reduce:transition-none ${isOpen ? "rotate-180" : ""}`}
                       aria-hidden="true"
                     >
                       <svg
@@ -85,33 +81,19 @@ export default function FAQ() {
                       >
                         <path d="m5 8 5 5 5-5" />
                       </svg>
-                    </motion.span>
+                    </span>
                   </button>
-                  <AnimatePresence initial={false}>
-                    {isOpen && (
-                      <motion.div
-                        id={`faq-panel-${i}`}
-                        role="region"
-                        aria-labelledby={`faq-button-${i}`}
-                        initial={reduced ? false : { height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={
-                          reduced
-                            ? { opacity: 0 }
-                            : { height: 0, opacity: 0 }
-                        }
-                        transition={{
-                          duration: reduced ? 0 : 0.35,
-                          ease: [0.22, 1, 0.36, 1],
-                        }}
-                        className="overflow-hidden"
-                      >
-                        <p className="pb-6 pr-8 text-sm leading-relaxed text-ink-soft">
-                          {faq.a}
-                        </p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                  {isOpen && (
+                    <div
+                      id={`faq-panel-${i}`}
+                      role="region"
+                      aria-labelledby={`faq-button-${i}`}
+                    >
+                      <p className="pb-6 pr-8 text-sm leading-relaxed text-ink-soft">
+                        {faq.a}
+                      </p>
+                    </div>
+                  )}
                 </div>
               );
             })}

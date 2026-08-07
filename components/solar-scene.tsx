@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { useAnimationFrame, useReducedMotion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 /* Linear interpolation between two hex colors */
 function lerpColor(a: string, b: string, t: number) {
@@ -14,6 +13,21 @@ function lerpColor(a: string, b: string, t: number) {
 }
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
+
+function useReducedMotionPreference() {
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updatePreference = () => setReducedMotion(media.matches);
+
+    updatePreference();
+    media.addEventListener("change", updatePreference);
+    return () => media.removeEventListener("change", updatePreference);
+  }, []);
+
+  return reducedMotion;
+}
 
 function formatTime(hour: number) {
   const h = Math.floor(hour);
@@ -32,16 +46,38 @@ const STARS = [
 export default function SolarScene() {
   const [hour, setHour] = useState(10.5);
   const [playing, setPlaying] = useState(true);
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = useReducedMotionPreference();
   const dragging = useRef(false);
+  const pendingAnimationTime = useRef(0);
 
-  useAnimationFrame((_, delta) => {
-    if (!playing || reducedMotion || dragging.current) return;
-    setHour((h) => {
-      const next = h + (delta / 1000) * 0.45;
-      return next > 19 ? 5 : next;
-    });
-  });
+  useEffect(() => {
+    if (!playing || reducedMotion) return;
+
+    let animationFrame = 0;
+    let previousTime = performance.now();
+
+    const animate = (now: number) => {
+      const delta = now - previousTime;
+      previousTime = now;
+
+      if (!dragging.current) {
+        pendingAnimationTime.current += delta;
+        if (pendingAnimationTime.current >= 80) {
+          const elapsed = pendingAnimationTime.current;
+          pendingAnimationTime.current = 0;
+          setHour((h) => {
+            const next = h + (elapsed / 1000) * 0.45;
+            return next > 19 ? 5 : next;
+          });
+        }
+      }
+
+      animationFrame = window.requestAnimationFrame(animate);
+    };
+
+    animationFrame = window.requestAnimationFrame(animate);
+    return () => window.cancelAnimationFrame(animationFrame);
+  }, [playing, reducedMotion]);
 
   // Daylight factor: 0 at night, 1 at solar noon
   const d = clamp(Math.sin((Math.PI * (hour - 6)) / 12), 0, 1);

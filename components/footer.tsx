@@ -1,5 +1,5 @@
 import Image from "next/image";
-import logo from "../companyinfo/caatlogo.webp";
+import logo from "../companyinfo/caatlogo-96.webp";
 import { defaultWhatsappMessage, site } from "@/lib/site";
 
 const quickLinks = [
@@ -134,7 +134,7 @@ export default function Footer() {
                 </a>
               </li>
             </ul>
-            <p className="mt-5 max-w-[220px] text-xs leading-relaxed text-white/40">
+            <p className="mt-5 max-w-[220px] text-xs leading-relaxed text-white/60">
               Mon–Fri, 10 am – 5 pm IST. Free online consultations via WhatsApp.
             </p>
           </div>

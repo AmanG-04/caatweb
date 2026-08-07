@@ -1,7 +1,5 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
-
 function IconSun() {
   return (
     <svg
@@ -143,17 +141,10 @@ function VConnector() {
 }
 
 export default function HowItWorks() {
-  const reduced = useReducedMotion();
-
   return (
     <section id="how-it-works" className="bg-night py-14 sm:py-18">
       <div className="container-wide">
-        <motion.div
-          initial={false}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        >
+        <div>
           <p className="section-kicker section-kicker-dark">
             How it works
           </p>
@@ -164,7 +155,7 @@ export default function HowItWorks() {
             No black box. Four stages between the sun and your ceiling fan —
             here is exactly what each one does.
           </p>
-        </motion.div>
+        </div>
 
         <div className="mt-14 flex flex-col lg:flex-row lg:items-stretch lg:gap-0">
           {steps.map((step, i) => (
@@ -175,17 +166,7 @@ export default function HowItWorks() {
                   <VConnector />
                 </>
               )}
-              <motion.div
-                initial={false}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{
-                  duration: 0.6,
-                  delay: reduced ? 0 : 0.12 * i,
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-                className="flex flex-col items-center rounded-3xl border border-white/10 bg-dusk/50 px-6 py-8 text-center lg:w-56 lg:shrink-0"
-              >
+              <div className="flex flex-col items-center rounded-3xl border border-white/10 bg-dusk/50 px-6 py-8 text-center lg:w-56 lg:shrink-0">
                 <div className="flex h-14 w-14 items-center justify-center rounded-full border border-gold/40 bg-night text-gold">
                   <step.icon />
                 </div>
@@ -195,23 +176,17 @@ export default function HowItWorks() {
                 <h3 className="mt-1 text-lg font-black tracking-tight text-white">
                   {step.title}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-white/60">
+                <p className="mt-2 text-sm leading-relaxed text-white/75">
                   {step.text}
                 </p>
-              </motion.div>
+              </div>
             </div>
           ))}
         </div>
 
-        <motion.p
-          initial={false}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.7, delay: 0.5 }}
-          className="mt-10 text-center font-mono text-[11px] uppercase tracking-[0.22em] text-white/40"
-        >
+        <p className="mt-10 text-center font-mono text-[11px] uppercase tracking-[0.22em] text-white/60">
           DC in · AC out · surplus exported via net meter
-        </motion.p>
+        </p>
       </div>
     </section>
   );
