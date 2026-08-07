@@ -60,14 +60,18 @@ export function Landing() {
       <HowItWorks />
 
       <section id="about" className="bg-paper py-14 sm:py-18">
-        <div className="container-wide grid gap-6 md:gap-10 md:grid-cols-[.7fr_1.3fr] md:items-center">
-          <div className="rounded-[2rem] border border-ink/10 bg-white p-8 shadow-soft">
-            <Image src={logo} alt="CAAT PowerBot" width={260} height={260} className="mx-auto h-44 w-44 object-contain md:h-52 md:w-52" />
-          </div>
-          <div>
+        <div className="container-wide">
+          <div className="text-center">
             <p className="section-kicker">About CAAT PowerBot</p>
-            <h2 className="section-title">Practical power solutions built around your property.</h2>
-            <p className="section-copy">CAAT PowerBot LLP helps homes and businesses in Delhi NCR design and install rooftop solar systems, maintain them, and navigate the steps from assessment through commissioning.</p>
+          </div>
+          <div className="mt-9 grid gap-6 md:gap-10 md:grid-cols-[.7fr_1.3fr] md:items-center">
+            <div className="rounded-[2rem] border border-ink/10 bg-white p-8 shadow-soft">
+              <Image src={logo} alt="CAAT PowerBot" width={260} height={260} className="mx-auto h-44 w-44 object-contain md:h-52 md:w-52" />
+            </div>
+            <div>
+              <h2 className="section-title !mt-0">Practical power solutions built around your property.</h2>
+              <p className="section-copy">CAAT PowerBot LLP helps homes and businesses in Delhi NCR design and install rooftop solar systems, maintain them, and navigate the steps from assessment through commissioning.</p>
+            </div>
           </div>
         </div>
       </section>
