@@ -18,11 +18,11 @@ export function SiteHeader({ context, fixed = false }: SiteHeaderProps) {
         <Image src={logo} alt="CAAT PowerBot logo" width={48} height={48} className="h-8 w-8 shrink-0 object-contain sm:h-11 sm:w-11" priority />
         <span className="truncate text-[13px] font-black tracking-tight sm:text-lg">CAAT PowerBot <span className="hidden text-teal sm:inline">LLP</span></span>
       </Link>
-      <div className="hidden gap-5 text-sm font-semibold lg:flex">
-        <Link href="/residential-solar">Residential</Link>
-        <Link href="/commercial-solar">Commercial</Link>
-        <Link href="/solar-subsidy-delhi-ncr">Subsidy</Link>
-        <Link href="/projects">Projects</Link>
+      <div className="hidden gap-4 text-sm font-semibold xl:flex">
+        <Link href="/about-us">About us</Link>
+        <Link href="/solutions">Solutions</Link>
+        <Link href="/testimonials">Testimonials</Link>
+        <Link href="/blogbot">BlogBot</Link>
         <Link href="/contact">Contact</Link>
       </div>
       {context ? <span className="site-header-context text-xs font-bold uppercase tracking-[.14em] text-ink/50">{context}</span> : <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">

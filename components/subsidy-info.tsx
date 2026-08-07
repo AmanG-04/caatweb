@@ -1,55 +1,93 @@
 import Reveal from "@/components/Reveal";
-import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
-import { buttonStyles } from "@/components/ui";
+import { Check } from "lucide-react";
+
+const subsidyRows = [
+  {
+    state: "Delhi & Uttar Pradesh",
+    values: [
+      { total: "₹40,000", detail: "Central ₹30k · State ₹10k" },
+      { total: "₹80,000", detail: "Central ₹60k · State ₹20k" },
+      { total: "₹1,08,000", detail: "Central ₹78k · State ₹30k" },
+    ],
+  },
+  {
+    state: "Haryana",
+    values: [
+      { total: "₹30,000", detail: "Central subsidy only" },
+      { total: "₹60,000", detail: "Central subsidy only" },
+      { total: "₹78,000", detail: "Central subsidy only" },
+    ],
+  },
+];
+
+const eligibility = ["Residential rooftop", "Net metering", "MNRE/DISCOM-approved vendor"];
 
 export default function SubsidyInfo() {
   return (
     <section id="subsidy" className="bg-paper py-14 sm:py-18">
-      <div className="container-wide grid gap-7 lg:grid-cols-[.75fr_1.25fr] lg:gap-16">
-        <Reveal className="max-w-xl">
+      <div className="container-wide">
+        <div className="text-center">
           <p className="section-kicker">Government subsidy</p>
-          <h2 className="section-title !text-3xl sm:!text-5xl">
-            Support for your rooftop solar plan.
-          </h2>
-          <p className="section-copy !text-base">
-            Homeowners in Delhi, Uttar Pradesh, and Haryana can avail financial assistance under the PM Surya Ghar: Muft Bijli Yojana for rooftop solar systems. The Central Government offers subsidies of ₹30,000 for 1 kW, ₹60,000 for 2 kW, and up to ₹78,000 for 3 kW and above, credited directly after installation and approval.
-          </p>
-          <p className="mt-4 max-w-xl text-sm leading-6 text-ink/65">
-            CAAT PowerBot handles everything from survey to subsidy, approvals, installation, and support for a hassle-free solar switch.
-          </p>
-        </Reveal>
+        </div>
 
-        <Reveal delay={0.1} className="max-w-3xl lg:pt-2">
-          <p className="font-mono text-[11px] font-bold uppercase tracking-[.18em] text-teal">
-            State subsidy &amp; eligibility
-          </p>
+        <div className="mt-9 grid gap-10 lg:grid-cols-[.68fr_1.32fr] lg:items-start lg:gap-16">
+          <Reveal className="max-w-md lg:pt-7">
+            <h2 className="section-title !mt-0 !text-3xl sm:!text-4xl">
+              Support for your rooftop solar plan.
+            </h2>
+            <p className="section-copy !text-base">
+              Eligible homeowners in Delhi, Uttar Pradesh, and Haryana can receive support under the PM Surya Ghar: Muft Bijli Yojana.
+            </p>
 
-          <dl className="mt-4 divide-y divide-ink/10 border-y border-ink/10">
-            <div className="grid gap-2 py-4 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-6">
-              <dt className="font-mono text-[11px] font-bold uppercase tracking-[.16em] text-teal">Delhi &amp; UP</dt>
-              <dd className="text-sm leading-6 text-ink/70">
-                Delhi offers an additional state subsidy of up to ₹30,000 (₹10,000 per kW up to 3 kW), enabling total support of up to ₹1,08,000 (subject to eligibility). Uttar Pradesh currently has only the Central subsidy; state incentives may be announced separately.
-              </dd>
+            <div className="mt-7 border-t border-ink/10 pt-5">
+              <p className="font-mono text-[10px] font-bold uppercase tracking-[.18em] text-teal">Basic eligibility</p>
+              <ul className="mt-3 space-y-2.5">
+                {eligibility.map((item) => (
+                  <li key={item} className="flex items-center gap-2.5 text-sm font-semibold text-ink/65">
+                    <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-lime/70 text-teal"><Check size={12} strokeWidth={2.5} /></span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
             </div>
-            <div className="grid gap-2 py-4 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-6">
-              <dt className="font-mono text-[11px] font-bold uppercase tracking-[.16em] text-teal">Haryana</dt>
-              <dd className="text-sm leading-6 text-ink/70">
-                Only Central subsidy is currently available; any additional benefits depend on state notifications.
-              </dd>
-            </div>
-            <div className="grid gap-2 py-4 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-6">
-              <dt className="font-mono text-[11px] font-bold uppercase tracking-[.16em] text-teal">Eligibility</dt>
-              <dd className="text-sm leading-6 text-ink/70">
-                Eligibility requires a residential rooftop system, net metering, and installation by an MNRE/DISCOM-approved vendor.
-              </dd>
-            </div>
-          </dl>
+          </Reveal>
 
-          <Link href="/solar-subsidy-delhi-ncr" className={buttonStyles("outline", "mt-6 gap-2 px-5")}>
-            Explore full subsidy guidance <ArrowUpRight size={16} />
-          </Link>
-        </Reveal>
+          <Reveal delay={0.1}>
+            <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between sm:gap-5">
+              <div>
+                <h3 className="text-xl font-black tracking-tight text-ink">Estimated support by system size</h3>
+                <p className="mt-1 text-sm text-ink/55">Total subsidy, with the contribution shown below.</p>
+              </div>
+              <p className="max-w-[14rem] text-xs leading-5 text-ink/45 sm:text-right">Subject to current programme rules and approval</p>
+            </div>
+
+            <div className="overflow-x-auto rounded-2xl border border-ink/10 bg-white shadow-soft">
+              <table className="w-full min-w-[42rem] border-collapse">
+                <thead>
+                  <tr className="bg-night text-white">
+                    <th scope="col" className="w-[31%] px-5 py-4 text-left text-xs font-bold uppercase tracking-[.12em] text-white/70">State</th>
+                    {['1 kW', '2 kW', '3 kW+'].map((size) => (
+                      <th key={size} scope="col" className="w-[23%] border-l border-white/10 px-4 py-4 text-center text-base font-black tracking-tight">{size}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {subsidyRows.map((row, rowIndex) => (
+                    <tr key={row.state} className={rowIndex === 0 ? "border-b border-ink/10" : ""}>
+                      <th scope="row" className="bg-cream/70 px-5 py-5 text-left text-sm font-bold leading-5 text-ink">{row.state}</th>
+                      {row.values.map((value, index) => (
+                        <td key={`${row.state}-${index}`} className="border-l border-ink/10 px-4 py-5 text-center">
+                          <span className="block whitespace-nowrap text-base font-black tracking-tight text-ink">{value.total}</span>
+                          <span className="mt-1.5 block whitespace-nowrap text-[10px] font-semibold text-ink/45">{value.detail}</span>
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Reveal>
+        </div>
       </div>
     </section>
   );

@@ -34,20 +34,19 @@ export default function FAQ() {
 
   return (
     <section id="faq" className="bg-paper py-14 sm:py-8">
-      <div className="mx-auto max-w-none 2xl:px-16 px-5 sm:px-8">
-        <div className="grid gap-10 lg:grid-cols-[1fr_1.6fr] lg:gap-16">
-          <div>
+      <div className="container-wide">
+        <div className="mx-auto max-w-3xl text-center">
             <p className="section-kicker">Straight answers</p>
-            <h2 className="section-title !text-4xl sm:!text-5xl">
+            <h2 className="section-title mx-auto !text-4xl sm:!text-5xl">
               Questions every roof owner asks.
             </h2>
-            <p className="section-copy max-w-md !text-base">
+            <p className="section-copy mx-auto !text-base">
               The same six questions come up in most solar conversations. Here
               are the clear answers before you contact us.
             </p>
-          </div>
+        </div>
 
-          <div className="divide-y divide-ink/10 rounded-3xl border border-ink/10 bg-white px-6 sm:px-8">
+        <div className="mx-auto mt-10 max-w-4xl divide-y divide-ink/10 rounded-3xl border border-ink/10 bg-white px-6 sm:px-8">
             {faqs.map((faq, i) => {
               const isOpen = open === i;
 
@@ -95,7 +94,6 @@ export default function FAQ() {
                 </div>
               );
             })}
-          </div>
         </div>
       </div>
     </section>

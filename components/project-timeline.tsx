@@ -70,14 +70,18 @@ export function ProjectTimeline() {
 
   return (
     <section id="process" className="project-timeline">
-      <div className="container-wide project-timeline-layout">
-        <div className="project-timeline-intro-column">
+      <div className="container-wide">
+        <div className="text-center">
           <p className="section-kicker">How a project runs</p>
-          <h2 className="section-title">Consultation to commissioning, handled.</h2>
-          <p className="section-copy">Five steps, one accountable team. Each scroll moves through one clear stage of your project.</p>
+        </div>
+        <div className="project-timeline-layout mt-0 grid gap-10 lg:gap-16">
+          <div className="project-timeline-intro-column xl:max-w-none">
+<h3 className="section-title !mt-4 !max-w-none !text-2xl sm:!text-3xl md:!text-6xl">
+  Consultation&nbsp;to commissioning, handled.
+</h3>          <p className="section-copy text-sm sm:text-base">Five steps, one accountable team. Each scroll moves through one clear stage of your project.</p>
           <p className="project-timeline-hint" aria-hidden="true">SCROLL THROUGH THE STEPS <span>→</span></p>
         </div>
-        <div className="project-timeline-experience">
+          <div className="project-timeline-experience">
           <div className="project-timeline-rail" aria-label="Choose a project delivery step">
             {steps.map(([number, title], index) => (
               <button
@@ -104,6 +108,7 @@ export function ProjectTimeline() {
                 </div>
               </article>
             ))}
+          </div>
           </div>
         </div>
       </div>

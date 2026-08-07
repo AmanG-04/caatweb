@@ -16,3 +16,13 @@ export const settingsSchema = z.object({
   annualTariffIncrease: z.coerce.number().finite().min(0).max(1).optional(),
   co2KgPerKwh: z.coerce.number().finite().nonnegative().max(100).optional(),
 }).strict();
+
+export const blogPostSchema = z.object({
+  title: z.string().trim().min(3).max(160),
+  slug: z.string().trim().min(3).max(160).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Use lowercase words separated by hyphens."),
+  excerpt: z.string().trim().min(10).max(360),
+  content: z.string().trim().min(20).max(50000),
+  status: z.enum(["draft", "published"]),
+}).strict();
+
+export type BlogPostInput = z.infer<typeof blogPostSchema>;

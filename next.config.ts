@@ -2,6 +2,15 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: { unoptimized: true },
+  async redirects() {
+    return [
+      { source: "/residential-solar", destination: "/solutions", permanent: true },
+      { source: "/commercial-solar", destination: "/solutions", permanent: true },
+      { source: "/solar-subsidy-delhi-ncr", destination: "/solutions", permanent: true },
+      { source: "/solar-panel-cost", destination: "/solutions", permanent: true },
+      { source: "/projects", destination: "/testimonials", permanent: true },
+    ];
+  },
   async headers() {
     return [{ source: "/(.*)", headers: [
       { key: "X-Content-Type-Options", value: "nosniff" },

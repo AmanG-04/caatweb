@@ -31,14 +31,14 @@ export function MobileNavMenu() {
   }, []);
 
   return (
-    <details ref={menuRef} className="site-header-menu lg:hidden">
+    <details ref={menuRef} className="site-header-menu xl:hidden">
       <summary aria-label="Open navigation menu"><span>Menu</span><ChevronDown size={14} aria-hidden="true" /></summary>
       <div className="site-header-menu-panel" onClick={closeMenu}>
         <Link href="/">Home</Link>
-        <Link href="/residential-solar">Residential solar</Link>
-        <Link href="/commercial-solar">Commercial solar</Link>
-        <Link href="/solar-subsidy-delhi-ncr">Subsidy</Link>
-        <Link href="/projects">Projects</Link>
+        <Link href="/about-us">About us</Link>
+        <Link href="/solutions">Solutions</Link>
+        <Link href="/testimonials">Testimonials</Link>
+        <Link href="/blogbot">BlogBot</Link>
         <Link href="/contact">Contact</Link>
         <a href={site.whatsapp(defaultWhatsappMessage)} target="_blank" rel="noopener noreferrer"><MessageCircle size={16} /> Free online consultation</a>
       </div>

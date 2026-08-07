@@ -101,11 +101,12 @@ body { margin: 0; overflow-x: hidden; background: var(--cream); color: var(--ink
 .project-timeline { display: grid; min-height: 0; align-items: center; scroll-margin-top: 7.5rem; background: #f7f8f2; padding: 3.5rem 0 2rem; color: #102a2a; }
 .project-timeline h2 { margin-top: 1rem; max-width: 42rem; font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; line-height: 1; letter-spacing: -.05em; }
 .project-timeline-intro { margin-top: 1rem; max-width: 38rem; color: rgba(16,42,42,.62); line-height: 1.7; }
-.project-timeline-layout { display: grid; gap: clamp(4rem, 7vw, 7rem); align-items: center; }
+.project-timeline-layout {  grid-template-columns: minmax(24rem, 2fr) minmax(0, 1fr); align-items: center;}
 .project-timeline-intro-column { max-width: 27rem; }
 .project-timeline-intro-column .section-title { max-width: 26rem; font-size: clamp(2.35rem, 3.8vw, 3.65rem); line-height: 1.04; }
 .project-timeline-intro-column .section-copy { max-width: 25rem; }
-.project-timeline-experience { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(1.5rem, 2.5vw, 2.5rem); max-width: 58rem; border-left: 1px solid rgba(16,42,42,.1); padding-left: clamp(1.25rem, 2.5vw, 2.5rem); }
+.project-timeline-experience { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(1.5rem, 2.5vw, 2.5rem); max-width: 58rem; padding-left: clamp(1.25rem, 4.5vw, 2.5rem); }
+.project-timeline-experience::before { position: absolute; top: 50%; left: 0; width: 1px; height: clamp(27rem, 16vw, 10rem); background: rgba(26,45,45,.1); content: ""; transform: translateY(-50%); }
 .project-timeline-rail { display: flex; flex-direction: column; align-self: center; gap: 2rem; width: 2.5rem; color: rgba(16,42,42,.75); font: 800 .68rem/1 var(--font-mono); letter-spacing: .06em; }
 .project-timeline-rail button { position: relative; display: grid; width: 2.5rem; height: 2.5rem; place-items: center; cursor: pointer; border: 1px solid rgba(16,42,42,.1); border-radius: 999px; background: #f7f8f2; color: inherit; font: inherit; letter-spacing: inherit; transition: color .28s ease, background .28s ease, border-color .28s ease; }
 .project-timeline-rail button:hover, .project-timeline-rail button:focus-visible { border-color: #0f766e; color: #0f766e; outline: none; }
@@ -121,8 +122,8 @@ body { margin: 0; overflow-x: hidden; background: var(--cream); color: var(--ink
 .project-timeline-step span { display: inline-block; margin-top: 1.3rem; border: 1px solid rgba(16,42,42,.1); border-radius: 999px; background: #efece4; padding: .42rem .8rem; color: rgba(16,42,42,.72); font: 800 .65rem/1 var(--font-mono); letter-spacing: .1em; }
 .project-timeline-hint { margin: 2rem 0 0; color: rgba(16,42,42,.72); font: 800 .62rem/1 var(--font-mono); letter-spacing: .17em; }
 .project-timeline-hint span { margin-left: .4rem; color: #0f766e; font-size: 1rem; }
-@media (min-width: 960px) { .project-timeline-layout { grid-template-columns: minmax(18rem, .8fr) minmax(0, 1.2fr); } .project-timeline-intro-column { position: sticky; top: 8rem; } .project-timeline-viewport { height: min(34rem, calc(100svh - 17rem)); min-height: 27rem; } }
-@media (max-width: 959px) { .project-timeline { padding: 4rem 0 2.5rem; } .project-timeline-experience { margin-top: 1.75rem; border-left: 0; padding-left: 0; } }
+@media (min-width: 960px) { .project-timeline-layout { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .project-timeline-intro-column { position: sticky; top: 8rem; } .project-timeline-viewport { height: min(34rem, calc(100svh - 17rem)); min-height: 27rem; } }
+@media (max-width: 959px) { .project-timeline { padding: 4rem 0 2.5rem; } .project-timeline-experience { margin-top: 1.75rem; padding-left: 0; } .project-timeline-experience::before { display: none; } }
 @media (max-width: 900px) { .solar-process-grid { grid-template-columns: repeat(2, 1fr); gap: 1.2rem; } .solar-process-grid::before { display: none; } }
 @media (max-width: 560px) { .solar-process { padding-top: 4rem; } .solar-process-grid { grid-template-columns: 1fr; margin-top: 3rem; } .solar-process-card { min-height: auto; } }
 .solar-scene { position: relative; overflow: hidden; border: 1px solid rgba(15,118,110,.28); border-radius: 1.5rem; background: #082a39; box-shadow: 0 24px 70px rgba(16,42,42,.18); }

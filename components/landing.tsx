@@ -18,7 +18,7 @@ export function Landing() {
   return (
     <main className="">
       <SiteHeader fixed />
-      <div className="h-16 sm:h-10" aria-hidden="true" />
+      <div className="h-16 sm:h-14" aria-hidden="true" />
 
       <section className="hero-flow relative overflow-hidden">
         <div className="container-wide relative z-10 grid items-center gap-6 py-8 sm:gap-10 sm:py-12 lg:min-h-[590px] lg:gap-15 lg:grid-cols-[.86fr_1.14fr] lg:py-2">
@@ -39,14 +39,16 @@ export function Landing() {
         </div>
       </section>
       
-      <div className="-mt-1 sm:-mt-12">
+      <div className="-mt-1 sm:-mt-8">
         <BrandMarquee />
       </div>
 
       <section id="services" className="bg-paper py-14 sm:py-18">
         <div className="container-wide">
-          <p className="section-kicker">Why CAAT PowerBot</p>
-          <h2 className="section-title">One Trusted Partner. From Consultation to Lifetime Support</h2>
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="section-kicker">Why CAAT PowerBot</p>
+            <h2 className="section-title mx-auto">One Trusted Partner. From Consultation to Lifetime Support</h2>
+          </div>
           {/* <p className="section-copy">Start with the numbers that matter, then move forward with clear support across design, paperwork, installation and maintenance.</p> */}
           <PowerbotBenefits />
         </div>

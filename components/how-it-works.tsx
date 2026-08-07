@@ -144,14 +144,14 @@ export default function HowItWorks() {
   return (
     <section id="how-it-works" className="bg-night py-14 sm:py-18">
       <div className="container-wide">
-        <div>
+        <div className="mx-auto max-w-3xl text-center">
           <p className="section-kicker section-kicker-dark">
             How it works
           </p>
-          <h2 className="section-title section-title-light">
+          <h2 className="section-title section-title-light mx-auto">
             From sunlight to switchboard.
           </h2>
-          <p className="section-copy section-copy-light">
+          <p className="section-copy section-copy-light mx-auto">
             No black box. Four stages between the sun and your ceiling fan —
             here is exactly what each one does.
           </p>
