@@ -351,7 +351,7 @@ export default function SolarScene() {
           )}
         </button>
         <div className="mx-auto flex w-full max-w-[17rem] min-w-0 items-center gap-3">
-          <span className="shrink-0 font-mono text-[10px] tracking-widest text-white/60">MORNING</span>
+          <span className="shrink-0 font-mono text-[10px] tracking-widest text-white/70">MORNING</span>
           <input
             type="range"
             min={5}
@@ -369,7 +369,7 @@ export default function SolarScene() {
             }}
             className="h-1.5 min-w-0 flex-1 cursor-pointer appearance-none rounded-full bg-white/20 accent-gold"
           />
-          <span className="shrink-0 font-mono text-[10px] tracking-widest text-white/60">EVENING</span>
+          <span className="shrink-0 font-mono text-[10px] tracking-widest text-white/70">EVENING</span>
         </div>
       </div>
     </div>

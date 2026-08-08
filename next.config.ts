@@ -2,6 +2,11 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: { unoptimized: true },
+  experimental: {
+    // Keep the stylesheet on the initial document so the above-the-fold hero
+    // can paint without waiting for a separate render-blocking CSS request.
+    inlineCss: true,
+  },
   async redirects() {
     return [
       { source: "/residential-solar", destination: "/solutions", permanent: true },

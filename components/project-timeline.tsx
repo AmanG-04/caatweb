@@ -29,6 +29,7 @@ export function ProjectTimeline() {
     const viewport = viewportRef.current;
     if (!viewport) return;
     const target = Math.max(0, Math.min(steps.length - 1, nextStep));
+
     isProgrammaticScrollRef.current = true;
     setCurrentStep(target);
     viewport.scrollTo({ top: viewport.clientHeight * target, behavior: "smooth" });
@@ -41,6 +42,8 @@ export function ProjectTimeline() {
   };
 
   const handleWheel = (event: React.WheelEvent<HTMLDivElement>) => {
+    if (window.matchMedia("(max-width: 767px)").matches) return;
+
     const direction = Math.sign(event.deltaY);
     const currentStep = activeStepRef.current;
     if (!direction || (direction < 0 && currentStep === 0) || (direction > 0 && currentStep === steps.length - 1)) return;
@@ -76,7 +79,7 @@ export function ProjectTimeline() {
         </div>
         <div className="project-timeline-layout mt-0 grid gap-10 lg:gap-16">
           <div className="project-timeline-intro-column xl:max-w-none">
-<h3 className="section-title !mt-4 !max-w-none !text-2xl sm:!text-3xl md:!text-6xl">
+<h3 className="section-title !mt-4 !max-w-none !text-4xl sm:!text-5xl md:!text-6xl">
   Consultation&nbsp;to commissioning, handled.
 </h3>          <p className="section-copy text-sm sm:text-base">Five steps, one accountable team. Each scroll moves through one clear stage of your project.</p>
           <p className="project-timeline-hint" aria-hidden="true">SCROLL THROUGH THE STEPS <span>→</span></p>
@@ -99,7 +102,6 @@ export function ProjectTimeline() {
           <div ref={viewportRef} className="project-timeline-viewport" aria-label="Project delivery steps" onScroll={handleScroll} onWheel={handleWheel}>
             {steps.map(([number, title, body, duration], index) => (
               <article className={`project-timeline-step ${index === activeStep ? "is-active" : ""}`} data-step={index} key={number}>
-                {/* <div className="project-timeline-number">{number}</div> */}
                 <div className="project-timeline-content">
                   <p className="project-timeline-counter">STEP {number} / {String(steps.length).padStart(2, "0")}</p>
                   <h3>{title}</h3>

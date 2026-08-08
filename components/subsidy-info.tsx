@@ -21,6 +21,7 @@ const subsidyRows = [
 ];
 
 const eligibility = ["Residential rooftop", "Net metering", "MNRE/DISCOM-approved vendor"];
+const systemSizes = ["1 kW", "2 kW", "3 kW+"];
 
 export default function SubsidyInfo() {
   return (
@@ -56,17 +57,44 @@ export default function SubsidyInfo() {
             <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between sm:gap-5">
               <div>
                 <h3 className="text-xl font-black tracking-tight text-ink">Estimated support by system size</h3>
-                <p className="mt-1 text-sm text-ink/55">Total subsidy, with the contribution shown below.</p>
+                <p className="mt-1 text-sm text-ink/70">Total subsidy, with the contribution shown below.</p>
               </div>
-              <p className="max-w-[14rem] text-xs leading-5 text-ink/45 sm:text-right">Subject to current programme rules and approval</p>
+              <p className="max-w-[14rem] text-xs leading-5 text-ink/70 sm:text-right">Subject to current programme rules and approval</p>
             </div>
 
-            <div className="overflow-x-auto rounded-2xl border border-ink/10 bg-white shadow-soft">
+            <div className="grid gap-3 sm:hidden">
+              {subsidyRows.map((row) => (
+                <section key={row.state} className="overflow-hidden rounded-2xl border border-ink/10 bg-white shadow-soft">
+                  <h4 className="bg-night px-4 py-3 text-sm font-black tracking-tight text-white">{row.state}</h4>
+                  <table className="w-full border-collapse text-left">
+                    <thead className="border-b border-ink/10 bg-cream/70 text-[10px] font-bold uppercase tracking-[.12em] text-ink/70">
+                      <tr>
+                        <th scope="col" className="px-4 py-2.5">System size</th>
+                        <th scope="col" className="px-4 py-2.5">Estimated support</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {row.values.map((value, index) => (
+                        <tr key={`${row.state}-${systemSizes[index]}`} className="border-b border-ink/10 last:border-b-0">
+                          <th scope="row" className="px-4 py-3 text-sm font-bold text-ink">{systemSizes[index]}</th>
+                          <td className="px-4 py-3">
+                            <span className="block text-base font-black tracking-tight text-ink">{value.total}</span>
+                            <span className="mt-0.5 block text-[11px] font-semibold leading-4 text-ink/70">{value.detail}</span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </section>
+              ))}
+            </div>
+
+            <div className="hidden overflow-x-auto rounded-2xl border border-ink/10 bg-white shadow-soft sm:block">
               <table className="w-full min-w-[42rem] border-collapse">
                 <thead>
                   <tr className="bg-night text-white">
                     <th scope="col" className="w-[31%] px-5 py-4 text-left text-xs font-bold uppercase tracking-[.12em] text-white/70">State</th>
-                    {['1 kW', '2 kW', '3 kW+'].map((size) => (
+                    {systemSizes.map((size) => (
                       <th key={size} scope="col" className="w-[23%] border-l border-white/10 px-4 py-4 text-center text-base font-black tracking-tight">{size}</th>
                     ))}
                   </tr>
@@ -78,7 +106,7 @@ export default function SubsidyInfo() {
                       {row.values.map((value, index) => (
                         <td key={`${row.state}-${index}`} className="border-l border-ink/10 px-4 py-5 text-center">
                           <span className="block whitespace-nowrap text-base font-black tracking-tight text-ink">{value.total}</span>
-                          <span className="mt-1.5 block whitespace-nowrap text-[10px] font-semibold text-ink/45">{value.detail}</span>
+                          <span className="mt-1.5 block whitespace-nowrap text-[10px] font-semibold text-ink/70">{value.detail}</span>
                         </td>
                       ))}
                     </tr>
