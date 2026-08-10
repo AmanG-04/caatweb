@@ -12,7 +12,7 @@ type ProjectReference = {
   images: readonly [string, string?];
 };
 
-const projectImage = (fileName: string) => `/api/project-images/${fileName}`;
+const projectImage = (fileName: string) => `/testimonials/${fileName}`;
 
 // Site information and photographs are extracted from "Profile CAAT PowerBot LLP-Solar.pptx".
 // "xyz" is deliberately marked as a placeholder until each customer supplies an approved comment.
@@ -119,17 +119,17 @@ function ProjectMedia({ project }: { project: ProjectReference }) {
   );
 }
 
-function CustomerComment() {
-  return (
-    <div className="mt-7 border-l-2 border-lime bg-cream px-5 py-4">
-      <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[.15em] text-teal">
-        <MessageSquareQuote size={15} aria-hidden="true" /> Customer comment
-      </div>
-      <p className="mt-2 text-base font-bold leading-7 text-ink">xyz</p>
-      <p className="mt-1 text-xs leading-5 text-ink/55">Placeholder — replace with the customer’s approved comment.</p>
-    </div>
-  );
-}
+      // function CustomerComment() {
+      //   return (
+      //     <div className="mt-7 border-l-2 border-lime bg-cream px-5 py-4">
+      //       <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[.15em] text-teal">
+      //         <MessageSquareQuote size={15} aria-hidden="true" /> Customer comment
+      //       </div>
+      //       <p className="mt-2 text-base font-bold leading-7 text-ink">xyz</p>
+      //       <p className="mt-1 text-xs leading-5 text-ink/55">Placeholder — replace with the customer’s approved comment.</p>
+      //     </div>
+      //   );
+      // }
 
 function Project({ project, index }: { project: ProjectReference; index: number }) {
   const reversed = index % 2 === 1;
@@ -147,7 +147,7 @@ function Project({ project, index }: { project: ProjectReference; index: number 
           {project.date ? <span className="rounded-full border border-ink/10 bg-white px-3 py-2">{project.date}</span> : null}
         </div>
         {project.equipment ? <p className="mt-6 border-t border-ink/10 pt-5 text-sm leading-6 text-ink/60">{project.equipment}</p> : null}
-        <CustomerComment />
+        {/* <CustomerComment /> */}
       </div>
     </article>
   );
@@ -157,11 +157,6 @@ export function ProjectTestimonials() {
   return (
     <section id="references" className="overflow-hidden bg-paper py-16 sm:py-20">
       <div className="container-wide">
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="section-kicker">Client projects</p>
-          <h2 className="section-title mx-auto">Installed work, ready for your review.</h2>
-          <p className="section-copy mx-auto">Nine project references from our company profile. Solar, battery and solar-water projects appear first, followed by electrical and backup-power work.</p>
-        </div>
         <div className="mt-14 space-y-20 sm:mt-20 sm:space-y-28">
           {projects.map((project, index) => <Project key={project.client} project={project} index={index} />)}
         </div>

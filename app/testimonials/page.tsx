@@ -13,7 +13,9 @@ export const metadata: Metadata = {
 
 export default function TestimonialsPage() {
   return (
-    <PublicPage eyebrow="Client projects & testimonials" title="Real systems. Real places. Real work." description="Nine references from our company profile, with customer-comment spaces ready for approved feedback.">
+    <PublicPage
+    // eyebrow="Client projects & testimonials" title="Real systems. Real places. Real work." description="Nine references from our company profile, with customer-comment spaces ready for approved feedback."
+    >
       <ProjectTestimonials />
       <section className="bg-white py-16 text-center sm:py-20">
         <div className="container-wide">
