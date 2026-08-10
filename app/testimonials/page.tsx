@@ -1,20 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { ClientReferences } from "@/components/client-references";
+import { ProjectTestimonials } from "@/components/project-testimonials";
 import { PublicPage } from "@/components/public-page";
 import { buttonStyles } from "@/components/ui";
 
 export const metadata: Metadata = {
-  title: "Client References | CAAT PowerBot",
-  description: "Explore a selection of solar, storage and hybrid power systems delivered by CAAT PowerBot across Delhi NCR.",
+  title: "Client Projects & Testimonials | CAAT PowerBot",
+  description: "Explore nine CAAT PowerBot project references across Delhi NCR, including solar, storage, electrical and backup-power work.",
   alternates: { canonical: "/testimonials" },
 };
 
 export default function TestimonialsPage() {
   return (
-    <PublicPage eyebrow="Client references" title="Real systems. Real places. Real work." description="A selection of solar, storage and hybrid power projects delivered by CAAT PowerBot across Delhi NCR. We share references rather than invented review quotes.">
-      <ClientReferences />
+    <PublicPage eyebrow="Client projects & testimonials" title="Real systems. Real places. Real work." description="Nine references from our company profile, with customer-comment spaces ready for approved feedback.">
+      <ProjectTestimonials />
       <section className="bg-white py-16 text-center sm:py-20">
         <div className="container-wide">
           <p className="section-kicker">Your project</p>

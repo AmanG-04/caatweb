@@ -26,6 +26,10 @@
 		{
 			"binding": "BILLS_BUCKET",
 			"bucket_name": "caat-powerbot-bills"
+		},
+		{
+			"binding": "PROJECT_IMAGES_BUCKET",
+			"bucket_name": "caat-powerbot-project-images"
 		}
 	],
 	"observability": {
