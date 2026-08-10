@@ -1,4 +1,4 @@
-import { getEnv } from "@/lib/cloudflare";
+import { getEnvAsync } from "@/lib/cloudflare";
 
 export const runtime = "edge";
 
@@ -11,7 +11,7 @@ export async function GET(_: Request, context: { params: Promise<{ key: string }
     return new Response("Not found", { status: 404 });
   }
 
-  const bucket = getEnv().PROJECT_IMAGES_BUCKET;
+  const bucket = (await getEnvAsync()).PROJECT_IMAGES_BUCKET;
   if (!bucket?.get) {
     return new Response("Not found", { status: 404 });
   }

@@ -5,3 +5,4 @@ export type R2ObjectLike = { body: ReadableStream<Uint8Array>; httpMetadata?: { 
 export type R2BucketLike = { put(key: string, value: ArrayBuffer, options?: Record<string, unknown>): Promise<unknown>; get?(key: string): Promise<R2ObjectLike | null>; createMultipartUpload?: unknown };
 export type RuntimeEnv = { DB?: D1DatabaseLike; BILLS_BUCKET?: R2BucketLike; PROJECT_IMAGES_BUCKET?: R2BucketLike; AUTH_MODE?: string; ADMIN_LOGIN_ID?: string; ADMIN_LOGIN_PASSWORD?: string; NEXT_PUBLIC_SITE_URL?: string };
 export function getEnv(): RuntimeEnv { try { return getCloudflareContext().env as RuntimeEnv; } catch { return {}; } }
+export async function getEnvAsync(): Promise<RuntimeEnv> { try { return (await getCloudflareContext({ async: true })).env as RuntimeEnv; } catch { return {}; } }
