@@ -108,10 +108,10 @@ function ProjectMedia({ project }: { project: ProjectReference }) {
   return (
     <div className="relative min-h-[20rem] sm:min-h-[25rem] lg:min-h-[31rem]">
       <div className="absolute inset-y-0 left-0 w-[83%] overflow-hidden rounded-[1.75rem] bg-teal shadow-[0_22px_55px_rgba(16,42,42,.18)]">
-        <Image src={primaryImage} alt={`${project.client} project installation`} fill sizes="(min-width: 1024px) 43vw, 86vw" className="object-cover" unoptimized />
+        <Image src={primaryImage} alt={`${project.client} project installation`} fill sizes="(min-width: 1024px) 43vw, 86vw" className={primaryImage.endsWith("nelumbo-inverters.png") ? "object-contain bg-teal" : "object-cover"} unoptimized />
       </div>
       {secondaryImage ? (
-        <div className="absolute right-0 bottom-5 h-[46%] w-[45%] overflow-hidden rounded-[1.25rem] border-4 border-paper bg-white shadow-[0_16px_40px_rgba(16,42,42,.22)] sm:bottom-7 sm:border-[6px]">
+        <div className="absolute right-[-1rem] bottom-[-1rem] h-[66%] w-[45%] overflow-hidden rounded-[1.25rem] border-4 border-paper bg-white shadow-[0_16px_40px_rgba(16,42,42,.22)] sm:border-[6px]">
           <Image src={secondaryImage} alt={`${project.client} project detail`} fill sizes="(min-width: 1024px) 22vw, 43vw" className="object-cover" unoptimized />
         </div>
       ) : null}

@@ -20,7 +20,7 @@ const subsidyRows = [
   },
 ];
 
-const eligibility = ["Residential rooftop", "Net metering", "MNRE/DISCOM-approved vendor"];
+const eligibility = ["Residential rooftop", "Net metering"];
 const systemSizes = ["1 kW", "2 kW", "3 kW+"];
 
 export default function SubsidyInfo() {
@@ -34,7 +34,7 @@ export default function SubsidyInfo() {
         <div className="mt-9 grid gap-10 lg:grid-cols-[.68fr_1.32fr] lg:items-start lg:gap-16">
           <Reveal className="max-w-md lg:pt-7">
             <h2 className="section-title !mt-0 !text-3xl sm:!text-4xl">
-              Support for your rooftop solar plan.
+              Govt Support for your rooftop solar plan.
             </h2>
             <p className="section-copy !text-base">
               Eligible homeowners in Delhi, Uttar Pradesh, and Haryana can receive support under the PM Surya Ghar: Muft Bijli Yojana.
@@ -42,9 +42,9 @@ export default function SubsidyInfo() {
 
             <div className="mt-7 border-t border-ink/10 pt-5">
               <p className="font-mono text-[10px] font-bold uppercase tracking-[.18em] text-teal">Basic eligibility</p>
-              <ul className="mt-3 space-y-2.5">
+              <ul className="mt-3 flex flex-wrap gap-2.5">
                 {eligibility.map((item) => (
-                  <li key={item} className="flex items-center gap-2.5 text-sm font-semibold text-ink/65">
+                  <li key={item} className="flex items-center gap-2.5 rounded-full border border-ink/10 bg-white px-3 py-2 text-xs font-semibold text-ink/65">
                     <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-lime/70 text-teal"><Check size={12} strokeWidth={2.5} /></span>
                     {item}
                   </li>
