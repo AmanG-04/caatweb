@@ -22,6 +22,7 @@ const projects: readonly ProjectReference[] = [
     category: "Solar + BESS",
     system: "30 kWp hybrid solar power system with 40 kWh battery backup",
     location: "Noida",
+    date: "Nov 2025",
     scope: "Emergency BESS with Wi-Fi connectivity, configured to replace a 45 kVA DG set for the factory and office complex.",
     equipment: "Deye hybrid inverter · Joulecube 51.2 V, 100 Ah batteries",
     images: [projectImage("nelumbo-inverters.png"), projectImage("nelumbo-monitoring.png")],
