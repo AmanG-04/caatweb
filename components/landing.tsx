@@ -69,8 +69,8 @@ export function Landing() {
               <Image src={logo} alt="CAAT PowerBot" width={260} height={260} className="mx-auto h-44 w-44 object-contain md:h-52 md:w-52" />
             </div>
             <div>
-              <h2 className="section-title !mt-0">Practical power solutions built around your property.</h2>
-              <p className="section-copy">CAAT PowerBot LLP helps homes and businesses in Delhi NCR design and install rooftop solar systems, maintain them, and navigate the steps from assessment through commissioning.</p>
+              <h2 className="section-title !mt-0">Electrical expertise built around reliable installations.</h2>
+              <p className="section-copy">Founded in August 2020, CAAT PowerBot LLP is an electrical engineering, trading and contracting company delivering rooftop solar solutions from assessment and design through installation, commissioning and maintenance, alongside expertise in power generation, distribution, emergency power, and automation and control systems. Our experienced team serves residential, commercial, industrial and infrastructure projects, making every installation efficient, safe and reliable.</p>
             </div>
           </div>
         </div>

@@ -21,6 +21,40 @@ const serviceList = [
   "Emergency generators",
 ];
 
+const socialLinks = [
+  { label: "Instagram", href: "https://www.instagram.com/caat.powerbot/", platform: "instagram" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/company/caat-powerbot-llp/", platform: "linkedin" },
+  { label: "Facebook", href: "https://www.facebook.com/people/CAAT-PowerBot-LLP/100093259755204/", platform: "facebook" },
+] as const;
+
+type SocialPlatform = "instagram" | "linkedin" | "facebook";
+
+function SocialLogo({ platform }: { platform: SocialPlatform }) {
+  if (platform === "instagram") {
+    return (
+      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+        <rect x="3" y="3" width="18" height="18" rx="5" />
+        <circle cx="12" cy="12" r="4" />
+        <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+      </svg>
+    );
+  }
+
+  if (platform === "linkedin") {
+    return (
+      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
+        <path d="M5.1 8.7h3.2V19H5.1V8.7Zm1.6-5a1.9 1.9 0 1 1 0 3.8 1.9 1.9 0 0 1 0-3.8ZM10.8 8.7h3v1.4h.1c.4-.8 1.5-1.7 3.1-1.7 3.3 0 3.9 2.2 3.9 5.1V19h-3.2v-4.9c0-1.2 0-2.8-1.7-2.8s-2 1.3-2 2.7V19h-3.2V8.7Z" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
+      <path d="M13.6 21v-8h2.7l.4-3h-3.1V8.1c0-.9.3-1.5 1.6-1.5h1.7V3.9c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.2V10H7.3v3h2.8v8h3.5Z" />
+    </svg>
+  );
+}
+
 function SunDivider() {
   return (
     <div className="flex items-center gap-4" aria-hidden="true">
@@ -66,6 +100,25 @@ export default function Footer() {
               Solar EPC for homes, housing societies and industry — from
               estimate to switch-on, with support after installation.
             </p>
+            <div className="mt-6">
+              <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">
+                Follow our work
+              </p>
+              <nav aria-label="Social media links" className="mt-3 flex gap-2.5">
+                {socialLinks.map(({ label, href, platform }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`CAAT PowerBot on ${label}`}
+                    className="group inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white/75 transition-all duration-200 hover:-translate-y-1 hover:border-gold hover:bg-gold hover:text-night focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+                  >
+                    <SocialLogo platform={platform} />
+                  </a>
+                ))}
+              </nav>
+            </div>
           </div>
 
           <nav aria-label="Footer quick links">
