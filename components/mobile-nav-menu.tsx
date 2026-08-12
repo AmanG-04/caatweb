@@ -31,10 +31,10 @@ export function MobileNavMenu() {
   }, []);
 
   return (
-    <details ref={menuRef} className="site-header-menu xl:hidden">
+    <details ref={menuRef} className="site-header-menu lg:hidden">
       <summary aria-label="Open navigation menu"><span>Menu</span><ChevronDown size={14} aria-hidden="true" /></summary>
       <div className="site-header-menu-panel" onClick={closeMenu}>
-        <Link href="/">Home</Link>
+        {/* <Link href="/">Home</Link> */}
         <Link href="/about-us">About us</Link>
         <Link href="/solutions">Solutions</Link>
         <Link href="/testimonials">Testimonials</Link>

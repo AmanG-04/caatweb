@@ -18,7 +18,7 @@ export function Landing() {
   return (
     <main className="">
       <SiteHeader fixed />
-      <div className="h-16 sm:h-14" aria-hidden="true" />
+      <div className="h-16 sm:h-10" aria-hidden="true" />
 
       <section className="hero-flow relative overflow-hidden">
         <div className="container-wide relative z-10 grid items-center gap-6 py-8 sm:gap-10 sm:py-12 lg:min-h-[590px] lg:gap-15 lg:grid-cols-[.86fr_1.14fr] lg:py-2">
@@ -39,7 +39,7 @@ export function Landing() {
         </div>
       </section>
       
-      <div className="-mt-1 sm:-mt-8">
+      <div className="-mt-1 sm:-mt-13">
         <BrandMarquee />
       </div>
 

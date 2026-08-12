@@ -18,7 +18,7 @@ export function SiteHeader({ context, fixed = false }: SiteHeaderProps) {
         <Image src={logo} alt="CAAT PowerBot logo" width={48} height={48} className="h-8 w-8 shrink-0 object-contain sm:h-11 sm:w-11" priority />
         <span className="truncate text-[13px] font-black tracking-tight sm:text-lg">CAAT PowerBot <span className="hidden text-teal sm:inline">LLP</span></span>
       </Link>
-      <div className="hidden gap-4 text-sm font-semibold xl:flex">
+      <div className="hidden gap-4 text-sm font-semibold lg:flex">
         <Link href="/about-us">About us</Link>
         <Link href="/solutions">Solutions</Link>
         <Link href="/testimonials">Testimonials</Link>

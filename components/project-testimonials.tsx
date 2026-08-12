@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { MapPin, MessageSquareQuote } from "lucide-react";
+import { MapPin } from "lucide-react";
 
 type ProjectReference = {
   client: string;
@@ -14,17 +14,17 @@ type ProjectReference = {
 
 const projectImage = (fileName: string) => `/testimonials/${fileName}`;
 
-// Site information and photographs are extracted from "Profile CAAT PowerBot LLP-Solar.pptx".
-// "xyz" is deliberately marked as a placeholder until each customer supplies an approved comment.
+// Project descriptions are summarized only from the written project details in
+// Profile CAAT PowerBot LLP-Solar.pptx. The images are supporting project media.
 const projects: readonly ProjectReference[] = [
   {
     client: "Nelumbo Technologies R&D Centre",
-    category: "Solar + BESS",
-    system: "30 kWp hybrid solar power system with 40 kWh battery backup",
+    category: "Emergency BESS",
+    system: "30 kWp hybrid inverter with 40 kWh LFP battery emergency BESS",
     location: "Noida",
     date: "Nov 2025",
-    scope: "Emergency BESS with Wi-Fi connectivity, configured to replace a 45 kVA DG set for the factory and office complex.",
-    equipment: "Deye hybrid inverter · Joulecube 51.2 V, 100 Ah batteries",
+    scope: "Wi-Fi-connected emergency BESS replacing a 45 kVA DG set for the factory and office complex.",
+    equipment: "Deye hybrid inverter · Joulecube 51.2 V, 100 Ah battery",
     images: [projectImage("nelumbo-inverters.png"), projectImage("nelumbo-monitoring.png")],
   },
   {
@@ -32,28 +32,28 @@ const projects: readonly ProjectReference[] = [
     category: "Rooftop solar",
     system: "35 kWp rooftop solar power system",
     location: "Karkardooma, Delhi",
-    date: "April 2025",
-    scope: "The profile notes a repeat order for an additional 55 kWp under execution.",
-    equipment: "Jakson N-Type 585 W solar panels · K-Solare inverter",
+    date: "Apr 2025",
+    scope: "Repeat order of 55 kWp under execution.",
+    equipment: "Jakson N-Type 585 Wp solar panels · K-Solare inverter",
     images: [projectImage("abhinandan-rooftop.png"), projectImage("abhinandan-site.png")],
   },
   {
     client: "Bhritii Healthcare",
-    category: "Solar + backup",
-    system: "25 kWp rooftop solar with 12 kWh battery standby power",
+    category: "Rooftop solar + emergency standby",
+    system: "25 kWp rooftop solar power system with 12 kWh lithium battery-pack inverter",
     location: "Delhi",
-    date: "August 2024",
-    scope: "A reliable, non-polluting backup-power solution for the healthcare facility.",
-    equipment: "Saatvik solar panels · K-Solare inverter · OGO Energy lithium battery",
+    date: "Aug 2024",
+    scope: "Emergency standby power. The customer wanted a reliable, non-polluting, environment-friendly backup-power solution.",
+    equipment: "Saatvik solar panel · K-Solare inverter · OGO lithium battery · Invergy hybrid inverter",
     images: [projectImage("bhritii-rooftop.png"), projectImage("bhritii-battery.png")],
   },
   {
     client: "Coco County",
-    category: "Rooftop solar",
+    category: "Solar power system",
     system: "18 kWp solar power system",
     location: "Greater Noida",
-    date: "January 2023",
-    scope: "A rooftop installation planned around the client requirement to limit visibility of solar panels and support structure.",
+    date: "Jan 2023",
+    scope: "The customer did not want to see the solar plates or structure in the elevation, even from a far distance.",
     images: [projectImage("coco-county-rooftop.png"), projectImage("coco-county-building.png")],
   },
   {
@@ -61,18 +61,19 @@ const projects: readonly ProjectReference[] = [
     category: "Solar water heating",
     system: "27,000 LPD solar water-heating system",
     location: "Noida",
-    date: "June 2024",
-    scope: "Solar water-heating installation for County Group.",
+    date: "Jun 2024",
+    scope: "Solar water-heating system for County Group.",
     images: [projectImage("county-107-water-heating.png"), projectImage("county-107-site.png")],
   },
+  
   {
     client: "VNA Hospital",
     category: "Electrical modernisation",
-    system: "Turnkey electrical-modernisation work for an approximately 10,000 sq ft facility",
+    system: "Turnkey electrical modernisation work for approximately 10,000 sq ft",
     location: "Navjeevan Vihar, Delhi",
-    date: "August 2022",
-    scope: "Design, internal and external wiring, and supply and installation of major electrical equipment.",
-    equipment: "82.5 kVA DG set · AMF and main LT panels · 5 kVA UPS · CCTV · intercom",
+    date: "Aug 2022",
+    scope: "Design and engineering; internal and external wiring; supply and installation of major equipment.",
+    equipment: "82.5 kVA DG set · AMF panel · main LT panel · 5 kVA UPS · copper earthing · 200 LPD solar water heater · LED lights · CCTV · intercom · Wi-Fi routers and switches · Kirloskar · Schneider · Vertiv · Phillips · Racold · Bonton · Tricolite",
     images: [projectImage("vna-hospital-modernisation.png")],
   },
   {
@@ -80,25 +81,25 @@ const projects: readonly ProjectReference[] = [
     category: "Genset installation",
     system: "2 × 1,010 kVA genset installation with heat exchanger",
     location: "Chattarpur, Delhi",
-    date: "August 2022",
+    date: "Aug 2022",
     scope: "Basement genset installation with a cooling tower at rooftop level and a 100 m high chimney exhaust stack.",
     images: [projectImage("risland-genset.png"), projectImage("risland-chimney.png")],
   },
-  {
-    client: "ILC Infra",
-    category: "DG-set installation",
-    system: "2 × 1,010 kVA DG-set installation",
-    location: "Sector 62, Gurgaon",
-    scope: "DG-set installation for the ILC Infra site.",
-    images: [projectImage("ilc-infra-generator.png"), projectImage("ilc-infra-site.png")],
-  },
+  // {
+  //   client: "ILC Infra",
+  //   category: "DG-set installation",
+  //   system: "2 × 1,010 kVA DG-set installation",
+  //   location: "Sector 62, Gurgaon",
+  //   scope: "DG-set installation at the ILC Infra site.",
+  //   images: [projectImage("ilc-infra-generator.png"), projectImage("ilc-infra-site.png")],
+  // },
   {
     client: "HIMT College",
-    category: "Switchgear upgrade",
+    category: "Switchgear + DG AMF",
     system: "Replacement of old switchgear panel and DG AMF conversion",
     location: "Greater Noida",
-    date: "July 2023",
-    scope: "Resolved frequent tripping, wire burning, blown fuses, and load imbalance. The profile records a complete-system shutdown of less than 12 hours.",
+    date: "Jul 2023",
+    scope: "Frequent tripping, wire burning, blown fuses and load imbalance were addressed through a new panel, proper jointing of old cables, engineering, design, planning and execution. Complete-system shutdown was less than 12 hours, with no loss of productivity at the college.",
     images: [projectImage("himt-before.png"), projectImage("himt-after.png")],
   },
 ];
@@ -120,18 +121,6 @@ function ProjectMedia({ project }: { project: ProjectReference }) {
   );
 }
 
-      // function CustomerComment() {
-      //   return (
-      //     <div className="mt-7 border-l-2 border-lime bg-cream px-5 py-4">
-      //       <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[.15em] text-teal">
-      //         <MessageSquareQuote size={15} aria-hidden="true" /> Customer comment
-      //       </div>
-      //       <p className="mt-2 text-base font-bold leading-7 text-ink">xyz</p>
-      //       <p className="mt-1 text-xs leading-5 text-ink/55">Placeholder — replace with the customer’s approved comment.</p>
-      //     </div>
-      //   );
-      // }
-
 function Project({ project, index }: { project: ProjectReference; index: number }) {
   const reversed = index % 2 === 1;
 
@@ -148,7 +137,6 @@ function Project({ project, index }: { project: ProjectReference; index: number 
           {project.date ? <span className="rounded-full border border-ink/10 bg-white px-3 py-2">{project.date}</span> : null}
         </div>
         {project.equipment ? <p className="mt-6 border-t border-ink/10 pt-5 text-sm leading-6 text-ink/60">{project.equipment}</p> : null}
-        {/* <CustomerComment /> */}
       </div>
     </article>
   );
