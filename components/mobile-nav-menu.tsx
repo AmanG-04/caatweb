@@ -2,11 +2,15 @@
 
 import Link from "next/link";
 import { ChevronDown, MessageCircle } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { defaultWhatsappMessage, site } from "@/lib/site";
 
 export function MobileNavMenu() {
+  const pathname = usePathname();
   const menuRef = useRef<HTMLDetailsElement>(null);
+
+  const isCurrentPath = (href: string) => pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
 
   const closeMenu = () => {
     menuRef.current?.removeAttribute("open");
@@ -35,11 +39,11 @@ export function MobileNavMenu() {
       <summary aria-label="Open navigation menu"><span>Menu</span><ChevronDown size={14} aria-hidden="true" /></summary>
       <div className="site-header-menu-panel" onClick={closeMenu}>
         {/* <Link href="/">Home</Link> */}
-        <Link href="/about-us">About us</Link>
-        <Link href="/solutions">Solutions</Link>
-        <Link href="/testimonials">Testimonials</Link>
-        <Link href="/blogbot">BlogBot</Link>
-        <Link href="/contact">Contact</Link>
+        <Link href="/about-us" aria-current={isCurrentPath("/about-us") ? "page" : undefined}>About us</Link>
+        <Link href="/solutions" aria-current={isCurrentPath("/solutions") ? "page" : undefined}>Solutions</Link>
+        <Link href="/testimonials" aria-current={isCurrentPath("/testimonials") ? "page" : undefined}>Testimonials</Link>
+        <Link href="/blogbot" aria-current={isCurrentPath("/blogbot") ? "page" : undefined}>BlogBot</Link>
+        <Link href="/contact" aria-current={isCurrentPath("/contact") ? "page" : undefined}>Contact</Link>
         <a href={site.whatsapp(defaultWhatsappMessage)} target="_blank" rel="noopener noreferrer"><MessageCircle size={16} /> Free online consultation</a>
       </div>
     </details>

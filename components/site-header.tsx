@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ArrowUpRight, MessageCircle } from "lucide-react";
 import logo from "../companyinfo/caatlogo-96.webp";
 import { defaultWhatsappMessage, site } from "@/lib/site";
@@ -11,24 +14,38 @@ type SiteHeaderProps = {
   fixed?: boolean;
 };
 
+const navigationLinks = [
+  { label: "About us", href: "/about-us" },
+  { label: "Solutions", href: "/solutions" },
+  { label: "Testimonials", href: "/testimonials" },
+  { label: "BlogBot", href: "/blogbot" },
+  { label: "Contact", href: "/contact" },
+];
+
+function isCurrentPath(pathname: string, href: string) {
+  return pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
+}
+
 export function SiteHeader({ context, fixed = false }: SiteHeaderProps) {
+  const pathname = usePathname();
+  const isEstimatePage = pathname === "/quote" || pathname.startsWith("/quote/");
+
   return (
     <nav className={`site-header container-wide z-50 flex items-center justify-between gap-3 bg-cream/95 py-3 backdrop-blur-md sm:gap-6 sm:py-4 ${fixed ? "site-header-fixed" : ""}`} aria-label="Primary navigation">
-      <Link href="/" className="flex min-w-0 items-center gap-2 sm:gap-2.5" aria-label="CAAT PowerBot LLP home">
+      <Link href="/" className={`flex min-w-0 items-center gap-2 sm:gap-2.5 ${pathname === "/" ? "site-header-home-active" : ""}`} aria-label="CAAT PowerBot LLP home" aria-current={pathname === "/" ? "page" : undefined}>
         <Image src={logo} alt="CAAT PowerBot logo" width={48} height={48} className="h-8 w-8 shrink-0 object-contain sm:h-11 sm:w-11" priority />
         <span className="truncate text-[13px] font-black tracking-tight sm:text-lg">CAAT PowerBot <span className="hidden text-teal sm:inline">LLP</span></span>
       </Link>
-      <div className="hidden gap-4 text-sm font-semibold lg:flex">
-        <Link href="/about-us">About us</Link>
-        <Link href="/solutions">Solutions</Link>
-        <Link href="/testimonials">Testimonials</Link>
-        <Link href="/blogbot">BlogBot</Link>
-        <Link href="/contact">Contact</Link>
+      <div className="site-header-links hidden gap-4 text-sm font-semibold lg:flex">
+        {navigationLinks.map(({ label, href }) => {
+          const active = isCurrentPath(pathname, href);
+          return <Link key={href} href={href} aria-current={active ? "page" : undefined}>{label}</Link>;
+        })}
       </div>
       {context ? <span className="site-header-context text-xs font-bold uppercase tracking-[.14em] text-ink/50">{context}</span> : <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
         <MobileNavMenu />
         <a href={site.whatsapp(defaultWhatsappMessage)} target="_blank" rel="noopener noreferrer" className={buttonStyles("outline", "site-header-consultation hidden min-h-10 gap-1.5 px-3 text-xs sm:min-h-11 sm:px-4 sm:text-sm lg:inline-flex")}><MessageCircle size={15} />Consultation</a>
-        <Link href="/quote" className={buttonStyles("primary", "site-header-cta min-h-9 gap-1 px-2.5 text-[11px] sm:min-h-11 sm:gap-1.5 sm:px-4 sm:text-sm")}><span className="sm:hidden">Estimate</span><span className="hidden sm:inline">Get estimate</span><ArrowUpRight size={14} /></Link>
+        <Link href="/quote" className={buttonStyles("primary", `site-header-cta min-h-9 gap-1 px-2.5 text-[11px] sm:min-h-11 sm:gap-1.5 sm:px-4 sm:text-sm ${isEstimatePage ? "site-header-cta-active" : ""}`)} aria-current={isEstimatePage ? "page" : undefined}><span className="sm:hidden">Estimate</span><span className="hidden sm:inline">Get estimate</span><ArrowUpRight size={14} /></Link>
       </div>}
     </nav>
   );

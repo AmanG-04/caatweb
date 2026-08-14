@@ -14,15 +14,20 @@ body { margin: 0; overflow-x: hidden; background: var(--cream); color: var(--ink
 .section-copy { margin-top: 1rem; max-width: 42rem; color: rgba(16,42,42,.68); font-size: 1.05rem; line-height: 1.75; }
 .section-copy-light { color: rgba(255,255,255,.68); }
 .grid-lines { background-image: linear-gradient(rgba(16,42,42,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(16,42,42,.06) 1px, transparent 1px); background-size: 44px 44px; }
+.about-hero-grid { position: absolute; z-index: -1; inset: -4rem 0; pointer-events: none; opacity: .7; background-image: radial-gradient(circle at 78% 22%, rgba(216,243,106,.6), transparent 20rem), linear-gradient(rgba(16,42,42,.055) 1px, transparent 1px), linear-gradient(90deg, rgba(16,42,42,.055) 1px, transparent 1px); background-position: center center, 0 0, 0 0; background-size: auto, 42px 42px, 42px 42px; -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 76%, transparent 100%); mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 76%, transparent 100%); animation: about-grid-drift 32s linear infinite; }
+.about-grid-continuation { position: absolute; z-index: 0; inset: -3rem 0 0; pointer-events: none; opacity: .36; background-image: linear-gradient(rgba(16,42,42,.055) 1px, transparent 1px), linear-gradient(90deg, rgba(16,42,42,.055) 1px, transparent 1px); background-position: 0 0, 0 0; background-size: 42px 42px; -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 20%, #000 48%, transparent 100%); mask-image: linear-gradient(to bottom, transparent 0%, #000 20%, #000 48%, transparent 100%); animation: about-grid-drift 32s linear infinite; }
+.about-story-section > .container-wide { position: relative; z-index: 1; }
 .hero-flow { isolation: isolate; }
 .hero-copy-title, .hero-copy-body, .hero-copy-actions, .hero-scene { opacity: 1; }
 .hero-title-highlight { display: inline-block; color: #0f766e; background: linear-gradient(100deg, #0f766e 0%, #0f766e 36%, #d8f36a 50%, #0f766e 64%, #0f766e 100%); background-size: 230% 100%; background-position: 100% 50%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: hero-title-pulse 9s ease-in-out infinite; }
 .site-header { position: sticky; top: 1rem; width: min(1190px, calc(100% - 30px)); padding-inline: 1.25rem; isolation: isolate; border: 1px solid rgba(16,42,42,.1); border-radius: 1.5rem; box-shadow: 0 16px 45px rgba(16,42,42,.14), 0 2px 8px rgba(16,42,42,.06); }
 .site-header::after { content: ""; position: absolute; z-index: -1; inset: 0; border-radius: inherit; background: linear-gradient(110deg, rgba(255,255,255,.55), transparent 35%, rgba(216,243,106,.12)); pointer-events: none; }
-.site-header > div > a { position: relative; transition: color .2s ease, transform .2s ease; }
-.site-header > div > a::after { content: ""; position: absolute; right: 0; bottom: -.45rem; left: 0; height: 2px; border-radius: 999px; background: #0f766e; transform: scaleX(0); transform-origin: right; transition: transform .24s cubic-bezier(.22,1,.36,1); }
-.site-header > div > a:hover { color: #0f766e; transform: translateY(-1px); }
-.site-header > div > a:hover::after { transform: scaleX(1); transform-origin: left; }
+.site-header-links > a { position: relative; transition: color .2s ease, transform .2s ease; }
+.site-header-links > a::after { content: ""; position: absolute; right: 0; bottom: -.45rem; left: 0; height: 2px; border-radius: 999px; background: #0f766e; transform: scaleX(0); transform-origin: right; transition: transform .24s cubic-bezier(.22,1,.36,1); }
+.site-header-links > a:hover, .site-header-links > a[aria-current="page"] { color: #0f766e; transform: translateY(-1px); }
+.site-header-links > a:hover::after, .site-header-links > a[aria-current="page"]::after { transform: scaleX(1); transform-origin: left; }
+.site-header-home-active { color: #0f766e; }
+.site-header-cta-active { box-shadow: 0 0 0 3px rgba(15,118,110,.2), 0 8px 20px rgba(216,243,106,.32); }
 .site-header-cta { border-radius: 999px; box-shadow: 0 8px 20px rgba(216,243,106,.32); transition: transform .2s ease, box-shadow .2s ease; }
 .site-header-cta:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 12px 26px rgba(216,243,106,.48); }
 .site-header-context { min-width: 9rem; text-align: right; }
@@ -36,12 +41,14 @@ body { margin: 0; overflow-x: hidden; background: var(--cream); color: var(--ink
 .site-header-menu-panel a { display: flex; align-items: center; gap: .55rem; border-bottom: 1px solid rgba(16,42,42,.08); padding: .8rem 1rem; color: #102a2a; font-size: .9rem; font-weight: 700; text-decoration: none; }
 .site-header-menu-panel a:last-child { border-bottom: 0; background: rgba(216,243,106,.28); color: #0b625c; }
 .site-header-menu-panel a:hover { background: rgba(15,118,110,.07); }
+.site-header-menu-panel a[aria-current="page"] { background: rgba(15,118,110,.1); color: #0b625c; }
 .site-header-fixed { position: fixed; top: 1rem; right: 0; left: 0; margin-inline: auto; background: rgba(247,248,242,.82); box-shadow: 0 10px 28px rgba(16,42,42,.10), 0 1px 3px rgba(16,42,42,.05); }
 .landing-header-space { height: 5.5rem; }
 .brand-marquee { position: relative; z-index: 0; isolation: isolate; }
 @media (max-width: 640px) { .site-header-context { min-width: 0; max-width: 9rem; text-align: right; font-size: .62rem; } }
 @media (max-width: 639px) { .site-header { top: .6rem; width: calc(100% - 20px); padding-inline: .65rem; border-radius: 1.25rem; } .site-header-menu summary { padding-inline: .55rem; font-size: .68rem; } .site-header-menu-panel { top: 4.7rem; } .section-title { font-size: clamp(2rem, 10vw, 2.5rem); line-height: 1.05; } .section-copy { font-size: 1rem; line-height: 1.65; } .hero-scene .solar-scene-card { border-radius: 1.25rem; } .hero-scene .solar-scene-artwork { transform: scale(1.08); transform-origin: 100% 54%; } }
 @keyframes hero-title-pulse { 0%, 100% { background-position: 100% 50%; } 50% { background-position: 0% 50%; } }
+@keyframes about-grid-drift { from { background-position: center center, 0 0, 0 0; } to { background-position: center center, 42px 42px, -42px 42px; } }
 .bg-night { background-color: #102a2a; }
 .bg-dusk\/50 { background-color: rgba(15,118,110,.5); }
 .text-gold { color: #d8f36a; }
@@ -176,4 +183,4 @@ body { margin: 0; overflow-x: hidden; background: var(--cream); color: var(--ink
 @media (min-width: 640px) { .quote-form-panel { border-width: 10px; } }
 @media (max-width: 639px) { .subsidy-steps { display: grid; justify-content: stretch; gap: 0; padding: .6rem 1rem; } .subsidy-step { position: relative; display: grid; grid-template-columns: 2.5rem minmax(0, 1fr); gap: .85rem; align-items: center; min-height: 3.8rem; } .subsidy-step-content { display: contents; } .subsidy-step-content > span:first-child { grid-column: 1; grid-row: 1; width: 2.5rem; height: 2.5rem; } .subsidy-step-content > span:last-child { grid-column: 2; grid-row: 1; font-size: .78rem; line-height: 1.3; } .subsidy-step-arrow { grid-column: 1; grid-row: 2; justify-self: center; width: 1.25rem; height: 1rem; margin-block: -.15rem .1rem; transform-origin: center; animation-name: subsidy-arrow-down; } .subsidy-step:last-child .subsidy-step-arrow { display: none; } }
 @media (max-width: 767px) { .brand-marquee-track { animation-duration: 42s; } .reference-column { animation-duration: 62s; } .reference-column-slow { animation-duration: 72s; } .project-timeline-step h3 { font-size: clamp(1.7rem, 8vw, 2.2rem); } .project-timeline-step p { font-size: 1rem; line-height: 1.65; } .project-timeline-hint { margin-top: 1.25rem; } }
-@media (prefers-reduced-motion: reduce) { .flow-rays path, .flow-sun, .flow-electricity, .flow-bulb, .flow-window-frame, .flow-energy-dot, .reference-column, .brand-marquee-track, .energy-dash, .subsidy-step-arrow, .subsidy-step-arrow path, .site-header, .hero-title-highlight, .floating-whatsapp, .faq-chevron, .faq-answer { animation: none; transition: none; } .hero-title-highlight { background-position: 50% 50%; } }
+@media (prefers-reduced-motion: reduce) { .flow-rays path, .flow-sun, .flow-electricity, .flow-bulb, .flow-window-frame, .flow-energy-dot, .reference-column, .brand-marquee-track, .energy-dash, .subsidy-step-arrow, .subsidy-step-arrow path, .site-header, .hero-title-highlight, .about-hero-grid, .about-grid-continuation, .floating-whatsapp, .faq-chevron, .faq-answer { animation: none; transition: none; } .hero-title-highlight { background-position: 50% 50%; } }

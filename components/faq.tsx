@@ -9,7 +9,7 @@ export const faqs = [
   },
   {
     q: "How much roof space do I need?",
-    a: "Plan on roughly 80 sq ft of shadow-free roof per kW. A typical 3 kW home system needs about 240 sq ft — a modest terrace. Water tanks, parapet walls and neighbouring buildings all cast shadows that matter, which is why we do a shadow analysis before quoting rather than guessing from a satellite photo.",
+    a: "Plan on roughly 60 sq ft of shadow-free roof per kW. A typical 3 kW home system needs about 180 sq ft — a modest terrace. Water tanks, parapet walls and neighbouring buildings all cast shadows that matter, which is why we do a shadow analysis before quoting rather than guessing from a satellite photo.",
   },
   {
     q: "What happens during monsoon and at night?",
