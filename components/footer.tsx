@@ -14,11 +14,9 @@ const quickLinks = [
 
 const serviceList = [
   "Rooftop solar installation",
-  "Solar water heaters",
-  "Maintenance & AMC",
-  "Energy audits & net metering",
-  "EV charging points",
-  "Emergency generators",
+  "Solar water heaters","BESS with Lithium-ion batteries",
+  "EV charger",
+  "Diesel & Gas generators","Maintenance & AMC",
 ];
 
 const socialLinks = [
@@ -169,14 +167,14 @@ export default function Footer() {
                   Free online consultation
                 </a>
               </li>
-              <li>
+              {/* <li>
                 <a
                   href={`tel:+${site.phoneRaw}`}
                   className="font-mono text-sm text-white/70 transition-colors hover:text-gold-soft"
                 >
                   {site.phoneDisplay}
                 </a>
-              </li>
+              </li> */}
               <li>
                 <a
                   href={`mailto:${site.email}`}
@@ -187,7 +185,7 @@ export default function Footer() {
               </li>
             </ul>
             <p className="mt-5 max-w-[220px] text-xs leading-relaxed text-white/60">
-              Mon–Fri, 10 am – 5 pm IST. Free online consultations via WhatsApp.
+              Mon–Fri, 10 am – 5 pm IST. 
             </p>
           </div>
         </div>
