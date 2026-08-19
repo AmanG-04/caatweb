@@ -176,7 +176,7 @@ export default function HowItWorks() {
                 <h3 className="mt-1 text-lg font-black tracking-tight text-white">
                   {step.title}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-white/75">
+                <p className="mt-2 text-base leading-7 text-white/75">
                   {step.text}
                 </p>
               </div>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { PageReveal } from "@/components/page-reveal";
 export const metadata: Metadata = {
   metadataBase: new URL("https://caatpowerbot.com"),
   title: "CAAT PowerBot LLP | Rooftop Solar in Delhi NCR",
@@ -8,4 +9,4 @@ export const metadata: Metadata = {
   icons: { icon: "/icon.png" },
   openGraph: { title: "Access to green energy made simple | CAAT PowerBot LLP", description: "Rooftop solar systems for homes and businesses in Delhi NCR.", type: "website" },
 };
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) { return <html lang="en" data-scroll-behavior="smooth"><body>{children}</body></html>; }
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) { return <html lang="en" data-scroll-behavior="smooth"><body><PageReveal>{children}</PageReveal></body></html>; }

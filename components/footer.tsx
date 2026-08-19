@@ -9,7 +9,7 @@ const quickLinks = [
   { label: "BlogBot", href: "/blogbot" },
   { label: "Contact", href: "/contact" },
   { label: "Savings estimate", href: "/quote" },
-  { label: "Free online consultation", href: site.whatsapp(defaultWhatsappMessage), external: true },
+  { label: "Online consultation", href: site.whatsapp(defaultWhatsappMessage), external: true },
 ];
 
 const serviceList = [
@@ -164,7 +164,7 @@ export default function Footer() {
                   rel="noopener noreferrer"
                   className="text-sm text-white/70 transition-colors hover:text-gold-soft"
                 >
-                  Free online consultation
+                  Online consultation
                 </a>
               </li>
               {/* <li>

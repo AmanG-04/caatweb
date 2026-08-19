@@ -26,7 +26,7 @@ export default function LeadCta() {
             rel="noopener noreferrer"
             className={buttonStyles("outline", "gap-2 border-white/25 bg-white/10 text-white hover:bg-white/15")}
           >
-            <MessageCircle size={17} /> Free online consultation
+            <MessageCircle size={17} /> Online consultation
           </a>
         </div>
       </div>

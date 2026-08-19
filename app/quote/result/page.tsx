@@ -86,7 +86,7 @@ export default function Result() {
         <div className="grid min-h-[calc(100vh-9rem)] place-items-center p-5">
           <Card className="max-w-lg border border-ink/10 p-8 text-center sm:p-10">
             <p className="section-kicker">Solar estimate</p>
-            <h1 className="mt-5 text-3xl font-black tracking-tight">No estimate found on this device.</h1>
+              <h1 className="text-3xl font-black leading-[1.02] tracking-[-.045em]">No estimate found on this device.</h1>
             <p className="mt-4 leading-7 text-ink/65">Complete the calculator first and your result will appear here.</p>
             <Link href="/quote" className={buttonStyles("primary", "mt-7 gap-2")}>
               Calculate my savings <ArrowUpRight size={16} />
@@ -115,7 +115,7 @@ export default function Result() {
             <Card className="bg-ink text-cream">
               <PanelsTopLeft className="text-lime" />
               <p className="mt-8 text-sm text-cream/60">Recommended system</p>
-              <b className="text-4xl">{q.systemSizeKw} kW</b>
+              <b className="text-4xl leading-none tracking-[-.045em]">{q.systemSizeKw} kW</b>
               <p className="mt-2 text-sm text-cream/60">
                 {q.panelsRequired} panels · {q.roofAreaSqFt} sq ft
               </p>
@@ -123,7 +123,7 @@ export default function Result() {
             <Card>
               <WalletCards className="text-teal" />
               <p className="mt-8 text-sm text-ink/50">Monthly savings</p>
-              <b className="text-4xl">{inr(q.monthlySavings)}</b>
+              <b className="text-4xl leading-none tracking-[-.045em]">{inr(q.monthlySavings)}</b>
               <p className="mt-2 text-sm text-ink/50">
                 {inr(q.annualSavings)} each year
               </p>
@@ -131,7 +131,7 @@ export default function Result() {
             <Card className="bg-lime">
               <Leaf className="text-teal" />
               <p className="mt-8 text-sm text-ink/60">25-year value</p>
-              <b className="text-4xl">{inr(q.twentyFiveYearSavings)}</b>
+              <b className="text-4xl leading-none tracking-[-.045em]">{inr(q.twentyFiveYearSavings)}</b>
               <p className="mt-2 text-sm text-ink/60">
                 {q.co2OffsetKg.toLocaleString("en-IN")} kg CO₂ offset
               </p>

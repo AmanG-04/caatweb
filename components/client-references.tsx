@@ -39,7 +39,7 @@ function ReferenceCard({ reference }: { reference: Reference }) {
         <span className="rounded-full bg-cream px-3 py-1 text-[10px] font-bold uppercase tracking-[.12em] text-teal">{reference.type}</span>
       </div>
       <h3 className="mt-5 text-lg font-black tracking-tight">{reference.client}</h3>
-      <p className="mt-2 text-sm font-semibold leading-6 text-ink/80">{reference.system}</p>
+       <p className="mt-2 text-base font-semibold leading-7 text-ink/80">{reference.system}</p>
       <p className="mt-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[.1em] text-ink/50"><MapPin size={14} className="text-teal" /> {reference.location}</p>
       <p className="mt-4 border-t border-ink/10 pt-4 text-xs leading-5 text-ink/55">{reference.equipment}</p>
     </article>

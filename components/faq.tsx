@@ -37,10 +37,10 @@ export default function FAQ() {
       <div className="container-wide">
         <div className="mx-auto max-w-3xl text-center">
             <p className="section-kicker">Straight answers</p>
-            <h2 className="section-title mx-auto !text-4xl sm:!text-5xl">
+            <h2 className="section-title mx-auto">
               Questions every roof owner asks.
             </h2>
-            <p className="section-copy mx-auto !text-base">
+            <p className="section-copy mx-auto">
               The same six questions come up in most solar conversations. Here
               are the clear answers before you contact us.
             </p>
@@ -86,7 +86,7 @@ export default function FAQ() {
                     className={`faq-answer${isOpen ? " is-open" : ""}`}
                   >
                     <div className="faq-answer-inner">
-                      <p className="pb-6 pr-8 text-sm leading-relaxed text-ink-soft">
+                      <p className="pb-6 pr-8 text-base leading-7 text-ink-soft">
                         {faq.a}
                       </p>
                     </div>

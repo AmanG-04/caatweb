@@ -9,7 +9,7 @@ import { defaultWhatsappMessage, site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Solar Savings Calculator Coming Soon | CAAT PowerBot",
-  description: "CAAT PowerBot's bill-based rooftop solar savings calculator is coming soon. Speak with our team for a free online consultation today.",
+  description: "CAAT PowerBot's bill-based rooftop solar savings calculator is coming soon. Speak with our team for an online consultation today.",
   alternates: { canonical: "/quote" },
 };
 
@@ -24,15 +24,15 @@ export default function QuotePage() {
               <Sun size={36} aria-hidden="true" />
             </span>
             <p className="section-kicker mt-8">CAAT PowerBot</p>
-            <h1 className="mt-5 text-4xl font-black leading-[1.02] tracking-[-.05em] sm:text-6xl">
+            <h1 className="page-title mx-auto mt-5">
               Your solar savings calculator is coming soon.
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-ink/70">
+            <p className="section-copy mx-auto mt-6 max-w-2xl">
               We&apos;re preparing a simpler way to turn your electricity use into a practical rooftop solar estimate. Until then, our team can help you take the next step.
             </p>
             <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
               <a href={site.whatsapp(defaultWhatsappMessage)} target="_blank" rel="noopener noreferrer" className={buttonStyles("primary", "gap-2 px-6")}>
-                <MessageCircle size={17} /> Free online consultation
+                <MessageCircle size={17} /> Online consultation
               </a>
               <Link href="/" className={buttonStyles("outline", "gap-2 px-6")}>
                 Explore solar solutions <ArrowUpRight size={17} />

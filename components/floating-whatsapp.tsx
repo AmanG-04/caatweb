@@ -6,7 +6,7 @@ export default function FloatingWhatsApp() {
       href={site.whatsapp(defaultWhatsappMessage)}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Start a free online consultation on WhatsApp"
+      aria-label="Start an online consultation on WhatsApp"
       className="floating-whatsapp group fixed bottom-4 right-4 z-40 flex items-center rounded-full bg-[#25D366] p-2.5 shadow-[0_10px_30px_-8px_rgba(14,17,40,0.5)] ring-2 ring-gold/50 transition-transform duration-200 hover:scale-[1.06] active:scale-[.96] sm:bottom-5 sm:right-5 sm:p-3.5"
     >
       <svg width="23" height="23" viewBox="0 0 24 24" fill="#ffffff" aria-hidden="true" className="shrink-0 sm:h-[26px] sm:w-[26px]">

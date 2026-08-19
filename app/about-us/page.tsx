@@ -93,29 +93,42 @@ export default function AboutUsPage() {
         <div className="about-hero-grid" aria-hidden="true" />
         <div className="container-wide sm: lg:">
           {/* <p className="section-kicker mx-auto !flex w-max justify-center">About CAAT PowerBot</p> */}
-          <div className="mt-12 grid gap-12 lg:grid-cols-[1.12fr_.88fr] lg:items-end">
-          <div className="max-w-4xl">
+          <div className="mt-12 grid gap-12 lg:grid-cols-[1.12fr_.88fr] lg:items-center">
+          <div className="max-w-4xl lg:self-center">
             {/* <p className="mt-7 font-mono text-[11px] font-bold uppercase tracking-[.26em] text-teal">Electrical engineering &middot; Solar &middot; Delhi NCR</p> */}
-            <h1 id="about-title" className="mt-5 text-5xl font-black leading-[.94] tracking-[-.065em] text-ink sm:text-6xl lg:text-7xl">Power systems designed with care, built to keep working.</h1>
-            <p className="mt-7 max-w-2xl text-lg leading-8 text-ink/70">We are an electrical engineering, trading and contracting company founded in August 2020. We bring practical engineering, experienced people and long-term responsibility to every system we work on.</p>
+            <h1 id="about-title" className="page-title mt-5 max-w-4xl">Power systems designed with care, <span className="hero-title-highlight inline-block px-1 pb-1 leading-[1.08]">built to keep working.</span></h1>
+            <p className="section-copy mt-7 max-w-2xl">We are an electrical engineering, trading and contracting company founded in August 2020. We bring practical engineering, experienced people and long-term responsibility to every system we work on.</p>
             {/* <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <a href="#our-story" className={buttonStyles("primary", "gap-2 px-6")}>Our story <ArrowDownRight size={17} /></a>
               <a href={site.whatsapp(defaultWhatsappMessage)} target="_blank" rel="noopener noreferrer" className={buttonStyles("outline", "gap-2 bg-white/70 px-6")}>Start a conversation <ArrowUpRight size={17} /></a>
             </div> */}
           </div>
-          <div className="grid grid-cols-2 gap-3 self-stretch sm:gap-4">
-            <div className="col-span-2 mx-auto flex aspect-square w-full max-w-56 flex-col items-center justify-center rounded-full bg-night p-7 text-center text-white shadow-[0_22px_50px_rgba(16,42,42,.18)] sm:max-w-60 sm:p-8">
-              <p className="font-mono text-[10px] font-bold uppercase tracking-[.24em] text-gold">Our purpose</p>
-              <p className="mt-4 max-w-[12rem] text-xl font-black leading-tight tracking-[-.035em] sm:text-2xl">Make every installation efficient, safe and reliable.</p>
-            </div>
-            <div className="mx-auto flex aspect-square w-full max-w-40 flex-col items-center justify-center rounded-full border border-ink/10 bg-white/80 p-5 text-center backdrop-blur-sm sm:p-6">
-              <p className="font-mono text-[10px] font-bold uppercase tracking-[.18em] text-teal">Established</p>
-              <p className="mt-3 text-3xl font-black tracking-[-.05em]">2020</p>
-            </div>
-            <div className="mx-auto flex aspect-square w-full max-w-40 flex-col items-center justify-center rounded-full border border-lime bg-lime p-5 text-center sm:p-6">
-              <p className="font-mono text-[10px] font-bold uppercase tracking-[.18em] text-teal">Core area</p>
-              <p className="mt-3 text-xl font-black leading-tight tracking-[-.04em]">Delhi NCR</p>
-            </div>
+          <div className="about-identity-stack lg:self-center" aria-label="CAAT PowerBot identity facts">
+            <div className="about-identity-line" aria-hidden="true" />
+            <article className="about-identity-card about-identity-card-year">
+              {/* <p className="about-identity-index">01</p> */}
+              <div>
+                <p className="about-identity-label">Established</p>
+                <p className="about-identity-value">2020</p>
+              </div>
+              {/* <p className="about-identity-note">Electrical systems foundation</p> */}
+            </article>
+            <article className="about-identity-card about-identity-card-area">
+                  {/* <p className="about-identity-index">02</p> */}
+              <div>
+                <p className="about-identity-label">Core area</p>
+                <p className="about-identity-value">Delhi NCR</p>
+              </div>
+              {/* <span className="about-identity-marker" aria-hidden="true" /> */}
+            </article>
+            <article className="about-identity-card about-identity-card-purpose">
+              {/* <p className="about-identity-index">03</p> */}
+              <div>
+                <p className="about-identity-label">Our purpose</p>
+                <p className="about-identity-value">Efficient. Safe. Reliable.</p>
+              </div>
+              {/* <p className="about-identity-note">The standard behind every installation</p> */}
+            </article>
           </div>
           </div>
         </div>
@@ -158,12 +171,6 @@ export default function AboutUsPage() {
           </div>
           <div className="max-w-2xl"><h2 id="people-title" className="section-title !mt-0">Experience at the centre of every decision.</h2><p className="mt-6 text-lg leading-8 text-ink/75">Our founder, Tushar Gupta, is an Electrical Engineer with postgraduate study in Sales, Marketing and IT management. He brings more than 30 years of experience in the power sector across India and international markets.</p><p className="mt-5 leading-8 text-ink/70">His experience includes work with Kirloskar Oil Engines, Wartsila (Finland), Jakson and HCL. He believes in customer-focused, environmentally friendly, safe and reliable technology solutions.</p><div className="mt-7 flex flex-wrap gap-2">{["Electrical engineering", "30+ years in power", "India & international markets"].map((item) => <span key={item} className="rounded-full border border-ink/15 bg-cream px-3 py-2 text-xs font-bold text-ink/65">{item}</span>)}</div></div>
           </div>
-        </div>
-      </section>
-
-      <section className="bg-paper py-16 sm:py-24" aria-labelledby="expertise-title">
-        <div className="container-wide"><p className="section-kicker mx-auto !flex w-max justify-center">Expertise</p><div className="mt-12 flex flex-col justify-between gap-6 lg:flex-row lg:items-end"><div className="max-w-2xl"><h2 id="expertise-title" className="section-title !mt-0">A broader electrical view of the property.</h2></div><p className="max-w-md text-base leading-8 text-ink/65">We can combine generation, distribution, backup, automation and energy management around the way a property actually operates.</p></div>
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{expertise.map(({ icon: Icon, title, body }) => <Card key={title} className="group border border-ink/10 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-teal/40 hover:shadow-[0_22px_50px_rgba(16,42,42,.12)]"><div className="flex items-start justify-between gap-4"><div className="grid h-12 w-12 place-items-center rounded-2xl bg-lime text-teal"><Icon size={22} aria-hidden="true" /></div><ArrowUpRight size={19} className="text-ink/25 transition-all group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-teal" aria-hidden="true" /></div><h3 className="mt-6 text-xl font-black tracking-tight">{title}</h3><p className="mt-3 text-sm leading-7 text-ink/70">{body}</p></Card>)}</div>
         </div>
       </section>
 

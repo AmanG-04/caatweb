@@ -44,7 +44,7 @@ export function MobileNavMenu() {
         <Link href="/testimonials" aria-current={isCurrentPath("/testimonials") ? "page" : undefined}>Testimonials</Link>
         <Link href="/blogbot" aria-current={isCurrentPath("/blogbot") ? "page" : undefined}>BlogBot</Link>
         <Link href="/contact" aria-current={isCurrentPath("/contact") ? "page" : undefined}>Contact</Link>
-        <a href={site.whatsapp(defaultWhatsappMessage)} target="_blank" rel="noopener noreferrer"><MessageCircle size={16} /> Free online consultation</a>
+        <a href={site.whatsapp(defaultWhatsappMessage)} target="_blank" rel="noopener noreferrer"><MessageCircle size={16} /> Online consultation</a>
       </div>
     </details>
   );

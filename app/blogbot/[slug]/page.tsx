@@ -16,7 +16,7 @@ function formatDate(value: string) {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const post = await findPublishedBlogPost((await params).slug);
   if (!post) return { title: "BlogBot | CAAT PowerBot" };
-  return { title: `${post.title} | CAAT BlogBot`, description: post.excerpt, alternates: { canonical: `/blogbot/${post.slug}` } };
+  return { title: `${post.title} | CAAT BlogBot`, description: post.content.slice(0, 160), alternates: { canonical: `/blogbot/${post.slug}` } };
 }
 
 export default async function BlogArticlePage({ params }: PageProps) {
@@ -24,11 +24,12 @@ export default async function BlogArticlePage({ params }: PageProps) {
   if (!post) notFound();
 
   return (
-    <PublicPage eyebrow="CAAT BlogBot" title={post.title} description={post.excerpt}>
+    <PublicPage>
       <article className="bg-white py-16 sm:py-24">
         <div className="container-wide max-w-3xl">
           <p className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[.15em] text-teal"><CalendarDays size={14} />{formatDate(post.published_at ?? post.created_at)}</p>
-          <div className="mt-8 space-y-6 text-[1.05rem] leading-8 text-ink/75">
+          <h1 className="page-title mt-6">{post.title}</h1>
+          <div className="mt-8 space-y-6 text-base leading-8 text-ink/75">
             {post.content.split(/\n{2,}/).map((paragraph, index) => <p key={`${index}-${paragraph.slice(0, 24)}`} className="whitespace-pre-line">{paragraph}</p>)}
           </div>
         </div>

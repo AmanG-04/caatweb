@@ -113,7 +113,7 @@ function ProjectMedia({ project }: { project: ProjectReference }) {
         <Image src={primaryImage} alt={`${project.client} project installation`} fill sizes="(min-width: 1024px) 43vw, 86vw" className={primaryImage.endsWith("nelumbo-inverters.png") ? "object-contain bg-teal" : "object-cover"} unoptimized />
       </div>
       {secondaryImage ? (
-        <div className="absolute right-[-1rem] bottom-[-1rem] h-[66%] w-[45%] overflow-hidden rounded-[1.25rem] border-4 border-paper bg-white shadow-[0_16px_40px_rgba(16,42,42,.22)] sm:border-[6px]">
+          <div className="absolute right-[-1.75rem] bottom-[-2.25rem] h-[66%] w-[55%] overflow-hidden rounded-[1.25rem] border-4 border-paper bg-white shadow-[0_16px_40px_rgba(16,42,42,.22)] sm:border-[6px]">
           <Image src={secondaryImage} alt={`${project.client} project detail`} fill sizes="(min-width: 1024px) 22vw, 43vw" className="object-cover" unoptimized />
         </div>
       ) : null}
@@ -146,6 +146,11 @@ export function ProjectTestimonials() {
   return (
     <section id="references" className="overflow-hidden bg-paper py-16 sm:py-20">
       <div className="container-wide">
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="section-kicker mx-auto !flex w-max justify-center">Client projects</p>
+          <h1 className="page-title mx-auto mt-5">Real systems. Real places. Real work.</h1>
+          <p className="section-copy mx-auto">A selection of solar, storage, electrical and backup-power projects delivered across Delhi NCR.</p>
+        </div>
         <div className="mt-14 space-y-20 sm:mt-20 sm:space-y-28">
           {projects.map((project, index) => <Project key={project.client} project={project} index={index} />)}
         </div>
