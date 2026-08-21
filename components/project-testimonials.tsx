@@ -10,6 +10,7 @@ type ProjectReference = {
   scope: string;
   equipment?: string;
   images: readonly [string, string?];
+  primaryImageLandscape?: boolean;
 };
 
 const projectImage = (fileName: string) => `/testimonials/${fileName}`;
@@ -36,6 +37,7 @@ const projects: readonly ProjectReference[] = [
     scope: "Repeat order of 55 kWp under execution.",
     equipment: "Jakson N-Type 585 Wp solar panels · K-Solare inverter",
     images: [projectImage("abhinandan-rooftop.png"), projectImage("abhinandan-site.png")],
+    primaryImageLandscape: true,
   },
   {
     client: "Bhritii Healthcare",
@@ -46,6 +48,7 @@ const projects: readonly ProjectReference[] = [
     scope: "Emergency standby power. The customer wanted a reliable, non-polluting, environment-friendly backup-power solution.",
     equipment: "Saatvik solar panel · K-Solare inverter · OGO lithium battery · Invergy hybrid inverter",
     images: [projectImage("bhritii-rooftop.png"), projectImage("bhritii-battery.png")],
+    primaryImageLandscape: true,
   },
   {
     client: "Coco County",
@@ -55,6 +58,7 @@ const projects: readonly ProjectReference[] = [
     date: "Jan 2023",
     scope: "The customer did not want to see the solar plates or structure in the elevation, even from a far distance.",
     images: [projectImage("coco-county-rooftop.png"), projectImage("coco-county-building.png")],
+    primaryImageLandscape: true,
   },
   {
     client: "County 107",
@@ -64,6 +68,7 @@ const projects: readonly ProjectReference[] = [
     date: "Jun 2024",
     scope: "Solar water-heating system for County Group.",
     images: [projectImage("county-107-water-heating.png"), projectImage("county-107-site.png")],
+    primaryImageLandscape: true,
   },
   
   {
@@ -100,21 +105,22 @@ const projects: readonly ProjectReference[] = [
     location: "Greater Noida",
     date: "Jul 2023",
     scope: "Frequent tripping, wire burning, blown fuses and load imbalance were addressed through a new panel, proper jointing of old cables, engineering, design, planning and execution. Complete-system shutdown was less than 12 hours, with no loss of productivity at the college.",
-    images: [projectImage("himt-before.png"), projectImage("himt-after.png")],
+    images: [projectImage("himt-after.png") ],
   },
 ];
 
 function ProjectMedia({ project }: { project: ProjectReference }) {
   const [primaryImage, secondaryImage] = project.images;
+  const landscape = project.primaryImageLandscape ?? false;
 
   return (
-    <div className="relative min-h-[20rem] sm:min-h-[25rem] lg:min-h-[31rem]">
+    <div className={`relative ${landscape ? "aspect-[1.32] min-h-[23rem] sm:min-h-[28rem] lg:min-h-[33rem]" : "min-h-[20rem] sm:min-h-[25rem] lg:min-h-[31rem]"}`}>
       <div className="absolute inset-y-0 left-0 w-[83%] overflow-hidden rounded-[1.75rem] bg-teal shadow-[0_22px_55px_rgba(16,42,42,.18)]">
-        <Image src={primaryImage} alt={`${project.client} project installation`} fill sizes="(min-width: 1024px) 43vw, 86vw" className={primaryImage.endsWith("nelumbo-inverters.png") ? "object-contain bg-teal" : "object-cover"} unoptimized />
+        <Image src={primaryImage} alt={`${project.client} project installation`} fill sizes="(min-width: 1024px) 52vw, 86vw" className={primaryImage.endsWith("nelumbo-inverters.png") ? "object-contain bg-teal" : "object-cover"} unoptimized />
       </div>
       {secondaryImage ? (
-          <div className="absolute right-[-1.75rem] bottom-[-2.25rem] h-[66%] w-[55%] overflow-hidden rounded-[1.25rem] border-4 border-paper bg-white shadow-[0_16px_40px_rgba(16,42,42,.22)] sm:border-[6px]">
-          <Image src={secondaryImage} alt={`${project.client} project detail`} fill sizes="(min-width: 1024px) 22vw, 43vw" className="object-cover" unoptimized />
+          <div className={`absolute right-[-1.75rem] bottom-[-2.25rem] overflow-hidden rounded-[1.25rem] border-4 border-paper bg-white shadow-[0_16px_40px_rgba(16,42,42,.22)] sm:border-[6px] ${landscape ? "h-[94%] w-[39%]" : "h-[66%] w-[55%]"}`}>
+          <Image src={secondaryImage} alt={`${project.client} project detail`} fill sizes="(min-width: 1024px) 27vw, 43vw" className="object-cover" unoptimized />
         </div>
       ) : null}
     </div>
@@ -125,7 +131,7 @@ function Project({ project, index }: { project: ProjectReference; index: number 
   const reversed = index % 2 === 1;
 
   return (
-    <article className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16 xl:gap-24">
+    <article className="grid items-center gap-10 lg:grid-cols-[1.2fr_.8fr] lg:gap-16 xl:gap-24">
       <div className={reversed ? "lg:order-2" : undefined}><ProjectMedia project={project} /></div>
       <div className={reversed ? "lg:order-1" : undefined}>
         <p className="font-mono text-[11px] font-black uppercase tracking-[.18em] text-teal">{String(index + 1).padStart(2, "0")} · {project.category}</p>
@@ -146,12 +152,10 @@ export function ProjectTestimonials() {
   return (
     <section id="references" className="overflow-hidden bg-paper py-16 sm:py-20">
       <div className="container-wide">
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="section-kicker mx-auto !flex w-max justify-center">Client projects</p>
-          <h1 className="page-title mx-auto mt-5">Real systems. Real places. Real work.</h1>
-          <p className="section-copy mx-auto">A selection of solar, storage, electrical and backup-power projects delivered across Delhi NCR.</p>
+        <div className="mb-14 text-center sm:mb-20">
+          <h1 className="hero-title-highlight inline-block px-2 pb-1 text-2xl font-black leading-[1.15] tracking-[-.05em] sm:text-5xl">Testimonials</h1>
         </div>
-        <div className="mt-14 space-y-20 sm:mt-20 sm:space-y-28">
+        <div className="space-y-20 sm:space-y-28">
           {projects.map((project, index) => <Project key={project.client} project={project} index={index} />)}
         </div>
       </div>

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowUpRight,
@@ -12,7 +13,6 @@ import {
   CarFront,
   ChevronLeft,
   ChevronRight,
-  FileText,
   Fuel,
   Leaf,
   PanelsTopLeft,
@@ -23,14 +23,14 @@ import {
 import { buttonStyles } from "@/components/ui";
 import { defaultWhatsappMessage, site } from "@/lib/site";
 
-const solutions = [
+export const solutions = [
   {
     id: "solar",
     eyebrow: "01 / Solar EPC",
     title: "Solar power shaped around your roof and routine.",
     shortTitle: "Solar",
     description: "From the first roof assessment to commissioning, we plan a solar system around how your property uses electricity.",
-    image: "https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=2200&q=90",
+    image: "/solutions/solar.jpeg",
     imageAlt: "Solar panels on a roof under a clear sky",
     icon: PanelsTopLeft,
     variants: ["On-grid systems", "Off-grid systems", "Hybrid systems"],
@@ -49,23 +49,24 @@ const solutions = [
   {
     id: "water-heating",
     eyebrow: "02 / Thermal solar",
-    title: "Solar water heating for a quieter daily energy load.",
+    title: "Cut your geyser bills. Enjoy free hot water from the sun.",
     shortTitle: "Water heating",
-    description: "Use the sun directly for hot-water requirements in homes, hostels, hotels, hospitals and other facilities.",
-    image: "https://plus.unsplash.com/premium_photo-1682125975211-35d55cc917ff?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    description: "A solar water heater is a one-time investment that delivers hot water for years using clean solar energy, reducing dependence on electricity and gas.",
+    image: "/solutions/heater.jpeg",
     imageAlt: "Solar thermal panels installed on a roof",
     icon: Leaf,
     variants: ["ETC systems", "FPC systems"],
-    detailHeading: "Hot water starts with demand, not collector type.",
-    detailIntro: "A solar water heater is sized around how much hot water your building needs and when it is used. We then choose the collector and storage arrangement that fits the site.",
-    adviceTitle: "ETC or FPC is a site decision.",
-    adviceBody: "Tube and flat-plate collectors perform differently across water conditions, roof layouts and operating temperatures. We can help you narrow down the right technology.",
-    detailLayout: "grid-cols-1 sm:grid-cols-3",
+    detailHeading: "Hot water without the winter bill shock.",
+    detailIntro: "For homes and businesses in Delhi, solar water heating turns available sunlight into a reliable daily utility. We size the system around your demand, roof and water conditions.",
+    adviceTitle: "Choose a system that keeps working for years.",
+    adviceBody: "ETC and FPC technologies suit different water conditions, roof layouts and operating temperatures. We help you select a durable, low-maintenance arrangement for the site.",
+    detailLayout: "grid-cols-1 sm:grid-cols-2",
     details: "We help match the collector technology, storage capacity and installation arrangement to hot-water demand, water quality, available space and operating conditions.",
     deliverables: [
-      { title: "Demand", body: "Assess daily hot-water use, occupancy and storage capacity." },
-      { title: "Technology", body: "Select ETC or FPC collectors for the site's water quality and conditions." },
-      { title: "Support", body: "Coordinate installation and ongoing service requirements." },
+      { title: "Massive savings", body: "Drastically reduce reliance on expensive electricity or gas for everyday water heating." },
+      { title: "Reliable hot water", body: "Enjoy a dependable supply of hot water, including during power outages when electric geysers cannot operate." },
+      { title: "Built to last", body: "We install corrosion-resistant systems designed for long service life with minimal upkeep." },
+      { title: "A cleaner daily utility", body: "Lower the carbon impact of water heating while using renewable energy available on your own roof." },
     ],
   },
   {
@@ -74,7 +75,7 @@ const solutions = [
     title: "Battery storage that keeps critical loads in view.",
     shortTitle: "BESS",
     description: "Lithium-battery energy storage for properties that need a more deliberate response to outages, peak demand or solar self-use.",
-    image: "https://images.unsplash.com/photo-1780445392417-68b9dccc45f2?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    image: "/solutions/bess.jpeg",
     imageAlt: "Modern energy storage and electrical equipment",
     icon: BatteryCharging,
     variants: ["Lithium-ion battery systems", "Solar-plus-storage", "Essential-load backup"],
@@ -93,45 +94,47 @@ const solutions = [
   {
     id: "ev-charging",
     eyebrow: "04 / Mobility power",
-    title: "EV charging built into the electrical plan.",
+    title: "Charge your EV at home. Fast, safe and convenient.",
     shortTitle: "EV charging",
-    description: "Charging infrastructure for homes, workplaces, fleets and shared parking locations, planned around the site's available capacity.",
+    description: "Make charging as easy as charging your phone with a dedicated EV charger professionally installed at your home, office or parking location.",
     image: "https://images.unsplash.com/photo-1639302610362-4c86747e8680?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     imageAlt: "Electric vehicle connected to a charging station",
     icon: CarFront,
     variants: ["Home charging", "Workplace charging", "Fleet and shared parking"],
-    detailHeading: "Charging works best when it is planned around parking and power.",
-    detailIntro: "A dependable EV charging setup considers where vehicles sit, how long they dwell, what the electrical system can supply and how demand may grow over time.",
-    adviceTitle: "Think beyond the charger unit.",
-    adviceBody: "Cable routes, protection, capacity management and future bays are often the decisions that make a charging installation simple to operate rather than difficult to expand.",
-    detailLayout: "grid-cols-1 sm:grid-cols-3",
+    detailHeading: "A dedicated charge point, ready when you are.",
+    detailIntro: "Skip public-charger queues and wake up to a vehicle ready for the day. CAAT PowerBot plans the charger, capacity, protection and installation around your parking and electrical setup.",
+    adviceTitle: "Bring charging home or build it into your workplace.",
+    adviceBody: "We review the available electrical capacity, cable route and future expansion needs so the installation is convenient today and practical to grow later.",
+    detailLayout: "grid-cols-1 sm:grid-cols-2",
     details: "The charger is only one part of the decision. We consider parking layout, load capacity, cable routes, protection and future expansion before recommending the right setup.",
     deliverables: [
-      { title: "Capacity review", body: "Check available electrical capacity before adding charging demand." },
-      { title: "Equipment", body: "Select suitable chargers, cabling and protection." },
-      { title: "Installation", body: "Coordinate parking layout, cable routes and future expansion." },
+      { title: "Charge on your schedule", body: "Charge overnight in your own garage or dedicated parking spot instead of waiting at public stations." },
+      { title: "Safe, certified installation", body: "Our electricians install the charger with the required protection and electrical safety standards for your vehicle and property." },
+      { title: "Compatible across EV brands", body: "We install AC and DC charging options suited to major electric vehicle models available in India." },
+      { title: "Future-ready property", body: "A dedicated charge point improves everyday convenience and adds appeal to homes, workplaces and commercial buildings." },
     ],
   },
   {
     id: "generators",
     eyebrow: "05 / Backup generation",
-    title: "Generator solutions for power when continuity matters.",
+    title: "Never be in the dark again.",
     shortTitle: "Generators",
-    description: "Diesel and gas generator solutions for essential backup requirements across residential, commercial and institutional sites.",
+    description: "Reliable diesel and gas generating sets for homes, offices, commercial buildings and institutions that need dependable backup power.",
     image: "https://images.unsplash.com/photo-1636867759143-c28c1e909bd3?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     imageAlt: "Industrial power equipment in a technical facility",
     icon: Fuel,
     variants: ["Diesel generators", "Gas generators", "Generator integration"],
-    detailHeading: "Backup generation begins with the load that cannot stop.",
-    detailIntro: "Generator capacity, fuel choice and installation requirements are shaped by your critical load, run time, starting current, ventilation and the way the site is operated.",
-    adviceTitle: "Size for the operating reality.",
-    adviceBody: "The right generator is not just a kVA number. We look at what must start, what must continue running and how the equipment will integrate with the property.",
-    detailLayout: "grid-cols-1 md:grid-cols-3",
+    detailHeading: "Reliable backup power, selected around your real requirement.",
+    detailIntro: "In Delhi, a power cut should not interrupt essential work, comfort or safety. CAAT PowerBot helps you choose and install a diesel or gas genset that keeps the right loads running when grid supply is unavailable.",
+    adviceTitle: "Choose the genset for the way your site actually operates.",
+    adviceBody: "We assess the loads that must remain available, expected runtime, starting current, available space and installation requirements before recommending a suitable system.",
+    detailLayout: "grid-cols-1 sm:grid-cols-2",
     details: "We work from the real operating load, starting method, run-time need, space, ventilation and connection requirements rather than recommending capacity in isolation.",
     deliverables: [
-      { title: "Load assessment", body: "Define the power and runtime required for essential operations." },
-      { title: "Equipment", body: "Compare diesel and gas options against site conditions." },
-      { title: "Integration", body: "Plan ventilation, installation and electrical connection requirements." },
+      { title: "Instant backup", body: "Automatic changeover can bring the generator online during an outage, helping essential loads continue with minimal interruption." },
+      { title: "Trusted, compliant equipment", body: "We supply and install low-noise, low-emission gensets from established Indian manufacturers, selected for the application." },
+      { title: "A fit for your scale", body: "From compact systems for homes and small offices to higher-capacity units for commercial buildings, the configuration follows your requirement." },
+      { title: "End-to-end support", body: "We manage installation and commissioning, with annual maintenance contract options for long-term reliability." },
     ],
   },
   {
@@ -158,14 +161,44 @@ const solutions = [
   },
 ] as const;
 
-export function SolutionsShowcase() {
-  const [hasSelectedSolution, setHasSelectedSolution] = useState(false);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const autoplay = useRef(Autoplay({ delay: 5000, stopOnInteraction: true, stopOnMouseEnter: false }));
-  const [emblaRef, emblaApi] = useEmblaCarousel({ align: "center", containScroll: false, loop: true, skipSnaps: true }, [autoplay.current]);
+export type SolutionId = (typeof solutions)[number]["id"];
+
+export function SolutionsShowcase({ initialSolutionId, initiallyExpanded = false }: { initialSolutionId?: SolutionId; initiallyExpanded?: boolean }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const initialIndex = Math.max(0, solutions.findIndex((solution) => solution.id === initialSolutionId));
+  const [hasSelectedSolution, setHasSelectedSolution] = useState(initiallyExpanded);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(!initiallyExpanded);
+  const [activeIndex, setActiveIndex] = useState(initialIndex);
+  const autoplay = useRef(Autoplay({ delay: 3500, stopOnInteraction: true, stopOnMouseEnter: false }));
+  const [emblaRef, emblaApi] = useEmblaCarousel({ align: "center", containScroll: false, loop: true, skipSnaps: true, startIndex: initialIndex }, [autoplay.current]);
   const activeSolution = solutions[activeIndex];
+  const detailSolution = initiallyExpanded ? solutions[initialIndex] : activeSolution;
   const ActiveIcon = activeSolution.icon;
+
+  useEffect(() => {
+    if (!emblaApi) {
+      return;
+    }
+
+    emblaApi.scrollTo(initialIndex, true);
+
+    if (initiallyExpanded) {
+      autoplay.current.stop();
+    }
+  }, [emblaApi, initialIndex, initiallyExpanded]);
+
+  useEffect(() => {
+    if (!initiallyExpanded || window.location.hash !== "#solution-details") {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      document.getElementById("solution-details")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 150);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [initiallyExpanded]);
 
   useEffect(() => {
     if (!emblaApi) {
@@ -259,6 +292,12 @@ export function SolutionsShowcase() {
   function selectSolution() {
     autoplay.current.stop();
     setIsAutoPlaying(false);
+
+    if (pathname === "/solutions" || activeSolution.id !== detailSolution.id) {
+      router.push(`/solutions/${activeSolution.id}#solution-details`, { scroll: false });
+      return;
+    }
+
     setHasSelectedSolution(true);
     window.setTimeout(() => {
       document.getElementById("solution-details")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -268,7 +307,7 @@ export function SolutionsShowcase() {
   return (
     <>
       <section className="overflow-hidden py-8 sm:py-12" style={{ backgroundColor: "#f7f8f2" }} aria-labelledby="solutions-explorer-title" aria-roledescription="carousel">
-        <div ref={emblaRef} className="overflow-hidden py-1">
+        <div ref={emblaRef} className="relative overflow-hidden py-1">
           <div className="flex touch-pan-y">
             {solutions.map((solution, index) => {
             const isActive = index === activeIndex;
@@ -276,7 +315,7 @@ export function SolutionsShowcase() {
 
             return (
               <div key={solution.id} className="min-w-0 flex-[0_0_94%] pl-3 sm:flex-[0_0_82%] sm:pl-5 lg:flex-[0_0_72%]">
-                <button type="button" onClick={() => { pauseAutoPlay(); if (isActive) { selectSolution(); } else { emblaApi?.scrollTo(index); } }} aria-label={isActive ? `Explore ${solution.shortTitle}` : `Show ${solution.shortTitle}`} aria-current={isActive ? "true" : undefined} className={`group relative h-[min(74svh,47rem)] min-h-[32rem] w-full overflow-hidden rounded-[2rem] border bg-night text-left transition-opacity duration-500 ease-out motion-reduce:transition-none ${isActive ? "border-teal/30 opacity-100" : "border-ink/10 opacity-45"}`}>
+                <button type="button" onClick={() => { pauseAutoPlay(); if (isActive) { selectSolution(); } else { emblaApi?.scrollTo(index); } }} aria-label={isActive ? `Explore ${solution.shortTitle}` : `Show ${solution.shortTitle}`} aria-current={isActive ? "true" : undefined} className={`group relative h-[min(74svh,47rem)] min-h-[32rem] w-full cursor-pointer overflow-hidden rounded-[2rem] border bg-night text-left transition-opacity duration-500 ease-out motion-reduce:transition-none ${isActive ? "border-teal/30 opacity-100" : "border-ink/10 opacity-45"}`}>
                   <span className="absolute inset-0 overflow-hidden rounded-[inherit]" aria-hidden="true">
                     <span data-parallax-layer className="relative flex h-full w-full justify-center will-change-transform motion-reduce:transform-none">
                       <img src={solution.image} alt="" className="h-full w-full max-w-none object-cover" />
@@ -300,25 +339,26 @@ export function SolutionsShowcase() {
             );
           })}
           </div>
-        </div>
-
-        <div className="container-wide mt-6 flex items-center justify-center gap-3 sm:mt-8">
-          <button type="button" onClick={() => { pauseAutoPlay(); showSolution(-1); }} className="grid h-11 w-11 place-items-center rounded-full border border-ink/15 bg-white text-ink transition hover:border-teal hover:bg-teal hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2" aria-label="Previous solution">
-            <ChevronLeft size={19} aria-hidden="true" />
-          </button>
-          <div className="flex gap-2" aria-label="Solution slide progress">
-            {solutions.map((solution, index) => (
-              <button key={solution.id} type="button" onClick={() => { pauseAutoPlay(); emblaApi?.scrollTo(index); }} aria-label={`Show ${solution.shortTitle}`} aria-current={index === activeIndex ? "true" : undefined} className={`h-1.5 overflow-hidden rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2 ${index === activeIndex ? "w-10 bg-ink/15" : "w-3 bg-ink/20 hover:bg-ink/50"}`}>
-                {index === activeIndex ? <span key={`${activeIndex}-${isAutoPlaying}`} className={`block h-full bg-teal ${isAutoPlaying ? "solution-autoplay-progress" : "w-full"}`} /> : null}
+          <div className="absolute inset-x-0 bottom-6 z-20 flex justify-center px-5 sm:bottom-8">
+            <div className="flex items-center justify-center gap-3 rounded-full border border-white/20 bg-[#071d20]/80 px-3 py-2 shadow-[0_12px_28px_rgba(7,29,32,.22)] backdrop-blur-md">
+              <button type="button" onPointerDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); pauseAutoPlay(); showSolution(-1); }} className="grid h-9 w-9 place-items-center rounded-full border border-white/20 bg-white/10 text-white transition hover:border-gold hover:bg-gold hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-night" aria-label="Previous solution">
+                <ChevronLeft size={17} aria-hidden="true" />
               </button>
-            ))}
+              <div className="flex gap-2" aria-label="Solution slide progress">
+                {solutions.map((solution, index) => (
+                  <button key={solution.id} type="button" onPointerDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); pauseAutoPlay(); emblaApi?.scrollTo(index); }} aria-label={`Show ${solution.shortTitle}`} aria-current={index === activeIndex ? "true" : undefined} className={`h-1.5 overflow-hidden rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-night ${index === activeIndex ? "w-10 bg-white/30" : "w-3 bg-white/35 hover:bg-white/70"}`}>
+                    {index === activeIndex ? <span key={`${activeIndex}-${isAutoPlaying}`} className={`block h-full bg-gold ${isAutoPlaying ? "solution-autoplay-progress" : "w-full"}`} /> : null}
+                  </button>
+                ))}
+              </div>
+              <button type="button" onPointerDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); showSolution(1); }} className="grid h-9 w-9 place-items-center rounded-full border border-white/20 bg-white/10 text-white transition hover:border-gold hover:bg-gold hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-night" aria-label="Next solution">
+                <ChevronRight size={17} aria-hidden="true" />
+              </button>
+              <button type="button" onPointerDown={(event) => event.stopPropagation()} onClick={(event) => { event.stopPropagation(); if (isAutoPlaying) { autoplay.current.stop(); } else { autoplay.current.play(); } setIsAutoPlaying((currentValue) => !currentValue); }} className="grid h-9 w-9 place-items-center rounded-full border border-white/20 bg-white/10 text-white transition hover:border-gold hover:bg-gold hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-night" aria-label={isAutoPlaying ? "Pause slide rotation" : "Start slide rotation"}>
+                {isAutoPlaying ? <Pause size={15} aria-hidden="true" /> : <Play size={15} aria-hidden="true" />}
+              </button>
+            </div>
           </div>
-          <button type="button" onClick={() => showSolution(1)} className="grid h-11 w-11 place-items-center rounded-full border border-ink/15 bg-white text-ink transition hover:border-teal hover:bg-teal hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2" aria-label="Next solution">
-            <ChevronRight size={19} aria-hidden="true" />
-          </button>
-          <button type="button" onClick={() => { if (isAutoPlaying) { autoplay.current.stop(); } else { autoplay.current.play(); } setIsAutoPlaying((currentValue) => !currentValue); }} className="grid h-11 w-11 place-items-center rounded-full border border-ink/15 bg-white text-ink transition hover:border-teal hover:bg-teal hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2" aria-label={isAutoPlaying ? "Pause slide rotation" : "Start slide rotation"}>
-            {isAutoPlaying ? <Pause size={17} aria-hidden="true" /> : <Play size={17} aria-hidden="true" />}
-          </button>
         </div>
       </section>
 
@@ -326,42 +366,44 @@ export function SolutionsShowcase() {
       <section id="solution-details" className="bg-white py-16 sm:py-24" aria-labelledby="solution-details-title">
         <div className="container-wide">
           <div className="mx-auto max-w-3xl text-center">
-            <p className="section-kicker mx-auto !flex w-max justify-center">{activeSolution.shortTitle}</p>
-            <h2 id="solution-details-title" className="section-title mx-auto">{activeSolution.detailHeading}</h2>
-            <p className="section-copy mx-auto">{activeSolution.detailIntro}</p>
+            <p className="section-kicker mx-auto !flex w-max justify-center">{detailSolution.shortTitle}</p>
+            <h2 id="solution-details-title" className="section-title mx-auto">{detailSolution.detailHeading}</h2>
+            <p className="section-copy mx-auto">{detailSolution.detailIntro}</p>
           </div>
-          {activeSolution.id === "solar" ? <div className="mx-auto mt-10 max-w-5xl overflow-hidden rounded-[1.75rem] border border-ink/10 bg-cream p-3 sm:p-4">
+          {detailSolution.id === "solar" ? <div className="mx-auto mt-10 max-w-5xl overflow-hidden rounded-[1.75rem] border border-ink/10 bg-cream p-3 sm:p-4">
             <Image src="/solutions/solarcompare.png" alt="Comparison of on-grid, off-grid and hybrid solar power systems" width={1600} height={900} className="h-auto w-full rounded-[1.25rem]" />
           </div> : null}
-          <div className={`mx-auto mt-10 grid max-w-5xl gap-4 ${activeSolution.detailLayout}`}>
-            {activeSolution.deliverables.map((deliverable) => (
-              <div key={deliverable.title} className="rounded-[1.5rem] border border-ink/10 bg-cream p-6 text-center sm:p-7">
-                <h3 className="text-2xl font-black tracking-tight text-ink">{deliverable.title}</h3>
-                <p className="mt-4 text-base leading-7 text-ink/65">{deliverable.body}</p>
+          <div className={`mx-auto mt-10 grid max-w-5xl gap-4 ${detailSolution.detailLayout}`}>
+            {detailSolution.deliverables.map((deliverable, index) => {
+              const generatorFeature = detailSolution.id === "generators";
+              const featured = generatorFeature && index === 0;
+              const generatorCardStyle = [
+                "border-night bg-night text-white",
+                "border-lime bg-lime text-ink",
+                "border-ink/10 bg-white text-ink",
+                "border-teal bg-teal text-white",
+              ][index];
+              const generatorNumberStyle = ["text-white/20", "text-teal/40", "text-ink/10", "text-white/20"][index];
+
+              return (
+              <div key={deliverable.title} className={`rounded-[1.5rem] border p-6 text-left sm:p-8 ${generatorFeature ? generatorCardStyle : featured ? "sm:col-span-2 border-night bg-night text-white sm:px-10 sm:py-9" : "border-ink/10 bg-cream text-ink"}`}>
+                <div className="flex items-start justify-between gap-4">
+                  <p className={`font-mono text-[10px] font-bold uppercase tracking-[.2em] ${generatorFeature || featured ? "text-gold" : "text-teal"}`}>{generatorFeature ? `0${index + 1}` : featured ? "Power continuity" : `0${index + 1}`}</p>
+                  {generatorFeature ? <span className={`text-5xl font-black leading-none tracking-[-.1em] ${generatorNumberStyle}`}>{String(index + 1).padStart(2, "0")}</span> : null}
+                </div>
+                <h3 className={`mt-8 text-3xl font-black leading-[.95] tracking-[-.055em] ${generatorFeature ? "" : featured ? "sm:text-3xl" : "text-ink"}`}>{deliverable.title}</h3>
+                <p className={`mt-5 text-base leading-7 ${generatorFeature ? "text-current/70" : featured ? "mx-auto max-w-2xl text-white/70" : "text-ink/65"}`}>{deliverable.body}</p>
               </div>
-            ))}
+              );
+            })}
           </div>
           <div className="mx-auto mt-5 flex max-w-5xl flex-col items-center rounded-[1.5rem] bg-night p-6 text-center text-white sm:p-7">
             <Cable className="text-gold" size={22} aria-hidden="true" />
             <div className="mt-4 max-w-2xl">
-              <h3 className="font-black tracking-tight">{activeSolution.adviceTitle}</h3>
-               <p className="mt-2 text-base leading-7 text-white/75">{activeSolution.adviceBody}</p>
+              <h3 className="font-black tracking-tight">{detailSolution.adviceTitle}</h3>
+                <p className="mt-2 text-base leading-7 text-white/75">{detailSolution.adviceBody}</p>
             </div>
             <a href={site.whatsapp(defaultWhatsappMessage)} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex rounded-full bg-gold px-5 py-3 text-xs font-black text-ink transition hover:bg-gold-soft">Ask us</a>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-paper py-16 sm:py-24" aria-labelledby="brochure-title">
-        <div className="container-wide grid gap-8 lg:grid-cols-[.8fr_1.2fr] lg:items-center">
-          <div>
-            <p className="section-kicker">Equipment literature</p>
-            <h2 id="brochure-title" className="section-title">Relevant manufacturer brochures, when the equipment shortlist is clear.</h2>
-          </div>
-          <div className="rounded-[1.75rem] border border-ink/10 bg-white p-7 shadow-soft sm:p-9">
-            <FileText size={27} className="text-teal" aria-hidden="true" />
-            <p className="mt-5 text-lg font-black tracking-tight">Brochures will be added for verified equipment partners.</p>
-             <p className="mt-3 max-w-xl text-base leading-7 text-ink/65">We will publish product literature only after confirming the model range and the manufacturer-approved public link. This avoids presenting out-of-date specifications as a recommendation.</p>
           </div>
         </div>
       </section>

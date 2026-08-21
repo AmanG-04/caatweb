@@ -9,5 +9,6 @@
     "simpleCodingTimeTracker.health.modalNotifications": false,
     "simpleCodingTimeTracker.health.eyeRestInterval": 20,
     "simpleCodingTimeTracker.health.stretchInterval": 0,
-    "simpleCodingTimeTracker.health.breakThreshold": 90
+    "simpleCodingTimeTracker.health.breakThreshold": 90,
+    "css.lint.unknownAtRules": "ignore"
 }

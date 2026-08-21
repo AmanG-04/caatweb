@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, MessageCircle } from "lucide-react";
+import { ArrowUpRight, PanelsTopLeft, MessageCircle } from "lucide-react";
 import { buttonStyles } from "@/components/ui";
 import { defaultWhatsappMessage, site } from "@/lib/site";
 
@@ -19,6 +19,9 @@ export default function LeadCta() {
         <div className="mx-auto mt-8 flex max-w-max flex-col gap-3 sm:flex-row">
           <Link href="/quote" className={buttonStyles("primary", "gap-2 px-6")}>
             Get my solar estimate <ArrowUpRight size={17} />
+          </Link>
+          <Link href="/solutions" className={buttonStyles("outline", "gap-2 border-white/25 bg-white/10 text-white hover:bg-white/15")}>
+            <PanelsTopLeft size={17} /> Explore solutions
           </Link>
           <a
             href={site.whatsapp(defaultWhatsappMessage)}

@@ -23,23 +23,13 @@ export default function ContactPage() {
       <SiteHeader fixed />
       <div className="landing-header-space" aria-hidden="true" />
       <section className="hero-flow">
-        <div className="container-wide py-16 sm:py-24">
-          <p className="section-kicker">Contact CAAT PowerBot</p>
-          <h1 className="page-title mt-5 max-w-3xl">
-            Let&apos;s talk about your rooftop solar plan.
-          </h1>
-          <p className="section-copy mt-6 max-w-2xl">
-            Start with an online consultation or generate a bill-based solar estimate whenever you are ready.
-          </p>
-          <div className="mt-8">
-            <Link href="/quote" className={buttonStyles("primary", "gap-2")}>
-              Get my solar estimate
-              <ArrowUpRight size={17} />
-            </Link>
+        <div className="container-wide py-16 sm:py-14">
+          <div className="text-center">
+            <h1 className="hero-title-highlight inline-block px-2 pb-1 text-2xl font-black leading-[1.15] tracking-[-.05em] sm:text-5xl">Contact</h1>
           </div>
         </div>
       </section>
-      <section className="bg-paper py-16 sm:py-24">
+      <section className="bg-paper py-16 sm:py-4">
         <div className="container-wide grid gap-5 md:grid-cols-2">
           {contacts.map(({ icon: Icon, label, value, href, external }) => (
             <Card key={label} className="border border-ink/10">

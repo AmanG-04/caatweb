@@ -187,6 +187,9 @@ export default function Footer() {
             <p className="mt-5 max-w-[220px] text-xs leading-relaxed text-white/60">
               Mon–Fri, 10 am – 5 pm IST. 
             </p>
+            <a href="/brochures" className="mt-6 inline-flex items-center gap-2 rounded-xl border border-gold/35 bg-gold/10 px-4 py-3 font-mono text-[10px] font-bold uppercase tracking-[.14em] text-gold transition-colors hover:border-gold hover:bg-gold hover:text-night">
+              Brochures & technical docs
+            </a>
           </div>
         </div>
 
