@@ -3,7 +3,22 @@ import { listPublishedBlogPosts } from "@/lib/blog";
 
 export const dynamic = "force-dynamic";
 
-const routes = ["", "/quote", "/about-us", "/solutions", "/testimonials", "/blogbot", "/contact"];
+const routes = [
+  "",
+  "/quote",
+  "/about-us",
+  "/solutions",
+  "/solutions/solar",
+  "/solutions/water-heating",
+  "/solutions/bess",
+  "/solutions/ev-charging",
+  "/solutions/generators",
+  "/solutions/maintenance",
+  "/testimonials",
+  "/blogbot",
+  "/brochures",
+  "/contact",
+];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://caatpowerbot.com";
