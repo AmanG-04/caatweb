@@ -20,7 +20,6 @@ export async function POST(request: Request) {
     const parsed = quoteFormSchema.safeParse(raw);
     if (!parsed.success) return NextResponse.json({ success: false, error: { code: "VALIDATION_ERROR", message: "Please check the highlighted fields.", fields: parsed.error.flatten().fieldErrors } }, { status: 400 });
     const d = parsed.data;
-    if (!d.billObjectKey) return NextResponse.json({ success: false, error: { code: "BILL_REQUIRED", message: "Please upload your electricity bill." } }, { status: 400 });
     const db = getEnv().DB;
 
     if (db && !allowDuplicate) {

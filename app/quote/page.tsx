@@ -13,16 +13,16 @@ import { ArrowLeft, ArrowRight, Check, Sun, Upload } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 
 const labels = [
+  "Your energy",
   "About you",
   "Your property",
   "System preference",
-  "Your energy",
 ];
 const ranges = [
+  ["monthlyUnits", "pricePerUnit", "provider"],
   ["name", "phone", "email", "address", "city", "state", "pincode"],
   ["propertyType", "roofType", "ownership"],
   ["systemType", "batteryRequired"],
-  ["monthlyUnits", "pricePerUnit", "provider"],
 ] as const;
 type Duplicate = {
   id: string;
@@ -31,10 +31,19 @@ type Duplicate = {
   result: Record<string, unknown>;
 };
 
+type ExtractedFields = {
+  provider?: string | null;
+  consumerName?: string | null;
+  monthlyUnits?: number | null;
+  pricePerUnit?: number | null;
+  billingMonth?: string | null;
+};
+
 type ApiResult = {
   success?: boolean;
-  data?: { objectKey?: string; quote?: { id?: string } & Record<string, unknown> };
+  data?: { objectKey?: string; fields?: ExtractedFields; source?: string; quote?: { id?: string } & Record<string, unknown> };
   error?: { code?: string; message?: string; existingQuote?: Duplicate };
+  meta?: { message?: string };
 };
 
 type PincodeLookupResult = {
@@ -60,6 +69,12 @@ export default function QuotePage() {
   const [step, setStep] = useState(0);
   const [validatedStep, setValidatedStep] = useState(-1);
   const [file, setFile] = useState<File | null>(null);
+  const [billObjectKey, setBillObjectKey] = useState<string | null>(null);
+  const [readingBill, setReadingBill] = useState(false);
+  const [billMessage, setBillMessage] = useState("");
+  const [billReadFromUpload, setBillReadFromUpload] = useState(false);
+  const [manualOpen, setManualOpen] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
   const [sitePhoto, setSitePhoto] = useState<File | null>(null);
   const [calculating, setCalculating] = useState(false);
   const [error, setError] = useState("");
@@ -131,7 +146,72 @@ export default function QuotePage() {
   const next = async () => {
     const valid = await trigger(ranges[step]);
     if (valid) setStep((current) => Math.min(3, current + 1));
-    else setValidatedStep(step);
+    else {
+      setValidatedStep(step);
+      if (step === 0) setManualOpen(true);
+    }
+  };
+  const handleBillSelect = async (selected: File | null) => {
+    setError("");
+    setBillMessage("");
+    setBillReadFromUpload(false);
+    setFile(selected);
+    setBillObjectKey(null);
+    if (!selected) return;
+    const allowedTypes = ["application/pdf", "image/png", "image/jpeg"];
+    if (!allowedTypes.includes(selected.type) || selected.size > 10 * 1024 * 1024) {
+      setError("Only valid PDF, PNG or JPEG files up to 10MB are accepted.");
+      return;
+    }
+    try {
+      setReadingBill(true);
+      setBillMessage("Uploading your bill…");
+      const form = new FormData();
+      form.append("file", selected);
+      const uploadResponse = await fetch("/api/upload", { method: "POST", body: form });
+      const uploadResult = await readApiResult(uploadResponse, "Bill upload did not return a valid response");
+      if (!uploadResponse.ok) throw new Error(uploadResult.error?.message ?? "Bill upload failed");
+      const objectKey = uploadResult.data?.objectKey;
+      if (!objectKey) throw new Error("Bill upload did not return a file reference.");
+      setBillObjectKey(objectKey);
+      try {
+        setBillMessage("Reading your bill…");
+        const extractResponse = await fetch("/api/bill/extract", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ objectKey }),
+        });
+        const extractResult = await readApiResult(extractResponse, "Bill reading did not return a valid response");
+        if (extractResponse.ok && extractResult.data?.fields) {
+          const fields = extractResult.data.fields;
+          const applyValue = (name: "monthlyUnits" | "pricePerUnit" | "provider", value: string | number | null | undefined) => {
+            if (value === null || value === undefined || value === "") return;
+            const current = getValues(name);
+            if (current === undefined || current === null || String(current).trim() === "") {
+              setValue(name, value as React.ComponentProps<"input">["value"], { shouldValidate: false, shouldDirty: true });
+            }
+          };
+          applyValue("monthlyUnits", fields.monthlyUnits);
+          applyValue("pricePerUnit", fields.pricePerUnit);
+          applyValue("provider", fields.provider);
+          if (fields.monthlyUnits != null || fields.pricePerUnit != null) {
+            setBillReadFromUpload(true);
+            setManualOpen(true);
+            setBillMessage("Read from your bill — please verify the details below. Everything is editable.");
+          } else {
+            setBillMessage("We read your bill but could not find the units or rate — please enter them manually.");
+          }
+          return;
+        }
+        setBillMessage(extractResult.meta?.message ?? "We couldn't read the bill automatically — please enter the details below.");
+      } catch {
+        setBillMessage("We couldn't read the bill automatically — please enter the details below.");
+      }
+    } catch {
+      setError("Your bill could not be uploaded right now. You can continue by entering the details manually.");
+    } finally {
+      setReadingBill(false);
+    }
   };
   const fieldError = (field: keyof QuoteFormData) =>
     validatedStep === step ? errors[field]?.message : undefined;
@@ -139,10 +219,9 @@ export default function QuotePage() {
     setCalculating(true);
     setError("");
     try {
-      if (!file) throw new Error("Please upload your electricity bill.");
-      let billObjectKey: string | undefined;
+      let storedBillObjectKey = billObjectKey ?? undefined;
       let sitePhotoObjectKey: string | undefined;
-      {
+      if (file && !storedBillObjectKey) {
         const form = new FormData();
         form.append("file", file);
         const uploadResponse = await fetch("/api/upload", {
@@ -153,7 +232,8 @@ export default function QuotePage() {
         if (!uploadResponse.ok)
           throw new Error(uploadResult.error?.message ?? "Bill upload failed");
         if (!uploadResult.data?.objectKey) throw new Error("Bill upload did not return a file reference.");
-        billObjectKey = uploadResult.data.objectKey;
+        storedBillObjectKey = uploadResult.data.objectKey;
+        setBillObjectKey(uploadResult.data.objectKey);
       }
       if (sitePhoto) {
         const form = new FormData();
@@ -176,7 +256,7 @@ export default function QuotePage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...data,
-          billObjectKey,
+          billObjectKey: storedBillObjectKey,
           sitePhotoObjectKey,
           allowDuplicate,
         }),
@@ -254,15 +334,117 @@ export default function QuotePage() {
                 <p className="mt-2 text-xs font-bold uppercase tracking-[.14em] text-lime/80">Step {step + 1} of {labels.length}</p>
                 <p className="mt-2 min-h-6 text-cream/75">
                   {step === 0
-                    ? "Let’s start with the basics."
+                    ? "Upload your electricity bill and we will read it for you — or enter the details manually."
                     : step === 1
-                      ? "A little context helps us size your system."
+                      ? "Let’s start with the basics."
                       : step === 2
-                        ? "Choose the system that fits your property and backup needs."
-                        : "Your energy use is the key to better savings."}
+                        ? "A little context helps us size your system."
+                        : "Choose the system that fits your property and backup needs."}
                 </p>
                 <div className="mt-8 grid gap-4 sm:grid-cols-2">
                   {step === 0 && (
+                    <div className="sm:col-span-2 space-y-5">
+                      <label
+                        className={`group relative flex cursor-pointer flex-col items-center justify-center gap-4 rounded-[1.75rem] border-2 border-dashed px-6 py-12 text-center transition-colors ${dragActive || file ? "border-lime/80 bg-teal/45" : "border-white/40 bg-night/50 hover:border-lime/70 hover:bg-teal/35"}`}
+                        onDragOver={(event) => {
+                          event.preventDefault();
+                          setDragActive(true);
+                        }}
+                        onDragLeave={() => setDragActive(false)}
+                        onDrop={(event) => {
+                          event.preventDefault();
+                          setDragActive(false);
+                          void handleBillSelect(event.dataTransfer.files?.[0] ?? null);
+                        }}
+                      >
+                        <input
+                          className="sr-only"
+                          type="file"
+                          accept="application/pdf,image/png,image/jpeg"
+                          onChange={(event) => void handleBillSelect(event.target.files?.[0] ?? null)}
+                        />
+                        <span className="grid h-16 w-16 place-items-center rounded-full bg-lime text-teal shadow-[0_10px_30px_rgba(216,243,106,.35)] transition-transform duration-300 group-hover:scale-105">
+                          {readingBill ? <Sun size={30} className="calculating-orb" aria-hidden="true" /> : <Upload size={28} aria-hidden="true" />}
+                        </span>
+                        {file ? (
+                          <span className="min-w-0">
+                            <span className="block truncate text-sm font-bold text-white">{file.name}</span>
+                            <span className="mt-1 block text-xs leading-5 text-cream/75">
+                              {readingBill ? "Reading your bill…" : "Uploaded — tap to choose a different file"}
+                            </span>
+                          </span>
+                        ) : (
+                          <span>
+                            <span className="block text-lg font-black tracking-tight text-white sm:text-xl">Upload your electricity bill</span>
+                            <span className="mt-1.5 block text-xs leading-5 text-cream/75 sm:text-sm">
+                              PDF or a clear photo, up to 10MB.
+                              <span className="mt-0.5 block">We read your units and rate automatically.</span>
+                            </span>
+                          </span>
+                        )}
+                        {file && !readingBill && (
+                          <button
+                            type="button"
+                            className="rounded-full border border-white/25 px-3 py-1.5 text-xs font-bold text-cream/80 hover:border-lime/60"
+                            onClick={(event) => {
+                              event.preventDefault();
+                              event.stopPropagation();
+                              void handleBillSelect(null);
+                            }}
+                          >
+                            Remove bill
+                          </button>
+                        )}
+                      </label>
+                      {billMessage && (
+                        <p role="status" className={`flex items-start gap-2 rounded-2xl border px-4 py-3 text-sm leading-5 ${billReadFromUpload ? "border-lime/40 bg-teal/40 text-cream" : "border-white/20 bg-night/55 text-cream/75"}`}>
+                          {billReadFromUpload && <Check size={16} className="mt-0.5 shrink-0 text-lime" aria-hidden="true" />}
+                          {billMessage}
+                        </p>
+                      )}
+                      {!manualOpen ? (
+                        <p className="text-center">
+                          <button
+                            type="button"
+                            onClick={() => setManualOpen(true)}
+                            className="text-xs font-bold uppercase tracking-[.14em] text-cream/60 underline decoration-white/25 underline-offset-4 transition-colors hover:text-lime"
+                          >
+                            or enter your usage manually
+                          </button>
+                        </p>
+                      ) : (
+                        <div className="rounded-2xl border border-white/15 bg-night/40 p-5 sm:p-6">
+                          <p className="text-sm font-bold">
+                            Your usage<sup className="ml-1 text-red-500">*</sup>
+                          </p>
+                          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                            <Input
+                              required
+                              type="number"
+                              label="Average monthly units (kWh)"
+                              error={fieldError("monthlyUnits")}
+                              {...register("monthlyUnits")}
+                            />
+                            <Input
+                              required
+                              type="number"
+                              step="0.01"
+                              label="Price per unit (INR)"
+                              error={fieldError("pricePerUnit")}
+                              {...register("pricePerUnit")}
+                            />
+                            <Input
+                              label="Electricity provider"
+                              wrapperClassName="sm:col-span-2"
+                              error={fieldError("provider")}
+                              {...register("provider")}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {step === 1 && (
                     <>
                       <Input
                         required
@@ -312,7 +494,7 @@ export default function QuotePage() {
                       {pincodeMessage && <p className="sm:col-span-2 -mt-1 text-xs leading-5 text-cream/75" role="status">{pincodeMessage}</p>}
                     </>
                   )}
-                  {step === 1 && (
+                  {step === 2 && (
                     <>
                       <Select
                         required
@@ -366,7 +548,7 @@ export default function QuotePage() {
                       </label>
                     </>
                   )}
-                  {step === 2 && (
+                  {step === 3 && (
                     <div className="sm:col-span-2 space-y-6">
                       <div>
                         <p className="mb-3 text-sm font-bold">
@@ -432,53 +614,11 @@ export default function QuotePage() {
                             </label>
                           ))}
                         </div>
-                      </div>}
-                    </div>
-                  )}
-                  {step === 3 && (
-                    <>
-                      <Input
-                        required
-                        type="number"
-                        label="Average monthly units"
-                        error={fieldError("monthlyUnits")}
-                        {...register("monthlyUnits")}
-                      />
-                      <Input
-                        required
-                        type="number"
-                        step="0.01"
-                        label="Price per unit (INR)"
-                        error={fieldError("pricePerUnit")}
-                        {...register("pricePerUnit")}
-                      />
-                      <Input
-                        label="Electricity provider"
-                        error={fieldError("provider")}
-                        {...register("provider")}
-                      />
-                      <label className="sm:col-span-2">
-                        <span className="mb-2 block text-sm font-bold">
-                          Upload electricity bill
-                          <sup className="ml-1 text-red-500">*</sup>
-                        </span>
-                        <span className="flex cursor-pointer items-center gap-3 rounded-2xl border border-dashed border-ink/20 p-5 text-sm text-ink/60">
-                          <Upload size={20} />
-                          {file ? file.name : "PDF, PNG or JPEG up to 10MB"}
-                          <input
-                            className="hidden"
-                            type="file"
-                            accept="application/pdf,image/png,image/jpeg"
-                            onChange={(event) =>
-                              setFile(event.target.files?.[0] ?? null)
-                            }
-                          />
-                        </span>
-                      </label>
-                    </>
-                  )}
-                </div>
-              </div>
+                       </div>}
+                     </div>
+                   )}
+                 </div>
+               </div>
               <div className="mt-10 flex justify-between">
                 <Button
                   type="button"

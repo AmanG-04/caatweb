@@ -3,5 +3,5 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 export type D1DatabaseLike = { prepare(query: string): { bind(...values: unknown[]): { run(): Promise<unknown>; first<T = Record<string, unknown>>(): Promise<T | null>; all<T = Record<string, unknown>>(): Promise<{ results: T[] }> } } };
 export type R2ObjectLike = { body: ReadableStream<Uint8Array>; httpMetadata?: { contentType?: string } };
 export type R2BucketLike = { put(key: string, value: ArrayBuffer, options?: Record<string, unknown>): Promise<unknown>; get?(key: string): Promise<R2ObjectLike | null>; createMultipartUpload?: unknown };
-export type RuntimeEnv = { DB?: D1DatabaseLike; BILLS_BUCKET?: R2BucketLike; AUTH_MODE?: string; ADMIN_LOGIN_ID?: string; ADMIN_LOGIN_PASSWORD?: string; NEXT_PUBLIC_SITE_URL?: string };
+export type RuntimeEnv = { DB?: D1DatabaseLike; BILLS_BUCKET?: R2BucketLike; AUTH_MODE?: string; ADMIN_LOGIN_ID?: string; ADMIN_LOGIN_PASSWORD?: string; NEXT_PUBLIC_SITE_URL?: string; GEMINI_API_KEY?: string; GEMINI_MODEL?: string };
 export function getEnv(): RuntimeEnv { try { return getCloudflareContext().env as RuntimeEnv; } catch { return {}; } }
