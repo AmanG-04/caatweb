@@ -39,11 +39,11 @@ export function MobileNavMenu() {
       <summary aria-label="Open navigation menu"><span>Menu</span><ChevronDown size={14} aria-hidden="true" /></summary>
       <div className="site-header-menu-panel" onClick={closeMenu}>
         {/* <Link href="/">Home</Link> */}
-        <Link href="/about-us" aria-current={isCurrentPath("/about-us") ? "page" : undefined}>About us</Link>
-        <Link href="/solutions" aria-current={isCurrentPath("/solutions") ? "page" : undefined}>Solutions</Link>
-        <Link href="/testimonials" aria-current={isCurrentPath("/testimonials") ? "page" : undefined}>Testimonials</Link>
-        <Link href="/blogbot" aria-current={isCurrentPath("/blogbot") ? "page" : undefined}>BlogBot</Link>
-        <Link href="/contact" aria-current={isCurrentPath("/contact") ? "page" : undefined}>Contact</Link>
+        <Link href="/about-us" prefetch={false} aria-current={isCurrentPath("/about-us") ? "page" : undefined}>About us</Link>
+        <Link href="/solutions" prefetch={false} aria-current={isCurrentPath("/solutions") ? "page" : undefined}>Solutions</Link>
+        <Link href="/testimonials" prefetch={false} aria-current={isCurrentPath("/testimonials") ? "page" : undefined}>Testimonials</Link>
+        <Link href="/blogbot" prefetch={false} aria-current={isCurrentPath("/blogbot") ? "page" : undefined}>BlogBot</Link>
+        <Link href="/contact" prefetch={false} aria-current={isCurrentPath("/contact") ? "page" : undefined}>Contact</Link>
         <a href={site.whatsapp(defaultWhatsappMessage)} target="_blank" rel="noopener noreferrer"><MessageCircle size={16} /> Online consultation</a>
       </div>
     </details>

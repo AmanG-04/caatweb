@@ -414,7 +414,7 @@ export function SolutionsShowcase({ initialSolutionId, initiallyExpanded = false
           <h2 id="solutions-cta-title" className="mt-5 text-3xl font-black leading-tight tracking-[-.035em] sm:text-4xl">Tell us what needs power. We will help define the right next step.</h2>
           <p className="mx-auto mt-4 max-w-xl leading-7 text-white/70">For a solar estimate, start with your electricity bill. For another solution, start a consultation and tell us about the site.</p>
           <div className="mx-auto mt-8 flex max-w-max flex-col gap-3 sm:flex-row">
-            <Link href="/quote" className={buttonStyles("primary", "gap-2 px-6")}>
+            <Link href="/quote" prefetch={false} className={buttonStyles("primary", "gap-2 px-6")}>
               Get a solar estimate
               <ArrowUpRight size={17} aria-hidden="true" />
             </Link>

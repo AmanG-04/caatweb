@@ -36,7 +36,7 @@ export default async function BlogBotPage() {
                 <article key={post.id} className="flex flex-col rounded-3xl border border-ink/10 bg-white p-7 shadow-soft">
                   <p className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[.15em] text-teal"><CalendarDays size={14} />{formatDate(post.published_at ?? post.created_at)}</p>
                   <h2 className="mt-5 text-2xl font-black tracking-tight">{post.title}</h2>
-                  <Link href={`/blogbot/${post.slug}`} className="mt-7 inline-flex items-center gap-2 text-sm font-black text-teal">Read article <ArrowUpRight size={16} /></Link>
+                  <Link href={`/blogbot/${post.slug}`} prefetch={false} className="mt-7 inline-flex items-center gap-2 text-sm font-black text-teal">Read article <ArrowUpRight size={16} /></Link>
                 </article>
               ))}
             </div>

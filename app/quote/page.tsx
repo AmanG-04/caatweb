@@ -34,7 +34,7 @@ export default function QuotePage() {
               <a href={site.whatsapp(defaultWhatsappMessage)} target="_blank" rel="noopener noreferrer" className={buttonStyles("primary", "gap-2 px-6")}>
                 <MessageCircle size={17} /> Online consultation
               </a>
-              <Link href="/" className={buttonStyles("outline", "gap-2 px-6")}>
+              <Link href="/" prefetch={false} className={buttonStyles("outline", "gap-2 px-6")}>
                 Explore solar solutions <ArrowUpRight size={17} />
               </Link>
             </div>
