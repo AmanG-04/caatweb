@@ -5,20 +5,26 @@ import { consumeRateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
-const DEFAULT_GEMINI_MODEL = "gemini-3.7-flash";
-/** Best to worst. Flash models carry ~20 req/day free; Flash-Lite tiers carry ~500/day, so they close the chain as high-volume workhorses. */
+const DEFAULT_GEMINI_MODEL = "gemini-3.6-flash";
+/** Best to worst. 3.7-flash sits last: it has repeatedly hung until timeout for this key while 3.6 answers in seconds. Flash-Lite tiers carry ~500/day. */
 const GEMINI_FALLBACK_MODELS = [
-  "gemini-3.6-flash",
   "gemini-3.5-flash",
   "gemini-3-flash",
   "gemini-2.5-flash",
   "gemini-3.5-flash-lite",
   "gemini-3.1-flash-lite",
   "gemini-2.5-flash-lite",
+  "gemini-3.7-flash",
 ];
 const GEMINI_ATTEMPT_TIMEOUT_MS = 15_000;
 const GEMINI_TOTAL_BUDGET_MS = 35_000;
 const MAX_BYTES = 10 * 1024 * 1024;
+
+// Soft circuit breaker (per isolate): two consecutive total failures open a cooldown window.
+let geminiConsecutiveFailures = 0;
+let geminiCooldownUntil = 0;
+const GEMINI_FAILURE_THRESHOLD = 2;
+const GEMINI_COOLDOWN_MS = 120_000;
 
 const extractRequestSchema = z.object({ objectKey: z.string().regex(/^bills\/[0-9a-f-]{36}\.(pdf|png|jpg)$/) });
 
@@ -162,76 +168,92 @@ async function extractWithGemini(bytes: Uint8Array, mime: DetectedMime) {
 
   const override = env.GEMINI_MODEL ?? process.env.GEMINI_MODEL;
   const candidates = [...new Set([override, DEFAULT_GEMINI_MODEL, ...GEMINI_FALLBACK_MODELS].filter((model): model is string => Boolean(model)))];
-
-  let response: Response | null = null;
-  let lastError = "";
-  let usedModel = "";
   const startedAt = Date.now();
-  for (const model of candidates) {
-    const remaining = GEMINI_TOTAL_BUDGET_MS - (Date.now() - startedAt);
-    if (model !== candidates[0] && remaining < 3_000) {
-      lastError = `GEMINI_BUDGET_EXHAUSTED_AFTER_${usedModel || candidates[0]}`;
-      break;
+
+  const attemptModel = async (model: string, timeoutMs: number) => {
+    const response = await callGemini(model, bytes, mime, apiKey, timeoutMs);
+    // Unavailable model: 404 retired/unknown, 429 quota exhausted, 503 overloaded.
+    if (response.status === 404 || response.status === 429 || response.status === 503) {
+      console.info("bill_gemini_model_skipped", { model, status: response.status, elapsedMs: Date.now() - startedAt });
+      throw new Error(`GEMINI_HTTP_${response.status}_${model}`);
     }
-    let attempt: Response;
+    if (!response.ok) throw new Error(`GEMINI_HTTP_${response.status}`);
+    const payload = JSON.parse(await response.text()) as {
+      candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+    };
+    const rawText = payload.candidates?.[0]?.content?.parts?.map((part) => part.text ?? "").join("") ?? "";
+    if (!rawText.trim()) throw new Error("GEMINI_EMPTY_RESPONSE");
+    const parsed = extractedFieldsSchema.safeParse(JSON.parse(rawText));
+    if (!parsed.success) {
+      console.error("bill_gemini_parse_failed", { model, raw: rawText.slice(0, 600), issues: parsed.error.issues.slice(0, 5) });
+      throw new Error("GEMINI_INVALID_RESPONSE");
+    }
+    console.info("bill_gemini_model_selected", { model, elapsedMs: Date.now() - startedAt });
+    const fields = parsed.data;
+    return {
+      provider: fields.provider ?? null,
+      consumerName: fields.consumerName ?? null,
+      monthlyUnits: fields.monthlyUnits != null ? Math.round(fields.monthlyUnits) : null,
+      pricePerUnit: fields.pricePerUnit != null ? Number(fields.pricePerUnit.toFixed(2)) : null,
+      pricePerUnitSource: fields.pricePerUnitSource ?? null,
+      billingMonth: fields.billingMonth ?? null,
+      averageMonthlyUnits: fields.averageMonthlyUnits != null ? Math.round(fields.averageMonthlyUnits) : null,
+      averageBillAmount: fields.averageBillAmount != null ? Number(fields.averageBillAmount.toFixed(2)) : null,
+      address: fields.address ?? null,
+      city: fields.city ?? null,
+      state: fields.state ?? null,
+      pincode: fields.pincode ?? null,
+    };
+  };
+
+  const withTimeoutGuard = async (model: string) => {
     try {
-      attempt = await callGemini(model, bytes, mime, apiKey, Math.min(GEMINI_ATTEMPT_TIMEOUT_MS, Math.max(remaining, 3_000)));
+      return await attemptModel(model, Math.min(GEMINI_ATTEMPT_TIMEOUT_MS, GEMINI_TOTAL_BUDGET_MS));
     } catch (callError) {
       const message = callError instanceof Error ? callError.message : String(callError);
-      if (/abort|timeout/i.test(message) && model !== candidates[candidates.length - 1]) {
-        lastError = `GEMINI_TIMEOUT_${model}`;
+      if (/abort|timeout/i.test(message)) {
         console.info("bill_gemini_model_skipped", { model, status: "timeout", elapsedMs: Date.now() - startedAt });
-        continue;
+        throw new Error(`GEMINI_TIMEOUT_${model}`);
       }
       throw callError;
     }
-    const isLastModel = model === candidates[candidates.length - 1];
-    // Advance to the next model when this one is unavailable: 404 retired/unknown, 429 quota exhausted, 503 overloaded.
-    if ((attempt.status === 404 || attempt.status === 429 || attempt.status === 503) && !isLastModel) {
-      lastError = `GEMINI_HTTP_${attempt.status}_${model}`;
-      console.info("bill_gemini_model_skipped", { model, status: attempt.status, elapsedMs: Date.now() - startedAt });
-      continue;
+  };
+
+  let lastError = "";
+  // Race the primary flash model against the highest-quota Flash-Lite (500 RPD bucket):
+  // whichever answers first wins, so a single hung model no longer stalls the whole request.
+  const raceModels = [candidates[0], candidates.find((model) => model.includes("flash-lite"))].filter((model): model is string => Boolean(model));
+  try {
+    return await Promise.any(raceModels.map((model) => withTimeoutGuard(model)));
+  } catch (raceError) {
+    if (raceError instanceof AggregateError) {
+      lastError = raceError.errors.map((error) => (error instanceof Error ? error.message : String(error))).join(" | ");
+    } else {
+      throw raceError;
     }
-    response = attempt;
-    usedModel = model;
-    break;
-  }
-  if (!response) throw new Error(lastError || "GEMINI_NO_MODEL");
-  console.info("bill_gemini_model_selected", { model: usedModel, elapsedMs: Date.now() - startedAt });
-
-  if (response.status === 429) throw new Error("GEMINI_RATE_LIMITED");
-  if (!response.ok) throw new Error(`GEMINI_HTTP_${response.status}`);
-
-  const payload = JSON.parse(await response.text()) as {
-    candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
-  };
-  const rawText = payload.candidates?.[0]?.content?.parts?.map((part) => part.text ?? "").join("") ?? "";
-  if (!rawText.trim()) throw new Error("GEMINI_EMPTY_RESPONSE");
-
-  const parsed = extractedFieldsSchema.safeParse(JSON.parse(rawText));
-  if (!parsed.success) {
-    console.error("bill_gemini_parse_failed", { raw: rawText.slice(0, 600), issues: parsed.error.issues.slice(0, 5) });
-    throw new Error("GEMINI_INVALID_RESPONSE");
   }
 
-  const fields = parsed.data;
-  return {
-    provider: fields.provider ?? null,
-    consumerName: fields.consumerName ?? null,
-    monthlyUnits: fields.monthlyUnits != null ? Math.round(fields.monthlyUnits) : null,
-    pricePerUnit: fields.pricePerUnit != null ? Number(fields.pricePerUnit.toFixed(2)) : null,
-    pricePerUnitSource: fields.pricePerUnitSource ?? null,
-    billingMonth: fields.billingMonth ?? null,
-    averageMonthlyUnits: fields.averageMonthlyUnits != null ? Math.round(fields.averageMonthlyUnits) : null,
-    averageBillAmount: fields.averageBillAmount != null ? Number(fields.averageBillAmount.toFixed(2)) : null,
-    address: fields.address ?? null,
-    city: fields.city ?? null,
-    state: fields.state ?? null,
-    pincode: fields.pincode ?? null,
-  };
+  for (const model of candidates.filter((model) => !raceModels.includes(model))) {
+    const remaining = GEMINI_TOTAL_BUDGET_MS - (Date.now() - startedAt);
+    if (remaining < 3_000) {
+      lastError = `${lastError} | GEMINI_BUDGET_EXHAUSTED`;
+      break;
+    }
+    try {
+      return await withTimeoutGuard(model);
+    } catch (attemptError) {
+      lastError = `${lastError} | ${attemptError instanceof Error ? attemptError.message : String(attemptError)}`;
+    }
+  }
+  throw new Error(lastError || "GEMINI_NO_MODEL");
 }
 
 export async function POST(request: Request) {
+  // Circuit breaker: after repeated total failures, fail fast for a cooldown window
+  // instead of making every user wait out the full timeout budget during a Gemini outage.
+  if (Date.now() < geminiCooldownUntil) {
+    return NextResponse.json({ success: false, error: { code: "EXTRACTION_BUSY", message: "Bill reading is temporarily unavailable. Please enter the details manually." } }, { status: 503, headers: { "Retry-After": String(Math.ceil((geminiCooldownUntil - Date.now()) / 1000)) } });
+  }
   try {
     const rate = await consumeRateLimit(request, "bill-extract", 10, 600);
     if (!rate.allowed) {
@@ -254,14 +276,23 @@ export async function POST(request: Request) {
 
     try {
       const fields = await extractWithGemini(file.bytes, file.mime);
+      geminiConsecutiveFailures = 0;
+      geminiCooldownUntil = 0;
       return NextResponse.json({ success: true, data: { fields, source: "gemini" } });
     } catch (geminiError) {
       const reason = geminiError instanceof Error ? geminiError.message : String(geminiError);
       console.error("bill_gemini_extraction_failed", { objectKey, reason });
+      if (reason !== "GEMINI_UNCONFIGURED" && !reason.startsWith("GEMINI_HTTP_400")) {
+        geminiConsecutiveFailures += 1;
+        if (geminiConsecutiveFailures >= GEMINI_FAILURE_THRESHOLD) {
+          geminiCooldownUntil = Date.now() + GEMINI_COOLDOWN_MS;
+          console.error("bill_gemini_circuit_open", { consecutiveFailures: geminiConsecutiveFailures, cooldownMs: GEMINI_COOLDOWN_MS });
+        }
+      }
       if (reason === "GEMINI_UNCONFIGURED") {
         return NextResponse.json({ success: false, error: { code: "EXTRACTION_UNCONFIGURED", message: "Automatic bill reading is not available right now. Please enter the details manually." } }, { status: 503 });
       }
-      if (reason === "GEMINI_RATE_LIMITED") {
+      if (reason.includes("GEMINI_RATE_LIMITED")) {
         return NextResponse.json({ success: false, error: { code: "EXTRACTION_BUSY", message: "Bill reading is busy right now. Please enter the details manually." } }, { status: 429 });
       }
       return NextResponse.json({ success: false, error: { code: "EXTRACTION_FAILED", message: "We couldn't read this bill automatically. Please enter the details manually." } }, { status: 502 });
