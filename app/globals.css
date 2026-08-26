@@ -128,7 +128,6 @@ body { margin: 0; overflow-x: hidden; background: var(--cream); color: var(--ink
 .quote-form-panel .border-ink\/15, .quote-form-panel .border-ink\/20 { border-color: rgba(185, 233, 222, .35); background: rgba(247, 248, 242, .1); }
 .quote-form-panel .text-ink\/60, .quote-form-panel .text-ink\/55, .quote-form-panel .text-ink\/45 { color: rgba(247, 248, 242, .7); }
 @media (min-width: 768px) and (min-height: 680px) {
-  .quote-shell { height: 100dvh; min-height: 0; overflow: hidden; }
   .quote-content { padding-block: 1.25rem; }
   .quote-stepper { margin-bottom: 1.25rem; }
   .quote-form-panel { padding: 1.5rem; }

@@ -36,7 +36,14 @@ type ExtractedFields = {
   consumerName?: string | null;
   monthlyUnits?: number | null;
   pricePerUnit?: number | null;
+  pricePerUnitSource?: "printed" | "calculated" | null;
   billingMonth?: string | null;
+  averageMonthlyUnits?: number | null;
+  averageBillAmount?: number | null;
+  address?: string | null;
+  city?: string | null;
+  state?: string | null;
+  pincode?: string | null;
 };
 
 type ApiResult = {
@@ -184,26 +191,39 @@ export default function QuotePage() {
         const extractResult = await readApiResult(extractResponse, "Bill reading did not return a valid response");
         if (extractResponse.ok && extractResult.data?.fields) {
           const fields = extractResult.data.fields;
-          const applyValue = (name: "monthlyUnits" | "pricePerUnit" | "provider", value: string | number | null | undefined) => {
+          const applyValue = (name: "monthlyUnits" | "pricePerUnit" | "provider" | "name" | "address" | "city" | "state" | "pincode", value: string | number | null | undefined) => {
             if (value === null || value === undefined || value === "") return;
             const current = getValues(name);
             if (current === undefined || current === null || String(current).trim() === "") {
               setValue(name, value as React.ComponentProps<"input">["value"], { shouldValidate: false, shouldDirty: true });
             }
           };
-          applyValue("monthlyUnits", fields.monthlyUnits);
+          const averageUnits = fields.averageMonthlyUnits ?? fields.monthlyUnits ?? null;
+          applyValue("monthlyUnits", averageUnits);
           applyValue("pricePerUnit", fields.pricePerUnit);
           applyValue("provider", fields.provider);
-          if (fields.monthlyUnits != null || fields.pricePerUnit != null) {
+          applyValue("name", fields.consumerName);
+          applyValue("address", fields.address);
+          applyValue("city", fields.city);
+          applyValue("state", fields.state);
+          applyValue("pincode", fields.pincode);
+          const contactFilled = [fields.consumerName, fields.address, fields.city, fields.state, fields.pincode].some((value) => Boolean(value));
+          if (averageUnits != null || fields.pricePerUnit != null) {
             setBillReadFromUpload(true);
             setManualOpen(true);
-            setBillMessage("Read from your bill — please verify the details below. Everything is editable.");
+            const averaged = fields.averageMonthlyUnits != null;
+            setBillMessage(
+              `${averaged ? "Averaged from your bill's usage history. " : ""}${fields.pricePerUnitSource === "calculated" ? "The per-unit rate was not printed, so we calculated it from your bill total. " : ""}${contactFilled ? "Your name and address were filled on the next step — " : "Read from your bill — "}please verify the details below.`,
+            );
+            window.setTimeout(() => {
+              document.getElementById("manual-usage-panel")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            }, 80);
           } else {
-            setBillMessage("We read your bill but could not find the units or rate — please enter them manually.");
+            setBillMessage(extractResult.meta?.message ?? "We read your bill but could not find the units or rate — please enter them manually.");
           }
           return;
         }
-        setBillMessage(extractResult.meta?.message ?? "We couldn't read the bill automatically — please enter the details below.");
+        setBillMessage(extractResult.error?.message ?? extractResult.meta?.message ?? "We couldn't read the bill automatically — please enter the details below.");
       } catch {
         setBillMessage("We couldn't read the bill automatically — please enter the details below.");
       }
@@ -413,7 +433,7 @@ export default function QuotePage() {
                           </button>
                         </p>
                       ) : (
-                        <div className="rounded-2xl border border-white/15 bg-night/40 p-5 sm:p-6">
+                        <div id="manual-usage-panel" className="rounded-2xl border border-white/15 bg-night/40 p-5 sm:p-6">
                           <p className="text-sm font-bold">
                             Your usage<sup className="ml-1 text-red-500">*</sup>
                           </p>
