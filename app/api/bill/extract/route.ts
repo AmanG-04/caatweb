@@ -16,6 +16,8 @@ const GEMINI_FALLBACK_MODELS = [
   "gemini-3.1-flash-lite",
   "gemini-2.5-flash-lite",
 ];
+const GEMINI_ATTEMPT_TIMEOUT_MS = 15_000;
+const GEMINI_TOTAL_BUDGET_MS = 35_000;
 const MAX_BYTES = 10 * 1024 * 1024;
 
 const extractRequestSchema = z.object({ objectKey: z.string().regex(/^bills\/[0-9a-f-]{36}\.(pdf|png|jpg)$/) });
@@ -134,13 +136,13 @@ function buildGeminiPrompt(mime: DetectedMime): string {
   ].join(" ");
 }
 
-async function callGemini(model: string, bytes: Uint8Array, mime: DetectedMime, apiKey: string) {
+async function callGemini(model: string, bytes: Uint8Array, mime: DetectedMime, apiKey: string, timeoutMs: number) {
   const generationConfig: Record<string, unknown> = { temperature: 0, responseMimeType: "application/json", responseSchema: geminiResponseSchema };
   if (model.startsWith("gemini-3")) generationConfig.thinkingConfig = { thinkingLevel: "low" };
   return fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
-    signal: AbortSignal.timeout(45_000),
+    signal: AbortSignal.timeout(timeoutMs),
     body: JSON.stringify({
       contents: [{
         parts: [
@@ -164,15 +166,21 @@ async function extractWithGemini(bytes: Uint8Array, mime: DetectedMime) {
   let response: Response | null = null;
   let lastError = "";
   let usedModel = "";
+  const startedAt = Date.now();
   for (const model of candidates) {
+    const remaining = GEMINI_TOTAL_BUDGET_MS - (Date.now() - startedAt);
+    if (model !== candidates[0] && remaining < 3_000) {
+      lastError = `GEMINI_BUDGET_EXHAUSTED_AFTER_${usedModel || candidates[0]}`;
+      break;
+    }
     let attempt: Response;
     try {
-      attempt = await callGemini(model, bytes, mime, apiKey);
+      attempt = await callGemini(model, bytes, mime, apiKey, Math.min(GEMINI_ATTEMPT_TIMEOUT_MS, Math.max(remaining, 3_000)));
     } catch (callError) {
       const message = callError instanceof Error ? callError.message : String(callError);
       if (/abort|timeout/i.test(message) && model !== candidates[candidates.length - 1]) {
         lastError = `GEMINI_TIMEOUT_${model}`;
-        console.info("bill_gemini_model_skipped", { model, status: "timeout" });
+        console.info("bill_gemini_model_skipped", { model, status: "timeout", elapsedMs: Date.now() - startedAt });
         continue;
       }
       throw callError;
@@ -181,7 +189,7 @@ async function extractWithGemini(bytes: Uint8Array, mime: DetectedMime) {
     // Advance to the next model when this one is unavailable: 404 retired/unknown, 429 quota exhausted, 503 overloaded.
     if ((attempt.status === 404 || attempt.status === 429 || attempt.status === 503) && !isLastModel) {
       lastError = `GEMINI_HTTP_${attempt.status}_${model}`;
-      console.info("bill_gemini_model_skipped", { model, status: attempt.status });
+      console.info("bill_gemini_model_skipped", { model, status: attempt.status, elapsedMs: Date.now() - startedAt });
       continue;
     }
     response = attempt;
@@ -189,7 +197,7 @@ async function extractWithGemini(bytes: Uint8Array, mime: DetectedMime) {
     break;
   }
   if (!response) throw new Error(lastError || "GEMINI_NO_MODEL");
-  if (usedModel !== candidates[0]) console.info("bill_gemini_model_fallback", { model: usedModel });
+  console.info("bill_gemini_model_selected", { model: usedModel, elapsedMs: Date.now() - startedAt });
 
   if (response.status === 429) throw new Error("GEMINI_RATE_LIMITED");
   if (!response.ok) throw new Error(`GEMINI_HTTP_${response.status}`);
