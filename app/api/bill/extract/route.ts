@@ -159,15 +159,27 @@ async function extractWithGemini(bytes: Uint8Array, mime: DetectedMime) {
   if (!apiKey) throw new Error("GEMINI_UNCONFIGURED");
 
   const override = env.GEMINI_MODEL ?? process.env.GEMINI_MODEL;
-  const candidates = [override, DEFAULT_GEMINI_MODEL, ...GEMINI_FALLBACK_MODELS].filter((model): model is string => Boolean(model));
+  const candidates = [...new Set([override, DEFAULT_GEMINI_MODEL, ...GEMINI_FALLBACK_MODELS].filter((model): model is string => Boolean(model)))];
 
   let response: Response | null = null;
   let lastError = "";
   let usedModel = "";
   for (const model of candidates) {
-    const attempt = await callGemini(model, bytes, mime, apiKey);
-    if (attempt.status === 404 && model !== candidates[candidates.length - 1]) {
-      lastError = `GEMINI_HTTP_404_${model}`;
+    let attempt: Response;
+    try {
+      attempt = await callGemini(model, bytes, mime, apiKey);
+    } catch (callError) {
+      const message = callError instanceof Error ? callError.message : String(callError);
+      if (/abort|timeout/i.test(message) && model !== candidates[candidates.length - 1]) {
+        lastError = `GEMINI_TIMEOUT_${model}`;
+        continue;
+      }
+      throw callError;
+    }
+    const isLastModel = model === candidates[candidates.length - 1];
+    // Advance to the next model when this one is unavailable: 404 retired/unknown, 429 quota exhausted, 503 overloaded.
+    if ((attempt.status === 404 || attempt.status === 429 || attempt.status === 503) && !isLastModel) {
+      lastError = `GEMINI_HTTP_${attempt.status}_${model}`;
       continue;
     }
     response = attempt;
@@ -175,7 +187,7 @@ async function extractWithGemini(bytes: Uint8Array, mime: DetectedMime) {
     break;
   }
   if (!response) throw new Error(lastError || "GEMINI_NO_MODEL");
-  if (usedModel !== DEFAULT_GEMINI_MODEL) console.info("bill_gemini_model_fallback", { model: usedModel });
+  if (usedModel !== candidates[0]) console.info("bill_gemini_model_fallback", { model: usedModel });
 
   if (response.status === 429) throw new Error("GEMINI_RATE_LIMITED");
   if (!response.ok) throw new Error(`GEMINI_HTTP_${response.status}`);
