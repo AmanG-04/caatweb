@@ -172,6 +172,7 @@ async function extractWithGemini(bytes: Uint8Array, mime: DetectedMime) {
       const message = callError instanceof Error ? callError.message : String(callError);
       if (/abort|timeout/i.test(message) && model !== candidates[candidates.length - 1]) {
         lastError = `GEMINI_TIMEOUT_${model}`;
+        console.info("bill_gemini_model_skipped", { model, status: "timeout" });
         continue;
       }
       throw callError;
@@ -180,6 +181,7 @@ async function extractWithGemini(bytes: Uint8Array, mime: DetectedMime) {
     // Advance to the next model when this one is unavailable: 404 retired/unknown, 429 quota exhausted, 503 overloaded.
     if ((attempt.status === 404 || attempt.status === 429 || attempt.status === 503) && !isLastModel) {
       lastError = `GEMINI_HTTP_${attempt.status}_${model}`;
+      console.info("bill_gemini_model_skipped", { model, status: attempt.status });
       continue;
     }
     response = attempt;
