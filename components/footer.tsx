@@ -1,6 +1,8 @@
 import Image from "next/image";
+import Link from "next/link";
 import logo from "../companyinfo/caatlogo-96.webp";
 import { defaultWhatsappMessage, site } from "@/lib/site";
+import { serviceAreas } from "@/lib/service-areas";
 
 const quickLinks = [
   { label: "About us", href: "/about-us" },
@@ -78,7 +80,7 @@ export default function Footer() {
   return (
     <footer className="border-t-2 border-gold bg-night">
       <div className="mx-auto max-w-none 2xl:px-16 px-5 py-16 sm:px-8 sm:py-20">
-        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr]">
+        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1.2fr]">
           <div>
             <div className="flex items-center gap-3">
               <span className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl bg-white p-1">
@@ -151,6 +153,21 @@ export default function Footer() {
               ))}
             </ul>
           </div>
+
+          <nav aria-label="Areas we serve">
+            <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">
+              Areas we serve
+            </p>
+            <ul className="mt-5 space-y-3">
+              {serviceAreas.map((area) => (
+                <li key={area.slug}>
+                  <Link href={`/solar-installation/${area.slug}`} className="text-sm text-white/70 transition-colors hover:text-gold-soft">
+                    Solar in {area.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
 
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">

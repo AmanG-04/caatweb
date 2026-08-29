@@ -20,8 +20,8 @@ export default {
         "ink-soft": "#52706d",
       },
       fontFamily: {
-        display: ["Georgia", "serif"],
-        mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+        display: ["Satoshi", "Arial", "sans-serif"],
+        mono: ["var(--font-geist-mono)", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
       boxShadow: { soft: "0 18px 60px rgba(16,42,42,.10)" },
     },

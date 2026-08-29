@@ -1,10 +1,15 @@
+@import url("https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700,900&display=swap");
 @import "tailwindcss";
 @config "../tailwind.config.ts";
 
-:root { --ink: #102a2a; --cream: #f7f8f2; --color-gold: #d8f36a; --color-gold-soft: #edffad; --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace; }
+:root { --ink: #102a2a; --cream: #f7f8f2; --color-gold: #d8f36a; --color-gold-soft: #edffad; --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace; }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; overflow-y: auto; }
-body { margin: 0; overflow-x: hidden; background: var(--cream); color: var(--ink); font-family: Arial, Helvetica, sans-serif; }
+body { margin: 0; overflow-x: hidden; background: var(--cream); color: var(--ink); font-family: "Satoshi", Arial, Helvetica, sans-serif; font-weight: 400; }
+h1.font-black { font-weight: 900; }
+h2.font-black, h3.font-black { font-weight: 600; }
+button.font-bold, a.font-bold { font-weight: 600; }
+nav a { font-weight: 600; }
 .page-reveal > main > nav { animation: page-header-enter .57s .02s cubic-bezier(.2,.8,.2,1) both; will-change: opacity, transform; }
 .page-reveal > main > nav > a { animation: page-enter-up .49s .08s cubic-bezier(.2,.8,.2,1) both; }
 .page-reveal > main > nav > .site-header-links { animation: page-enter-up .52s .14s cubic-bezier(.2,.8,.2,1) both; }
@@ -77,7 +82,7 @@ body { margin: 0; overflow-x: hidden; background: var(--cream); color: var(--ink
 .brand-marquee { position: relative; z-index: 0; isolation: isolate; }
 @media (max-width: 640px) { .site-header-context { min-width: 0; max-width: 9rem; text-align: right; font-size: .62rem; } }
 @media (min-width: 640px) { .page-title { font-size: 3rem; } }
-@media (max-width: 639px) { .site-header { top: .6rem; width: calc(100% - 20px); padding-inline: .65rem; border-radius: 1.25rem; } .site-header-menu summary { padding-inline: .55rem; font-size: .68rem; } .site-header-menu-panel { top: 4.7rem; } .section-title { font-size: clamp(2rem, 10vw, 2.5rem); line-height: 1.05; } .section-copy { font-size: 1rem; line-height: 1.65; } .hero-scene .solar-scene-card { border-radius: 1.25rem; } .hero-scene .solar-scene-artwork { transform: scale(1.08); transform-origin: 100% 54%; } }
+@media (max-width: 639px) { .site-header { top: .6rem; width: calc(100% - 20px); padding-inline: .65rem; border-radius: 1.25rem; } .site-header-menu summary { padding-inline: .55rem; font-size: .68rem; } .site-header-menu-panel { top: 4.7rem; right: auto; left: 50%; width: calc(100vw - 2rem); max-width: 18rem; margin: 0; text-align: center; transform: translateX(-50%); } .site-header-menu-panel a { justify-content: center; } .section-title { font-size: clamp(2rem, 10vw, 2.5rem); line-height: 1.05; } .section-copy { font-size: 1rem; line-height: 1.65; } .hero-scene .solar-scene-card { border-radius: 1.25rem; } .hero-scene .solar-scene-artwork { transform: scale(1.08); transform-origin: 100% 54%; } }
 @keyframes hero-title-pulse { 0%, 100% { background-position: 100% 50%; } 50% { background-position: 0% 50%; } }
 @keyframes about-grid-drift { from { background-position: center center, 0 0, 0 0; } to { background-position: center center, 42px 42px, -42px 42px; } }
 .bg-night { background-color: #102a2a; }
@@ -153,9 +158,14 @@ body { margin: 0; overflow-x: hidden; background: var(--cream); color: var(--ink
 .project-timeline-rail button.is-active { border-color: #0f766e; background: #0f766e; color: #f7f8f2; }
 .project-timeline-viewport { height: min(38rem, 72vh); min-height: 29rem; overflow-y: auto; scroll-snap-type: y mandatory; -webkit-mask-image: linear-gradient(to bottom, transparent, #000 8%, #000 84%, transparent); mask-image: linear-gradient(to bottom, transparent, #000 8%, #000 84%, transparent); }
 .project-timeline-viewport::-webkit-scrollbar { display: none; }
-.project-timeline-step { display: grid; min-height: 100%; grid-template-columns: minmax(0, 1fr); align-items: center; padding: 2rem 1rem 2rem 0; scroll-snap-align: start; scroll-snap-stop: always; opacity: 1; transition: opacity .22s ease; }
+.project-timeline-step { position: relative; display: grid; min-height: 100%; grid-template-columns: minmax(0, 1fr); align-items: center; padding: 2rem 1rem 2rem 0; scroll-snap-align: start; scroll-snap-stop: always; opacity: 1; transition: opacity .22s ease; }
 .project-timeline-step.is-active { opacity: 1; }
 .project-timeline-content { max-width: 42rem; }
+.project-timeline-next { position: absolute; right: .8rem; bottom: 1.1rem; display: grid; width: 2rem; height: 2rem; place-items: center; cursor: pointer; border: 0; background: transparent; color: #102a2a; transition: color .2s ease, transform .2s ease; }
+.project-timeline-next svg { stroke-width: 2.8; animation: project-timeline-scroll-cue 1.5s ease-in-out infinite; }
+.project-timeline-next:hover { color: #0f766e; transform: translateY(1px); }
+.project-timeline-next:focus-visible { color: #0f766e; outline: 2px solid #0f766e; outline-offset: 3px; }
+@keyframes project-timeline-scroll-cue { 0%, 100% { transform: translateY(-2px); } 50% { transform: translateY(3px); } }
 .project-timeline-counter { margin: 0; color: #0f766e !important; font: 800 .67rem/1 var(--font-mono); letter-spacing: .16em; }
 .project-timeline-step h3 { margin-top: .8rem; font-size: clamp(1.8rem, 4vw, 3.15rem); font-weight: 900; line-height: 1; letter-spacing: -.04em; }
 .project-timeline-step p { margin-top: 1rem; max-width: 40rem; color: rgba(16,42,42,.68); font-size: 1.05rem; line-height: 1.75; }
@@ -216,4 +226,4 @@ body { margin: 0; overflow-x: hidden; background: var(--cream); color: var(--ink
 @media (min-width: 640px) { .quote-form-panel { border-width: 10px; } }
 @media (max-width: 639px) { .subsidy-steps { display: grid; justify-content: stretch; gap: 0; padding: .6rem 1rem; } .subsidy-step { position: relative; display: grid; grid-template-columns: 2.5rem minmax(0, 1fr); gap: .85rem; align-items: center; min-height: 3.8rem; } .subsidy-step-content { display: contents; } .subsidy-step-content > span:first-child { grid-column: 1; grid-row: 1; width: 2.5rem; height: 2.5rem; } .subsidy-step-content > span:last-child { grid-column: 2; grid-row: 1; font-size: .78rem; line-height: 1.3; } .subsidy-step-arrow { grid-column: 1; grid-row: 2; justify-self: center; width: 1.25rem; height: 1rem; margin-block: -.15rem .1rem; transform-origin: center; animation-name: subsidy-arrow-down; } .subsidy-step:last-child .subsidy-step-arrow { display: none; } }
 @media (max-width: 767px) { .brand-marquee-track { animation-duration: 42s; } .reference-column { animation-duration: 62s; } .reference-column-slow { animation-duration: 72s; } .project-timeline-step h3 { font-size: clamp(1.7rem, 8vw, 2.2rem); } .project-timeline-step p { font-size: 1rem; line-height: 1.65; } .project-timeline-hint { margin-top: 1.25rem; } }
-@media (prefers-reduced-motion: reduce) { .flow-rays path, .flow-sun, .flow-electricity, .flow-bulb, .flow-window-frame, .flow-energy-dot, .reference-column, .brand-marquee-track, .energy-dash, .subsidy-step-arrow, .subsidy-step-arrow path, .site-header, .hero-title-highlight, .about-hero-grid, .about-grid-continuation, .floating-whatsapp, .faq-chevron, .faq-answer, .solution-autoplay-progress { animation: none; transition: none; } .hero-title-highlight { background-position: 50% 50%; } }
+@media (prefers-reduced-motion: reduce) { .flow-rays path, .flow-sun, .flow-electricity, .flow-bulb, .flow-window-frame, .flow-energy-dot, .reference-column, .brand-marquee-track, .energy-dash, .subsidy-step-arrow, .subsidy-step-arrow path, .site-header, .hero-title-highlight, .about-hero-grid, .about-grid-continuation, .floating-whatsapp, .faq-chevron, .faq-answer, .solution-autoplay-progress, .project-timeline-next svg { animation: none; transition: none; } .hero-title-highlight { background-position: 50% 50%; } }

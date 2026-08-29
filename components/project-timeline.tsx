@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { ChevronDown } from "lucide-react";
 
 const steps = [
   ["01", "Online consultation", "Share your electricity bill, property details and goals with our expert on WhatsApp/Estimate Generator. We assess your needs, answer questions and outline the right solution with estimate.", "DAY 0 · ONLINE"],
@@ -108,6 +109,17 @@ export function ProjectTimeline() {
                   <p>{body}</p>
                   <span>{duration}</span>
                 </div>
+                {index === activeStep && index < steps.length - 1 ? (
+                  <button
+                    type="button"
+                    className="project-timeline-next"
+                    onClick={() => moveToStep(index + 1)}
+                    aria-label={`Scroll to step ${steps[index + 1][0]}: ${steps[index + 1][1]}`}
+                  >
+                    <span className="sr-only">Scroll for next step</span>
+                    <ChevronDown size={18} aria-hidden="true" />
+                  </button>
+                ) : null}
               </article>
             ))}
           </div>
