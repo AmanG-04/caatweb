@@ -306,7 +306,7 @@ export function SolutionsShowcase({ initialSolutionId, initiallyExpanded = false
 
   return (
     <>
-      <section className="overflow-hidden py-8 sm:py-12" style={{ backgroundColor: "#f7f8f2" }} aria-labelledby="solutions-explorer-title" aria-roledescription="carousel">
+      <section className="overflow-hidden py-7 sm:py-10" style={{ backgroundColor: "#f7f8f2" }} aria-labelledby="solutions-explorer-title" aria-roledescription="carousel">
         <div ref={emblaRef} className="relative overflow-hidden py-1">
           <div className="flex touch-pan-y">
             {solutions.map((solution, index) => {
@@ -314,8 +314,8 @@ export function SolutionsShowcase({ initialSolutionId, initiallyExpanded = false
             const Icon = solution.icon;
 
             return (
-              <div key={solution.id} className="min-w-0 flex-[0_0_94%] pl-3 sm:flex-[0_0_82%] sm:pl-5 lg:flex-[0_0_72%]">
-                <button type="button" onClick={() => { pauseAutoPlay(); if (isActive) { selectSolution(); } else { emblaApi?.scrollTo(index); } }} aria-label={isActive ? `Explore ${solution.shortTitle}` : `Show ${solution.shortTitle}`} aria-current={isActive ? "true" : undefined} className={`group relative h-[min(74svh,47rem)] min-h-[32rem] w-full cursor-pointer overflow-hidden rounded-[2rem] border bg-night text-left transition-opacity duration-500 ease-out motion-reduce:transition-none ${isActive ? "border-teal/30 opacity-100" : "border-ink/10 opacity-45"}`}>
+              <div key={solution.id} className="min-w-0 flex-[0_0_94%] pl-3 sm:flex-[0_0_82%] sm:pl-5 lg:flex-[0_0_68%]">
+                <button type="button" onClick={() => { pauseAutoPlay(); if (isActive) { selectSolution(); } else { emblaApi?.scrollTo(index); } }} aria-label={isActive ? `Explore ${solution.shortTitle}` : `Show ${solution.shortTitle}`} aria-current={isActive ? "true" : undefined} className={`group relative h-[min(62svh,40rem)] min-h-[26rem] w-full cursor-pointer overflow-hidden rounded-[2rem] border bg-night text-left transition-opacity duration-500 ease-out motion-reduce:transition-none ${isActive ? "border-teal/30 opacity-100" : "border-ink/10 opacity-45"}`}>
                   <span className="absolute inset-0 overflow-hidden rounded-[inherit]" aria-hidden="true">
                     <span data-parallax-layer className="relative flex h-full w-full justify-center will-change-transform motion-reduce:transform-none">
                       <img src={solution.image} alt="" className="h-full w-full max-w-none object-cover" />
