@@ -19,6 +19,16 @@ const projectImage = (fileName: string) => `/testimonials/${fileName}`;
 // Profile CAAT PowerBot LLP-Solar.pptx. The images are supporting project media.
 const projects: readonly ProjectReference[] = [
   {
+    client: "Amrita Hospital",
+    category: "Solar water heating",
+    system: "25,000 LPD solar water-heating system",
+    location: "Faridabad",
+    date: "Jun 2026",
+    scope: "Successful completion of a large-scale solar water-heating project for a healthcare facility, including supply of 84 FPC solar water-heater panels, repair of the old system, and structural reinforcement for safety and long-term performance.",
+    equipment: "84 FPC solar water-heater panels · structural reinforcement · system repair and handover",
+    images: [projectImage("amrita-solar-water-heater.jpeg")],
+  },
+  {
     client: "Nelumbo Technologies R&D Centre",
     category: "Emergency BESS",
     system: "30 kWp hybrid inverter with 40 kWh LFP battery emergency BESS",
@@ -31,10 +41,10 @@ const projects: readonly ProjectReference[] = [
   {
     client: "Abhinandan Jan Kalyan Society",
     category: "Rooftop solar",
-    system: "35 kWp rooftop solar power system",
+    system: "90 kWp rooftop solar power system",
     location: "Karkardooma, Delhi",
     date: "Apr 2025",
-    scope: "Repeat order of 55 kWp under execution.",
+    scope: "90 kWp rooftop solar power system for a residential society, with a focus on maximizing energy generation and reducing electricity costs.",
     equipment: "Jakson N-Type 585 Wp solar panels · K-Solare inverter",
     images: [projectImage("abhinandan-rooftop.png"), projectImage("abhinandan-site.png")],
     primaryImageLandscape: true,
@@ -114,13 +124,17 @@ function ProjectMedia({ project }: { project: ProjectReference }) {
   const landscape = project.primaryImageLandscape ?? false;
 
   return (
-    <div className={`relative ${landscape ? "aspect-[1.32] min-h-[23rem] sm:min-h-[28rem] lg:min-h-[33rem]" : "min-h-[20rem] sm:min-h-[25rem] lg:min-h-[31rem]"}`}>
-      <div className="absolute inset-y-0 left-0 w-[83%] overflow-hidden rounded-[1.75rem] bg-teal shadow-[0_22px_55px_rgba(16,42,42,.18)]">
-        <Image src={primaryImage} alt={`${project.client} project installation`} fill sizes="(min-width: 1024px) 52vw, 86vw" className={primaryImage.endsWith("nelumbo-inverters.png") ? "object-contain bg-teal" : "object-cover"} unoptimized />
+    <div className={`flex flex-col gap-4 sm:relative ${landscape ? "sm:aspect-[1.32] sm:min-h-[23rem] lg:min-h-[33rem]" : "sm:min-h-[20rem] lg:min-h-[31rem]"}`}>
+      <div className="relative overflow-hidden rounded-[1.75rem] bg-teal shadow-[0_22px_55px_rgba(16,42,42,.18)] sm:absolute sm:inset-y-0 sm:left-0 sm:w-[83%]">
+        <div className={`${landscape ? "aspect-[1.32] sm:aspect-auto" : "aspect-[1.1] sm:aspect-auto"} min-h-[17rem] sm:min-h-full`}>
+          <Image src={primaryImage} alt={`${project.client} project installation`} fill sizes="(min-width: 1024px) 52vw, 86vw" className={primaryImage.endsWith("nelumbo-inverters.png") ? "object-contain bg-teal" : "object-cover"} unoptimized />
+        </div>
       </div>
       {secondaryImage ? (
-          <div className={`absolute right-[-1.75rem] bottom-[-2.25rem] overflow-hidden rounded-[1.25rem] border-4 border-paper bg-white shadow-[0_16px_40px_rgba(16,42,42,.22)] sm:border-[6px] ${landscape ? "h-[94%] w-[39%]" : "h-[66%] w-[55%]"}`}>
-          <Image src={secondaryImage} alt={`${project.client} project detail`} fill sizes="(min-width: 1024px) 27vw, 43vw" className="object-cover" unoptimized />
+        <div className="relative overflow-hidden rounded-[1.25rem] border-4 border-paper bg-white shadow-[0_16px_40px_rgba(16,42,42,.22)] sm:absolute sm:right-[-1.75rem] sm:bottom-[-2.25rem] sm:z-10 sm:border-[6px] sm:h-[66%] sm:w-[55%] sm:shadow-[0_16px_40px_rgba(16,42,42,.22)]">
+          <div className={`${landscape ? "aspect-[1.2] sm:aspect-auto" : "aspect-[1.25] sm:aspect-auto"} min-h-[12rem] sm:min-h-full`}>
+            <Image src={secondaryImage} alt={`${project.client} project detail`} fill sizes="(min-width: 1024px) 27vw, 43vw" className="object-cover" unoptimized />
+          </div>
         </div>
       ) : null}
     </div>

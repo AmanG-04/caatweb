@@ -9,7 +9,7 @@ import { getServiceArea, serviceAreas } from "@/lib/service-areas";
 
 type PageProps = { params: Promise<{ city: string }> };
 
-export const dynamicParams = false;
+export const dynamicParams = true;
 
 export function generateStaticParams() {
   return serviceAreas.map((area) => ({ city: area.slug }));

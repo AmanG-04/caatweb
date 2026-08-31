@@ -79,9 +79,9 @@ function SunDivider() {
 export default function Footer() {
   return (
     <footer className="border-t-2 border-gold bg-night">
-      <div className="mx-auto max-w-none 2xl:px-16 px-5 py-16 sm:px-8 sm:py-20">
-        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1.2fr]">
-          <div>
+      <div className="mx-auto w-full max-w-[1280px] px-5 py-16 sm:px-8 sm:py-20 xl:px-12">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.3fr)]">
+          <div className="lg:pr-4">
             <div className="flex items-center gap-3">
               <span className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl bg-white p-1">
                 <Image
@@ -121,7 +121,7 @@ export default function Footer() {
             </div>
           </div>
 
-          <nav aria-label="Footer quick links">
+          {/* <nav aria-label="Footer quick links">
             <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">
               Explore
             </p>
@@ -139,7 +139,7 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
-          </nav>
+          </nav> */}
 
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-gold">
