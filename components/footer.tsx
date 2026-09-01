@@ -162,7 +162,7 @@ export default function Footer() {
               {serviceAreas.map((area) => (
                 <li key={area.slug}>
                   <Link href={`/solar-installation/${area.slug}`} className="text-sm text-white/70 transition-colors hover:text-gold-soft">
-                    Solar in {area.name}
+                    {area.name}
                   </Link>
                 </li>
               ))}

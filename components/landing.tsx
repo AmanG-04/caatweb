@@ -21,7 +21,7 @@ export function Landing() {
       <div className="h-16 sm:h-10" aria-hidden="true" />
 
       <section className="hero-flow relative overflow-hidden">
-        <div className="container-wide relative z-10 grid items-center gap-6 py-8 sm:gap-10 sm:py-12 lg:min-h-[590px] lg:gap-15 lg:grid-cols-[.86fr_1.14fr] lg:py-2">
+        <div className="container-wide relative z-10 grid items-center gap-6 py-6 sm:gap-10 sm:py-8 lg:min-h-[520px] lg:gap-15 lg:grid-cols-[.86fr_1.14fr] lg:py-1">
           <div className="hero-copy">
             {/* <p className="section-kicker">Delhi NCR rooftop solar</p> */}
             <h1 className="hero-copy-title mt-0 max-w-2xl text-[2.25rem] font-black leading-[1.01] tracking-[-.05em] sm:text-5xl lg:text-5xl">
@@ -34,12 +34,11 @@ export function Landing() {
           </div>
           <div className="hero-scene min-w-0">
             <SolarScene />
-            <p className="mt-3 text-center font-mono text-[10px] font-bold tracking-[.16em] text-teal">DRAG THE TIMELINE · WATCH THE SUN CHARGE THE HOUSE</p>
           </div>
         </div>
       </section>
       
-      <div className="-mt-1 sm:-mt-13">
+      <div className="-mt-6 sm:-mt-11">
         <BrandMarquee />
       </div>
 

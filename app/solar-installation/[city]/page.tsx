@@ -20,8 +20,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!area) return { title: "Service area not found | CAAT PowerBot" };
 
   return {
-    title: `Solar Panel Installation in ${area.name} | CAAT PowerBot`,
-    description: `Rooftop solar installation in ${area.name}, ${area.state}. Get a practical bill-based estimate and support with net metering from CAAT PowerBot.`,
+    title: `Solar, Generators, EV Chargers & Electrical Services in ${area.name} | CAAT PowerBot`,
+    description: `Premium solar panel installation, solar water heaters, generators, EV chargers, and electrical contracting services in ${area.name}, ${area.state}. From design to commissioning with expert support.`,
     alternates: { canonical: `/solar-installation/${area.slug}` },
   };
 }
@@ -45,8 +45,8 @@ export default async function ServiceAreaPage({ params }: PageProps) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(areaSchema).replace(/</g, "\\u003c") }} />
       <section className="hero-flow border-b border-ink/10">
         <div className="container-wide py-12 sm:py-16">
-          <p className="section-kicker">Solar in {area.name}</p>
-          <h1 className="page-title mt-5 max-w-4xl">Rooftop solar, designed for {area.name}.</h1>
+          <p className="section-kicker">Energy Solutions in {area.name}</p>
+          <h1 className="page-title mt-5 max-w-4xl">Premium Energy & Electrical Solutions for {area.name}.</h1>
           <p className="section-copy mt-6 max-w-2xl">{area.description}</p>
           <Link href="/quote" className={buttonStyles("primary", "mt-8 gap-2 px-6")}>
             Get my solar estimate
@@ -54,6 +54,42 @@ export default async function ServiceAreaPage({ params }: PageProps) {
           </Link>
         </div>
       </section>
+
+      <section className="bg-paper py-12 sm:py-16">
+        <div className="container-wide">
+          <div className="mb-12 text-center">
+            <p className="section-kicker">What We Offer</p>
+            <h2 className="section-title mx-auto">Complete Energy & Electrical Solutions</h2>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <Card className="border border-ink/10">
+              <p className="font-mono text-[11px] font-bold uppercase tracking-[.2em] text-teal">Solar Power</p>
+              <p className="mt-4 leading-7 text-ink/75">Rooftop solar systems for homes, businesses, and institutions with bill-based design, net metering support, and lifetime maintenance.</p>
+            </Card>
+            <Card className="border border-ink/10">
+              <p className="font-mono text-[11px] font-bold uppercase tracking-[.2em] text-teal">Solar Water Heating</p>
+              <p className="mt-4 leading-7 text-ink/75">ETC and FPC solar water-heating systems for residential and commercial properties with reliable performance and durability.</p>
+            </Card>
+            <Card className="border border-ink/10">
+              <p className="font-mono text-[11px] font-bold uppercase tracking-[.2em] text-teal">Battery Storage</p>
+              <p className="mt-4 leading-7 text-ink/75">Lithium-ion battery energy storage systems for solar integration, emergency backup, and off-grid applications.</p>
+            </Card>
+            <Card className="border border-ink/10">
+              <p className="font-mono text-[11px] font-bold uppercase tracking-[.2em] text-teal">EV Charging</p>
+              <p className="mt-4 leading-7 text-ink/75">EV charging infrastructure installation for homes, workplaces, fleets, and shared parking facilities.</p>
+            </Card>
+            <Card className="border border-ink/10">
+              <p className="font-mono text-[11px] font-bold uppercase tracking-[.2em] text-teal">Generators & Backup Power</p>
+              <p className="mt-4 leading-7 text-ink/75">Diesel and gas generator solutions with automatic transfer switches (ATS) and maintenance support for reliable backup power.</p>
+            </Card>
+            <Card className="border border-ink/10">
+              <p className="font-mono text-[11px] font-bold uppercase tracking-[.2em] text-teal">Electrical Contracting</p>
+              <p className="mt-4 leading-7 text-ink/75">Complete electrical design, installation, and modernization for residential, commercial, and industrial projects.</p>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       <section className="bg-paper py-12 sm:py-16">
         <div className="container-wide grid gap-5 md:grid-cols-2">
           <Card className="border border-ink/10">

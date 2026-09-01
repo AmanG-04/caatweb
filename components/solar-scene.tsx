@@ -331,6 +331,9 @@ export default function SolarScene() {
         </div>
       </div>
 
+      {/* Help text */}
+      <p className="text-center font-mono text-[9px] font-bold tracking-[.16em] text-teal px-5 py-2">DRAG THE TIMELINE · WATCH THE SUN CHARGE THE HOUSE</p>
+
       {/* Controls */}
       <div className="grid grid-cols-[2.25rem_minmax(0,1fr)] items-center gap-4 border-t border-white/10 bg-dusk/60 px-5 py-3 backdrop-blur sm:px-8">
         <button
