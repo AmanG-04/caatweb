@@ -4,7 +4,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
 import {
   ArrowUpRight,
   BatteryCharging,
@@ -163,8 +162,6 @@ export const solutions = [
 export type SolutionId = (typeof solutions)[number]["id"];
 
 export function SolutionsShowcase({ initialSolutionId, initiallyExpanded = false }: { initialSolutionId?: SolutionId; initiallyExpanded?: boolean }) {
-  const router = useRouter();
-  const pathname = usePathname();
   const initialIndex = Math.max(0, solutions.findIndex((solution) => solution.id === initialSolutionId));
   const [hasSelectedSolution, setHasSelectedSolution] = useState(initiallyExpanded);
   const [isAutoPlaying, setIsAutoPlaying] = useState(!initiallyExpanded);
@@ -292,8 +289,8 @@ export function SolutionsShowcase({ initialSolutionId, initiallyExpanded = false
     autoplay.current.stop();
     setIsAutoPlaying(false);
 
-    if (pathname === "/solutions" || activeSolution.id !== detailSolution.id) {
-      router.push(`/solutions/${activeSolution.id}#solution-details`, { scroll: false });
+    if (!initiallyExpanded || activeSolution.id !== detailSolution.id) {
+      window.location.assign(`/solutions/${activeSolution.id}#solution-details`);
       return;
     }
 

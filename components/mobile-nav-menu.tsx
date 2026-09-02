@@ -42,7 +42,6 @@ export function MobileNavMenu() {
       <summary aria-label="Open navigation menu"><span>Menu</span><ChevronDown size={14} aria-hidden="true" /></summary>
       {isOpen && createPortal(
       <div ref={panelRef} className="site-header-menu-panel" onClick={closeMenu}>
-        {/* <Link href="/">Home</Link> */}
         <a href="/about-us" aria-current={isCurrentPath("/about-us") ? "page" : undefined}>About us</a>
         <a href="/solutions" aria-current={isCurrentPath("/solutions") ? "page" : undefined}>Solutions</a>
         <a href="/testimonials" aria-current={isCurrentPath("/testimonials") ? "page" : undefined}>Testimonials</a>

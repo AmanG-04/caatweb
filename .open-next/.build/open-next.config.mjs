@@ -210,8 +210,130 @@ function resolveCdnInvalidation(value = "dummy") {
   return typeof value === "function" ? value : () => value;
 }
 
+// node_modules/@opennextjs/aws/dist/utils/error.js
+var IgnorableError = class extends Error {
+  __openNextInternal = true;
+  canIgnore = true;
+  logLevel = 0;
+  constructor(message) {
+    super(message);
+    this.name = "IgnorableError";
+  }
+};
+function isOpenNextError(e) {
+  try {
+    return "__openNextInternal" in e;
+  } catch {
+    return false;
+  }
+}
+
+// node_modules/@opennextjs/aws/dist/adapters/logger.js
+function debug(...args) {
+  if (globalThis.openNextDebug) {
+    console.log(...args);
+  }
+}
+function warn(...args) {
+  console.warn(...args);
+}
+var DOWNPLAYED_ERROR_LOGS = [
+  {
+    clientName: "S3Client",
+    commandName: "GetObjectCommand",
+    errorName: "NoSuchKey"
+  }
+];
+var isDownplayedErrorLog = (errorLog) => DOWNPLAYED_ERROR_LOGS.some((downplayedInput) => downplayedInput.clientName === errorLog?.clientName && downplayedInput.commandName === errorLog?.commandName && (downplayedInput.errorName === errorLog?.error?.name || downplayedInput.errorName === errorLog?.error?.Code));
+function error(...args) {
+  if (args.some((arg) => isDownplayedErrorLog(arg))) {
+    return debug(...args);
+  }
+  if (args.some((arg) => isOpenNextError(arg))) {
+    const error2 = args.find((arg) => isOpenNextError(arg));
+    if (error2.logLevel < getOpenNextErrorLogLevel()) {
+      return;
+    }
+    if (error2.logLevel === 0) {
+      return console.log(...args.map((arg) => isOpenNextError(arg) ? `${arg.name}: ${arg.message}` : arg));
+    }
+    if (error2.logLevel === 1) {
+      return warn(...args.map((arg) => isOpenNextError(arg) ? `${arg.name}: ${arg.message}` : arg));
+    }
+    return console.error(...args);
+  }
+  console.error(...args);
+}
+function getOpenNextErrorLogLevel() {
+  const strLevel = process.env.OPEN_NEXT_ERROR_LOG_LEVEL ?? "1";
+  switch (strLevel.toLowerCase()) {
+    case "debug":
+    case "0":
+      return 0;
+    case "error":
+    case "2":
+      return 2;
+    default:
+      return 1;
+  }
+}
+
+// node_modules/@opennextjs/cloudflare/dist/api/overrides/internal.js
+var debugCache = (name, ...args) => {
+  if (process.env.NEXT_PRIVATE_DEBUG_CACHE) {
+    console.log(`[${name}] `, ...args);
+  }
+};
+var FALLBACK_BUILD_ID = "no-build-id";
+
+// node_modules/@opennextjs/cloudflare/dist/api/overrides/incremental-cache/static-assets-incremental-cache.js
+var CACHE_DIR = "cdn-cgi/_next_cache";
+var NAME = "cf-static-assets-incremental-cache";
+var StaticAssetsIncrementalCache = class {
+  name = NAME;
+  async get(key, cacheType) {
+    const assets = getCloudflareContext().env.ASSETS;
+    if (!assets)
+      throw new IgnorableError("No Static Assets");
+    debugCache("StaticAssetsIncrementalCache", `get ${key}`);
+    try {
+      const response = await assets.fetch(this.getAssetUrl(key, cacheType));
+      if (!response.ok) {
+        await response.body?.cancel();
+        return null;
+      }
+      return {
+        value: await response.json(),
+        lastModified: globalThis.__BUILD_TIMESTAMP_MS__
+      };
+    } catch (e) {
+      error("Failed to get from cache", e);
+      return null;
+    }
+  }
+  async set(key, _value, cacheType) {
+    error(`StaticAssetsIncrementalCache: Failed to set to read-only cache key=${key} type=${cacheType}`);
+  }
+  async delete() {
+    error("StaticAssetsIncrementalCache: Failed to delete from read-only cache");
+  }
+  getAssetUrl(key, cacheType) {
+    if (cacheType === "composable") {
+      throw new Error("Composable cache is not supported in static assets incremental cache");
+    }
+    const buildId = process.env.OPEN_NEXT_BUILD_ID ?? FALLBACK_BUILD_ID;
+    const name = (cacheType === "fetch" ? `${CACHE_DIR}/__fetch/${buildId}/${key}` : `${CACHE_DIR}/${buildId}/${key}.cache`).replace(/\/+/g, "/");
+    return `http://assets.local/${name}`;
+  }
+};
+var static_assets_incremental_cache_default = new StaticAssetsIncrementalCache();
+
 // open-next.config.ts
-var open_next_config_default = defineCloudflareConfig({});
+var open_next_config_default = defineCloudflareConfig({
+  incrementalCache: static_assets_incremental_cache_default,
+  enableCacheInterception: true,
+  routePreloadingBehavior: "none"
+});
 export {
   open_next_config_default as default
 };

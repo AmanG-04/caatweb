@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { ArrowUpRight, Mail, MessageCircle } from "lucide-react";
 import Footer from "@/components/footer";
 import { SiteHeader } from "@/components/site-header";
