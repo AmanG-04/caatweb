@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { ArrowUpRight, BellRing, MessageCircle, Sun } from "lucide-react";
 import Footer from "@/components/footer";
 import FloatingWhatsApp from "@/components/floating-whatsapp";
@@ -34,9 +33,9 @@ export default function QuotePage() {
               <a href={site.whatsapp(defaultWhatsappMessage)} target="_blank" rel="noopener noreferrer" className={buttonStyles("primary", "gap-2 px-6")}>
                 <MessageCircle size={17} /> Online consultation
               </a>
-              <Link href="/" prefetch={false} className={buttonStyles("outline", "gap-2 px-6")}>
+              <a href="/" className={buttonStyles("outline", "gap-2 px-6")}>
                 Explore solar solutions <ArrowUpRight size={17} />
-              </Link>
+              </a>
             </div>
             <p className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-ink/55">
               <BellRing size={16} className="text-teal" /> Calculator launch updates available through WhatsApp.

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import { ArrowUpRight, MapPin } from "lucide-react";
 import Footer from "@/components/footer";
 import { SiteHeader } from "@/components/site-header";
@@ -48,10 +47,10 @@ export default async function ServiceAreaPage({ params }: PageProps) {
           <p className="section-kicker">Energy Solutions in {area.name}</p>
           <h1 className="page-title mt-5 max-w-4xl">Premium Energy & Electrical Solutions for {area.name}.</h1>
           <p className="section-copy mt-6 max-w-2xl">{area.description}</p>
-          <Link href="/quote" prefetch={false} className={buttonStyles("primary", "mt-8 gap-2 px-6")}>
+           <a href="/quote" className={buttonStyles("primary", "mt-8 gap-2 px-6")}>
             Get my solar estimate
             <ArrowUpRight size={17} />
-          </Link>
+           </a>
         </div>
       </section>
 

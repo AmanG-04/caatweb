@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { ChevronDown, MessageCircle } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -44,11 +43,11 @@ export function MobileNavMenu() {
       {isOpen && createPortal(
       <div ref={panelRef} className="site-header-menu-panel" onClick={closeMenu}>
         {/* <Link href="/">Home</Link> */}
-        <Link href="/about-us" prefetch={false} aria-current={isCurrentPath("/about-us") ? "page" : undefined}>About us</Link>
-        <Link href="/solutions" prefetch={false} aria-current={isCurrentPath("/solutions") ? "page" : undefined}>Solutions</Link>
-        <Link href="/testimonials" prefetch={false} aria-current={isCurrentPath("/testimonials") ? "page" : undefined}>Testimonials</Link>
-        <Link href="/blogbot" prefetch={false} aria-current={isCurrentPath("/blogbot") ? "page" : undefined}>BlogBot</Link>
-        <Link href="/contact" prefetch={false} aria-current={isCurrentPath("/contact") ? "page" : undefined}>Contact</Link>
+        <a href="/about-us" aria-current={isCurrentPath("/about-us") ? "page" : undefined}>About us</a>
+        <a href="/solutions" aria-current={isCurrentPath("/solutions") ? "page" : undefined}>Solutions</a>
+        <a href="/testimonials" aria-current={isCurrentPath("/testimonials") ? "page" : undefined}>Testimonials</a>
+        <a href="/blogbot" aria-current={isCurrentPath("/blogbot") ? "page" : undefined}>BlogBot</a>
+        <a href="/contact" aria-current={isCurrentPath("/contact") ? "page" : undefined}>Contact</a>
         <a href={site.whatsapp(defaultWhatsappMessage)} target="_blank" rel="noopener noreferrer"><MessageCircle size={16} /> Online consultation</a>
       </div>,
       document.body,

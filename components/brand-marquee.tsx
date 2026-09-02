@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 const brands = [
   "Solar Panels",
   "Solar Water Heaters",
@@ -26,13 +24,13 @@ function BrandSet() {
 
 export function BrandMarquee() {
   return (
-    <Link href="/solutions" prefetch={false}>
+    <a href="/solutions">
       <section className="brand-marquee cursor-pointer transition-opacity hover:opacity-80" aria-label="Products and services - click to explore solutions">
         <div className="brand-marquee-track">
           <BrandSet />
           <BrandSet />
         </div>
       </section>
-    </Link>
+    </a>
   );
 }

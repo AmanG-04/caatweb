@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { ExternalLink } from "lucide-react";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { brochures } from "@/lib/brochures";
 
@@ -41,13 +40,12 @@ export default async function BrochureViewerPage({ params }: BrochurePageProps) 
     <main className="min-h-screen bg-paper px-4 py-5 sm:px-8 sm:py-8">
       <div className="mx-auto max-w-7xl">
         <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-          <Link
+          <a
             href="/brochures"
-            prefetch={false}
             className="font-mono text-[11px] font-bold uppercase tracking-[.14em] text-teal underline decoration-teal/35 underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal"
           >
             Back to documents
-          </Link>
+          </a>
           <a
             href={driveUrl}
             target="_blank"

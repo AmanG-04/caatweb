@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { ArrowUpRight, ExternalLink, FileText, PanelsTopLeft } from "lucide-react";
-import Link from "next/link";
 import { PublicPage } from "@/components/public-page";
 import { brochures, brochuresDriveUrl } from "@/lib/brochures";
 
@@ -42,10 +41,9 @@ export default function BrochuresPage() {
             </div>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {brochures.map((brochure, index) => (
-                <Link
+                <a
                   key={brochure.id}
                   href={`/brochures/${brochure.id}`}
-                  prefetch={false}
                   className="group min-h-52 rounded-[1.5rem] border border-ink/10 bg-white p-6 shadow-soft transition duration-200 hover:-translate-y-1 hover:border-teal/40 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal"
                 >
                   <span className="flex items-center justify-between font-mono text-[10px] font-bold uppercase tracking-[.16em] text-ink/45">
@@ -59,7 +57,7 @@ export default function BrochuresPage() {
                     {brochure.label}
                   </span>
                   <span className="mt-2 block text-sm text-ink/60">Preview document</span>
-                </Link>
+                </a>
               ))}
               <a
                 href={brochuresDriveUrl}

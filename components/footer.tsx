@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import logo from "../companyinfo/caatlogo-96.webp";
 import { defaultWhatsappMessage, site } from "@/lib/site";
 import { serviceAreas } from "@/lib/service-areas";
@@ -161,9 +160,9 @@ export default function Footer() {
             <ul className="mt-5 space-y-3">
               {serviceAreas.map((area) => (
                 <li key={area.slug}>
-                  <Link href={`/solar-installation/${area.slug}`} prefetch={false} className="text-sm text-white/70 transition-colors hover:text-gold-soft">
+                  <a href={`/solar-installation/${area.slug}`} className="text-sm text-white/70 transition-colors hover:text-gold-soft">
                     {area.name}
-                  </Link>
+                  </a>
                 </li>
               ))}
             </ul>
@@ -204,13 +203,12 @@ export default function Footer() {
             <p className="mt-5 max-w-[220px] text-xs leading-relaxed text-white/60">
               Mon–Fri, 10 am – 5 pm IST. 
             </p>
-            <Link
+            <a
               href="/brochures"
-              prefetch={false}
               className="mt-6 inline-flex items-center gap-2 rounded-xl border border-gold/35 bg-gold/10 px-4 py-3 font-mono text-[10px] font-bold uppercase tracking-[.14em] text-gold transition-colors hover:border-gold hover:bg-gold hover:text-night"
             >
               Brochures & technical docs
-            </Link>
+            </a>
           </div>
         </div>
 
