@@ -1,2 +1,29 @@
 /_next/static/*
   Cache-Control: public, max-age=31536000, immutable
+
+/
+  Cache-Control: public, max-age=600, stale-while-revalidate=86400
+
+/about-us
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+/solutions
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+/solutions/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/testimonials
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+/contact
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+/brochures
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+/brochures/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+/solar-installation/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
