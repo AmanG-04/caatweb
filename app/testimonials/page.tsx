@@ -22,7 +22,7 @@ export default function TestimonialsPage() {
           <p className="section-kicker">Your project</p>
           <h2 className="section-title mx-auto">See what your roof could support.</h2>
           <p className="section-copy mx-auto">Start with your electricity use for a practical first estimate, then discuss the details that are specific to your property.</p>
-          <Link href="/quote" className={buttonStyles("primary", "mt-8 gap-2 px-6")}>Get my solar estimate <ArrowUpRight size={17} /></Link>
+          <Link href="/quote" prefetch={false} className={buttonStyles("primary", "mt-8 gap-2 px-6")}>Get my solar estimate <ArrowUpRight size={17} /></Link>
         </div>
       </section> */}
     </PublicPage>

@@ -18,10 +18,10 @@ export function Landing() {
   return (
     <main className="">
       <SiteHeader fixed />
-      <div className="h-16 sm:h-10" aria-hidden="true" />
+      <div className="landing-header-space" aria-hidden="true" />
 
       <section className="hero-flow relative overflow-hidden">
-        <div className="container-wide relative z-10 grid items-center gap-6 py-6 sm:gap-10 sm:py-8 lg:min-h-[520px] lg:gap-15 lg:grid-cols-[.86fr_1.14fr] lg:py-1">
+        <div className="container-wide relative z-10 grid items-center gap-6 py-6 sm:gap-10 sm:py-8 lg:min-h-fit lg:gap-15 lg:grid-cols-[.86fr_1.14fr] lg:py-4 xl:min-h-fit">
           <div className="hero-copy">
             {/* <p className="section-kicker">Delhi NCR rooftop solar</p> */}
             <h1 className="hero-copy-title mt-0 max-w-2xl text-[2.25rem] font-black leading-[1.01] tracking-[-.05em] sm:text-5xl lg:text-5xl">
@@ -38,7 +38,7 @@ export function Landing() {
         </div>
       </section>
       
-      <div className="-mt-6 sm:-mt-11">
+      <div>
         <BrandMarquee />
       </div>
 

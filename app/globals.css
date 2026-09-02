@@ -14,7 +14,7 @@ nav a { font-weight: 600; }
 .page-reveal > main > nav > a { animation: page-enter-up .49s .08s cubic-bezier(.2,.8,.2,1) both; }
 .page-reveal > main > nav > .site-header-links { animation: page-enter-up .52s .14s cubic-bezier(.2,.8,.2,1) both; }
 .page-reveal > main > nav > div:last-child { animation: page-enter-up .52s .18s cubic-bezier(.2,.8,.2,1) both; }
-.page-reveal .brand-marquee { animation: page-enter-up .78s .3s cubic-bezier(.2,.8,.2,1) both; will-change: opacity, transform; }
+.page-reveal .brand-marquee { animation: page-marquee-enter .52s .3s ease-out both; will-change: opacity; }
 @keyframes page-header-enter { from { opacity: 0; transform: translate3d(0, -.35rem, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
 .page-reveal > main > section:first-of-type .section-kicker { animation: page-enter-up .49s .05s cubic-bezier(.2,.8,.2,1) both; will-change: opacity, transform; }
 .page-reveal > main > section:first-of-type h1 { animation: page-enter-up .57s .1s cubic-bezier(.2,.8,.2,1) both; will-change: opacity, transform; }
@@ -23,6 +23,7 @@ nav a { font-weight: 600; }
 .page-reveal > main > section:first-of-type .about-identity-stack,
 .page-reveal > main > section:first-of-type form { animation: page-enter-up .6s .13s cubic-bezier(.2,.8,.2,1) both; will-change: opacity, transform; }
 @keyframes page-enter-up { from { opacity: 0; transform: translate3d(0, .35rem, 0); } to { opacity: 1; transform: translate3d(0, 0, 0); } }
+@keyframes page-marquee-enter { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .page-reveal { animation: none; } }
 .container-wide { width: min(1180px, calc(100% - 40px)); margin-inline: auto; }
 .section-kicker { display: inline-flex; align-items: center; gap: .72rem; color: #0f5853; font: 900 .68rem/1.15 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .19em; text-transform: uppercase; }

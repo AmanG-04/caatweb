@@ -161,7 +161,7 @@ export default function Footer() {
             <ul className="mt-5 space-y-3">
               {serviceAreas.map((area) => (
                 <li key={area.slug}>
-                  <Link href={`/solar-installation/${area.slug}`} className="text-sm text-white/70 transition-colors hover:text-gold-soft">
+                  <Link href={`/solar-installation/${area.slug}`} prefetch={false} className="text-sm text-white/70 transition-colors hover:text-gold-soft">
                     {area.name}
                   </Link>
                 </li>
@@ -204,9 +204,13 @@ export default function Footer() {
             <p className="mt-5 max-w-[220px] text-xs leading-relaxed text-white/60">
               Mon–Fri, 10 am – 5 pm IST. 
             </p>
-            <a href="/brochures" className="mt-6 inline-flex items-center gap-2 rounded-xl border border-gold/35 bg-gold/10 px-4 py-3 font-mono text-[10px] font-bold uppercase tracking-[.14em] text-gold transition-colors hover:border-gold hover:bg-gold hover:text-night">
+            <Link
+              href="/brochures"
+              prefetch={false}
+              className="mt-6 inline-flex items-center gap-2 rounded-xl border border-gold/35 bg-gold/10 px-4 py-3 font-mono text-[10px] font-bold uppercase tracking-[.14em] text-gold transition-colors hover:border-gold hover:bg-gold hover:text-night"
+            >
               Brochures & technical docs
-            </a>
+            </Link>
           </div>
         </div>
 

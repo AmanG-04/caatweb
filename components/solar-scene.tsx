@@ -107,7 +107,7 @@ export default function SolarScene() {
     <div className="solar-scene-card relative overflow-hidden rounded-3xl border border-white/10 bg-night shadow-2xl shadow-black/40">
       <svg
         viewBox="0 0 960 475"
-        className="solar-scene-artwork block w-full"
+        className="solar-scene-artwork block w-full max-h-[250px] sm:max-h-[320px] lg:max-h-[360px] object-cover"
         role="img"
         aria-label="Animated technical illustration: the sun crosses the sky, rooftop solar panels feed an inverter and battery, and the house lights stay on from stored solar after dark"
       >
@@ -332,15 +332,15 @@ export default function SolarScene() {
       </div>
 
       {/* Help text */}
-      <p className="text-center font-mono text-[9px] font-bold tracking-[.16em] text-teal px-5 py-2">DRAG THE TIMELINE · WATCH THE SUN CHARGE THE HOUSE</p>
+      <p className="border-t border-white/10 bg-dusk/60 px-4 py-1.5 text-center font-mono text-[8px] font-bold tracking-[.13em] text-white/65 backdrop-blur sm:px-6">DRAG THE TIMELINE · WATCH THE SUN CHARGE THE HOUSE</p>
 
       {/* Controls */}
-      <div className="grid grid-cols-[2.25rem_minmax(0,1fr)] items-center gap-4 border-t border-white/10 bg-dusk/60 px-5 py-3 backdrop-blur sm:px-8">
+      <div className="grid grid-cols-[2rem_minmax(0,1fr)] items-center gap-3 border-t border-white/10 bg-dusk/60 px-4 py-2 backdrop-blur sm:px-6">
         <button
           type="button"
           onClick={() => setPlaying((p) => !p)}
           aria-label={playing ? "Pause the day cycle" : "Play the day cycle"}
-          className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-white/15 text-white/80 transition hover:border-gold hover:text-gold"
+          className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-white/15 text-white/80 transition hover:border-gold hover:text-gold"
         >
           {playing ? (
             <svg width="12" height="14" viewBox="0 0 12 14" fill="currentColor" aria-hidden>
@@ -353,8 +353,8 @@ export default function SolarScene() {
             </svg>
           )}
         </button>
-        <div className="mx-auto flex w-full max-w-[17rem] min-w-0 items-center gap-3">
-          <span className="shrink-0 font-mono text-[10px] tracking-widest text-white/70">MORNING</span>
+        <div className="mx-auto flex w-full max-w-[15rem] min-w-0 items-center gap-2">
+          <span className="shrink-0 font-mono text-[9px] tracking-widest text-white/65">MORNING</span>
           <input
             type="range"
             min={5}
@@ -372,7 +372,7 @@ export default function SolarScene() {
             }}
             className="h-1.5 min-w-0 flex-1 cursor-pointer appearance-none rounded-full bg-white/20 accent-gold"
           />
-          <span className="shrink-0 font-mono text-[10px] tracking-widest text-white/70">EVENING</span>
+          <span className="shrink-0 font-mono text-[9px] tracking-widest text-white/65">EVENING</span>
         </div>
       </div>
     </div>

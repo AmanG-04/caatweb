@@ -408,7 +408,7 @@ export function SolutionsShowcase({ initialSolutionId, initiallyExpanded = false
         </div>
       </section>
 
-      <section className="bg-night px-5 py-16 text-center text-white sm:px-8 sm:py-20" aria-labelledby="solutions-cta-title">
+      {/* <section className="bg-night px-5 py-16 text-center text-white sm:px-8 sm:py-20" aria-labelledby="solutions-cta-title">
         <div className="mx-auto max-w-2xl">
           <p className="section-kicker section-kicker-dark mx-auto !flex w-max justify-center">Start with the requirement</p>
           <h2 id="solutions-cta-title" className="mt-5 text-3xl font-black leading-tight tracking-[-.035em] sm:text-4xl">Tell us what needs power. We will help define the right next step.</h2>
@@ -424,7 +424,7 @@ export function SolutionsShowcase({ initialSolutionId, initiallyExpanded = false
             </a>
           </div>
         </div>
-      </section>
+      </section> */}
       </> : null}
     </>
   );

@@ -88,7 +88,7 @@ export default function Result() {
             <p className="section-kicker">Solar estimate</p>
               <h1 className="text-3xl font-black leading-[1.02] tracking-[-.045em]">No estimate found on this device.</h1>
             <p className="mt-4 leading-7 text-ink/65">Complete the calculator first and your result will appear here.</p>
-            <Link href="/quote" className={buttonStyles("primary", "mt-7 gap-2")}>
+            <Link href="/quote" prefetch={false} className={buttonStyles("primary", "mt-7 gap-2")}>
               Calculate my savings <ArrowUpRight size={16} />
             </Link>
           </Card>

@@ -26,7 +26,7 @@ function BrandSet() {
 
 export function BrandMarquee() {
   return (
-    <Link href="/solutions">
+    <Link href="/solutions" prefetch={false}>
       <section className="brand-marquee cursor-pointer transition-opacity hover:opacity-80" aria-label="Products and services - click to explore solutions">
         <div className="brand-marquee-track">
           <BrandSet />
