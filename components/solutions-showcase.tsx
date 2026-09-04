@@ -311,7 +311,7 @@ export function SolutionsShowcase({ initialSolutionId, initiallyExpanded = false
 
             return (
               <div key={solution.id} className="min-w-0 flex-[0_0_94%] pl-3 sm:flex-[0_0_82%] sm:pl-5 lg:flex-[0_0_68%]">
-                <button type="button" onClick={() => { pauseAutoPlay(); if (isActive) { selectSolution(); } else { emblaApi?.scrollTo(index); } }} aria-label={isActive ? `Explore ${solution.shortTitle}` : `Show ${solution.shortTitle}`} aria-current={isActive ? "true" : undefined} className={`group relative h-[min(62svh,40rem)] min-h-[26rem] w-full cursor-pointer overflow-hidden rounded-[2rem] border bg-night text-left transition-opacity duration-500 ease-out motion-reduce:transition-none ${isActive ? "border-teal/30 opacity-100" : "border-ink/10 opacity-45"}`}>
+                <button type="button" onClick={() => { pauseAutoPlay(); if (isActive) { selectSolution(); } else { emblaApi?.scrollTo(index); } }} aria-label={isActive ? `Explore ${solution.shortTitle}` : `Show ${solution.shortTitle}`} aria-current={isActive ? "true" : undefined} className={`group relative h-[min(62svh,40rem)] min-h-[26rem] w-full cursor-pointer overflow-hidden rounded-[2rem] border bg-night text-left transition-opacity duration-500 ease-out motion-reduce:transition-none ${isActive ? "energy-ring-slide border-transparent opacity-100" : "border-ink/10 opacity-45"}`}>
                   <span className="absolute inset-0 overflow-hidden rounded-[inherit]" aria-hidden="true">
                     <span data-parallax-layer className="relative flex h-full w-full justify-center will-change-transform motion-reduce:transform-none">
                       <img src={solution.image} alt="" className="h-full w-full max-w-none object-cover" />

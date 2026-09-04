@@ -91,7 +91,7 @@ export function ProjectTimeline() {
               <button
                 type="button"
                 key={number}
-                className={index === activeStep ? "is-active" : ""}
+                className={index === activeStep ? "is-active energy-ring-step" : ""}
                 aria-label={`View step ${number}: ${title}`}
                 aria-current={index === activeStep ? "step" : undefined}
                 onClick={() => moveToStep(index)}
