@@ -1,5 +1,6 @@
 // @ts-ignore - Generated at build time by opennextjs-cloudflare
 import { default as nextHandler } from "./.open-next/worker.js";
+import type { D1Database, R2Bucket, ScheduledController, ExecutionContext } from "@cloudflare/workers-types";
 
 interface Env {
   DB: D1Database;
@@ -11,6 +12,14 @@ interface Env {
   RESEND_API_KEY: string;
   ADMIN_EMAIL: string;
 }
+
+type LeadDigestItem = {
+  id: string;
+  name: string;
+  phone: string;
+  email: string;
+  created_at: string;
+};
 
 export default {
   // Pass all standard website requests to OpenNext
@@ -27,7 +36,7 @@ export default {
         "SELECT id, name, phone, email, created_at FROM leads WHERE created_at >= ? ORDER BY created_at DESC"
       )
         .bind(yesterday)
-        .all();
+        .all<LeadDigestItem>();
 
       console.log(`Total new leads since yesterday: ${newLeads.results.length}`);
 
@@ -39,7 +48,7 @@ export default {
   },
 };
 
-async function sendLeadDigestEmail(env: Env, leads: Array<{id: string; name: string; phone: string; email: string; created_at: string}>) {
+async function sendLeadDigestEmail(env: Env, leads: LeadDigestItem[]) {
   const timestamp = new Date().toLocaleString("en-IN", {
     timeZone: "Asia/Kolkata",
     dateStyle: "medium",
@@ -67,7 +76,7 @@ async function sendLeadDigestEmail(env: Env, leads: Array<{id: string; name: str
   // Send via Resend API to multiple recipients
   const recipients = ["tushar0408@gmail.com", "10amangupta04@gmail.com"];
 
-  const apiResponse = await fetch("https://api.resend.comemails", {
+  const apiResponse = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

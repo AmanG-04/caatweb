@@ -1,15 +1,5 @@
 import { Landing } from "@/components/landing";
-import { faqSchemaItems } from "@/lib/faq-schema";
-
-const faqSchema = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: faqSchemaItems.map(([name, text]) => ({
-    "@type": "Question",
-    name,
-    acceptedAnswer: { "@type": "Answer", text },
-  })),
-};
+import { faqPageSchema, jsonLd } from "@/lib/seo";
 
 export default function Page() {
   return (
@@ -17,7 +7,7 @@ export default function Page() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(faqSchema).replace(/</g, "\\u003c"),
+          __html: jsonLd(faqPageSchema),
         }}
       />
       <Landing />

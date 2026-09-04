@@ -1,33 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { faqItems } from "@/lib/seo";
 
-export const faqs = [
-  {
-    q: "How much subsidy do I actually get?",
-    a: "The applicable amount depends on the current programme rules, your system capacity and approval. See our solar subsidy guidance page for the current residential rates and full process; we prepare and file the application as part of every residential project.",
-  },
-  {
-    q: "How much roof space do I need?",
-    a: "Plan on roughly 60 sq ft of shadow-free roof per kW. A typical 3 kW home system needs about 180 sq ft — a modest terrace. Water tanks, parapet walls and neighbouring buildings all cast shadows that matter, which is why we do a shadow analysis before quoting rather than guessing from a satellite photo.",
-  },
-  {
-    q: "What happens during monsoon and at night?",
-    a: "At night the grid supplies you as usual. In monsoon, panels still generate 40–60% of their sunny-day output from diffused light. The key is net metering: surplus units you export on sunny days are credited to your account and offset the units you draw later, so your bill is settled on the net figure across the billing cycle.",
-  },
-  {
-    q: "How much maintenance does a system need?",
-    a: "Very little, but not zero. Panels need cleaning every 2–4 weeks in dusty months — dust alone can cost 10–15% of generation. The inverter should get an annual health check, and wiring and earthing an annual inspection. Our AMC covers all of this on a fixed schedule, with generation reports so you can see the system is performing.",
-  },
-  {
-    q: "What is the payback period?",
-    a: "For a typical residential system after subsidy, 3–4 years is realistic at current Delhi NCR tariffs; commercial systems paying higher tariffs often see 3 years or less. The panels are warrantied for 30 years of performance, so everything after payback is effectively free electricity. We give you the payback calculation for your actual bill before you commit.",
-  },
-  {
-    q: "Will my panels work during a power cut?",
-    a: "A standard grid-tied system shuts off during an outage — a safety feature called anti-islanding that protects linemen working on the grid. If backup matters to you, we design hybrid systems with a battery, or integrate solar with your existing inverter or generator, so critical loads keep running while the grid is down.",
-  },
-];
+export const faqs = faqItems.map(({ question, answer }) => ({ q: question, a: answer }));
 
 export default function FAQ() {
   const [open, setOpen] = useState<number | null>(0);

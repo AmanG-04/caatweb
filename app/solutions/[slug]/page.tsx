@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PublicPage } from "@/components/public-page";
 import { SolutionsShowcase, type SolutionId } from "@/components/solutions-showcase";
+import { SolarSizingGuide } from "@/components/solar-sizing-guide";
+import { jsonLd } from "@/lib/seo";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -52,7 +54,23 @@ export default async function SolutionPage({ params }: PageProps) {
 
   return (
     <PublicPage gridLines={false}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLd({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: `${solution.title} by CAAT PowerBot`,
+            description: solution.description,
+            brand: { "@type": "Brand", name: "CAAT PowerBot" },
+            category: "Energy equipment and installation service",
+            areaServed: ["Delhi", "Gurgaon", "Noida", "Greater Noida", "Ghaziabad", "Faridabad"],
+            url: `https://caatpowerbot.com/solutions/${solution.id}`,
+          }),
+        }}
+      />
       <SolutionsShowcase initialSolutionId={solution.id as SolutionId} initiallyExpanded />
+      {solution.id === "solar" ? <SolarSizingGuide /> : null}
     </PublicPage>
   );
 }
