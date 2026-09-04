@@ -29,11 +29,9 @@
 		}
 	],
 	"triggers": {
-		"crons": ["45 18 * * *"]
+		"crons": ["15 19 * * *"]
 	},
 	"observability": {
-		"enabled": false,
-		"head_sampling_rate": 1,
 		"logs": {
 			"enabled": true,
 			"head_sampling_rate": 1,
@@ -41,7 +39,7 @@
 			"invocation_logs": true
 		},
 		"traces": {
-			"enabled": false,
+			"enabled": true,
 			"persist": true,
 			"head_sampling_rate": 1
 		}

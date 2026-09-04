@@ -88,7 +88,7 @@ async function sendLeadDigestEmail(env: Env, leads: LeadDigestItem[]) {
   }
 
   // Send via Resend API to multiple recipients
-  const recipients = ["tushar0408@gmail.com", "10amangupta04@gmail.com"];
+  const recipients = ["10amangupta04@gmail.com"];
 
   const apiResponse = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -97,7 +97,7 @@ async function sendLeadDigestEmail(env: Env, leads: LeadDigestItem[]) {
       Authorization: `Bearer ${env.RESEND_API_KEY}`,
     },
     body: JSON.stringify({
-      from: "CAAT PowerBot <onboarding@resend.com>",
+      from: "CAAT PowerBot <onboarding@resend.dev>",
       to: recipients,
       subject,
       html: `
