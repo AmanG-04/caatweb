@@ -1,7 +1,7 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "caat-powerbot",
-	"main": ".open-next/worker.js",
+	"main": "custom-worker.ts",
 	"compatibility_date": "2026-07-23",
 	"compatibility_flags": [
 		"nodejs_compat"
@@ -28,6 +28,9 @@
 			"bucket_name": "caat-powerbot-bills"
 		}
 	],
+	"triggers": {
+		"crons": ["30 18 * * *"]
+	},
 	"observability": {
 		"enabled": false,
 		"head_sampling_rate": 1,

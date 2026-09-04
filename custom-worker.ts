@@ -25,26 +25,35 @@ export default {
   // Pass all standard website requests to OpenNext
   fetch: nextHandler.fetch,
 
-  // Handle scheduled Cron events
+  // Handle the daily 12:00 AM IST scheduled event.
   async scheduled(controller: ScheduledController, env: Env, ctx: ExecutionContext) {
     console.log(`Cron job started at: ${new Date(controller.scheduledTime).toISOString()}`);
 
-    // Example task: Fetch solar leads submitted in the past 24 hours from D1
-    try {
-      const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    if (!env.DB) {
+      console.error("Scheduled cron task failed: D1 database binding is unavailable.");
+      return;
+    }
+
+    if (!env.RESEND_API_KEY) {
+      console.error("Scheduled cron task failed: RESEND_API_KEY is not configured.");
+      return;
+    }
+
+    ctx.waitUntil((async () => {
+      try {
       const newLeads = await env.DB.prepare(
-        "SELECT id, name, phone, email, created_at FROM leads WHERE created_at >= ? ORDER BY created_at DESC"
+        "SELECT id, name, phone, email, created_at FROM leads WHERE datetime(created_at) >= datetime('now', '-1 day') ORDER BY datetime(created_at) DESC"
       )
-        .bind(yesterday)
         .all<LeadDigestItem>();
 
       console.log(`Total new leads since yesterday: ${newLeads.results.length}`);
 
       // Always send email digest (with leads or no-leads notification) via Resend
       await sendLeadDigestEmail(env, newLeads.results);
-    } catch (error) {
-      console.error("Scheduled cron task failed:", error);
-    }
+      } catch (error) {
+        console.error("Scheduled cron task failed:", error);
+      }
+    })());
   },
 };
 
