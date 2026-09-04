@@ -73,16 +73,16 @@ export function ProjectTimeline() {
   }, []);
 
   return (
-    <section id="process" className="project-timeline">
+    <section id="process" className="project-timeline" >
       <div className="container-wide">
         <div className="text-center">
           <p className="section-kicker">How a project runs</p>
         </div>
         <div className="project-timeline-layout mt-0 grid gap-10 lg:gap-16">
           <div className="project-timeline-intro-column xl:max-w-none">
-<h3 className="section-title !mt-4 !max-w-none">
+<h3 className="section-title !mt-1 !max-w-none">
   Consultation&nbsp;to commissioning, handled.
-</h3>          <p className="section-copy">Five steps, one accountable team. Each scroll moves through one clear stage of your project.</p>
+</h3>          <p className="section-copy !mt-2">Five steps, one accountable team. Each scroll moves through one clear stage of your project.</p>
           <p className="project-timeline-hint" aria-hidden="true">SCROLL THROUGH THE STEPS <span>→</span></p>
         </div>
           <div className="project-timeline-experience">
@@ -108,18 +108,18 @@ export function ProjectTimeline() {
                   <h3>{title}</h3>
                   <p>{body}</p>
                   <span>{duration}</span>
+                  {index === activeStep && index < steps.length - 1 ? (
+                    <button
+                      type="button"
+                      className="project-timeline-next"
+                      onClick={() => moveToStep(index + 1)}
+                      aria-label={`Scroll to step ${steps[index + 1][0]}: ${steps[index + 1][1]}`}
+                    >
+                      <span className="sr-only">Scroll for next step</span>
+                      <ChevronDown size={18} aria-hidden="true" />
+                    </button>
+                  ) : null}
                 </div>
-                {index === activeStep && index < steps.length - 1 ? (
-                  <button
-                    type="button"
-                    className="project-timeline-next"
-                    onClick={() => moveToStep(index + 1)}
-                    aria-label={`Scroll to step ${steps[index + 1][0]}: ${steps[index + 1][1]}`}
-                  >
-                    <span className="sr-only">Scroll for next step</span>
-                    <ChevronDown size={18} aria-hidden="true" />
-                  </button>
-                ) : null}
               </article>
             ))}
           </div>
