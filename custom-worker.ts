@@ -25,17 +25,20 @@ export default {
   // Pass all standard website requests to OpenNext
   fetch: nextHandler.fetch,
 
-  // Handle the daily 12:00 AM IST scheduled event.
+  // Handle the daily 12:15 AM IST scheduled event.
   async scheduled(controller: ScheduledController, env: Env, ctx: ExecutionContext) {
-    console.log(`Cron job started at: ${new Date(controller.scheduledTime).toISOString()}`);
+    console.log("Daily lead digest cron started", {
+      scheduledTime: new Date(controller.scheduledTime).toISOString(),
+      cron: controller.cron,
+    });
 
     if (!env.DB) {
-      console.error("Scheduled cron task failed: D1 database binding is unavailable.");
+      console.error("Daily lead digest cron failed: D1 database binding is unavailable.");
       return;
     }
 
     if (!env.RESEND_API_KEY) {
-      console.error("Scheduled cron task failed: RESEND_API_KEY is not configured.");
+      console.error("Daily lead digest cron failed: RESEND_API_KEY is not configured.");
       return;
     }
 
@@ -46,12 +49,14 @@ export default {
       )
         .all<LeadDigestItem>();
 
-      console.log(`Total new leads since yesterday: ${newLeads.results.length}`);
+      console.log("Daily lead digest lead query complete", {
+        leadCount: newLeads.results.length,
+      });
 
       // Always send email digest (with leads or no-leads notification) via Resend
       await sendLeadDigestEmail(env, newLeads.results);
       } catch (error) {
-        console.error("Scheduled cron task failed:", error);
+        console.error("Daily lead digest cron failed:", error);
       }
     })());
   },
