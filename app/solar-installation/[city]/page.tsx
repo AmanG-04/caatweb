@@ -5,6 +5,7 @@ import Footer from "@/components/footer";
 import { SiteHeader } from "@/components/site-header";
 import { buttonStyles, Card } from "@/components/ui";
 import { getServiceArea, serviceAreas } from "@/lib/service-areas";
+import FloatingWhatsApp from "@/components/floating-whatsapp";
 
 type PageProps = { params: Promise<{ city: string }> };
 
@@ -133,6 +134,7 @@ export default async function ServiceAreaPage({ params }: PageProps) {
         </section>
       )}
       <Footer />
+      <FloatingWhatsApp />
     </main>
   );
 }

@@ -14,10 +14,12 @@ const quickLinks = [
 ];
 
 const serviceList = [
-  "Rooftop solar installation",
-  "Solar water heaters","BESS with Lithium-ion batteries",
-  "EV charger",
-  "Diesel & Gas generators","Maintenance & AMC",
+  { label: "Rooftop solar installation", href: "/solutions/solar" },
+  { label: "Solar water heaters", href: "/solutions/water-heating" },
+  { label: "BESS with Lithium-ion batteries", href: "/solutions/bess" },
+  { label: "EV charger", href: "/solutions/ev-charging" },
+  { label: "Diesel & Gas generators", href: "/solutions/generators" },
+  { label: "Maintenance & AMC", href: "/solutions/maintenance" },
 ];
 
 const socialLinks = [
@@ -145,9 +147,11 @@ export default function Footer() {
               Services
             </p>
             <ul className="mt-5 space-y-3">
-              {serviceList.map((service) => (
-                <li key={service} className="text-sm text-white/60">
-                  {service}
+                {serviceList.map((service) => (
+                <li key={service.href}>
+                  <a href={service.href} className="text-sm text-white/60 transition-colors hover:text-gold-soft">
+                    {service.label}
+                  </a>
                 </li>
               ))}
             </ul>
@@ -160,7 +164,7 @@ export default function Footer() {
             <ul className="mt-5 space-y-3">
               {serviceAreas.map((area) => (
                 <li key={area.slug}>
-                  <a href={`/solar-installation/${area.slug}`} className="text-sm text-white/70 transition-colors hover:text-gold-soft">
+                  <a href={`/solar-installation/${area.slug}`} className="block text-sm font-semibold text-white/70 transition-colors hover:text-gold-soft">
                     {area.name}
                   </a>
                 </li>
@@ -204,7 +208,9 @@ export default function Footer() {
               Mon–Fri, 10 am – 5 pm IST. 
             </p>
             <a
-              href="/brochures"
+              href="https://drive.google.com/drive/folders/1VDJCP4I6PV7MJlPkpE64gLiy23yVDRCF?usp=sharing"
+              target="_blank"
+              rel="noopener noreferrer"
               className="mt-6 inline-flex items-center gap-2 rounded-xl border border-gold/35 bg-gold/10 px-4 py-3 font-mono text-[10px] font-bold uppercase tracking-[.14em] text-gold transition-colors hover:border-gold hover:bg-gold hover:text-night"
             >
               Brochures & technical docs

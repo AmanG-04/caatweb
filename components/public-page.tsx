@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Footer from "@/components/footer";
 import { SiteHeader } from "@/components/site-header";
+import FloatingWhatsApp from "@/components/floating-whatsapp";
 
 type PublicPageProps = {
   eyebrow?: string;
@@ -28,6 +29,7 @@ export function PublicPage({ eyebrow, title, description, children, gridLines = 
       ) : null}
       {children}
       <Footer />
+      <FloatingWhatsApp />
     </main>
   );
 }

@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { ArrowUpRight, MessageCircle } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import logo from "../companyinfo/caatlogo-96.webp";
-import { defaultWhatsappMessage, site } from "@/lib/site";
+import { site } from "@/lib/site";
 import { MobileNavMenu } from "./mobile-nav-menu";
 import { buttonStyles } from "./ui";
 
@@ -41,9 +41,8 @@ export function SiteHeader({ context, fixed = false }: SiteHeaderProps) {
           return <a key={href} href={href} aria-current={active ? "page" : undefined}>{label}</a>;
         })}
       </div>
-      {context ? <span className="site-header-context text-xs font-bold uppercase tracking-[.14em] text-ink/50">{context}</span> : <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+      {context ? <div className="flex shrink-0 items-center gap-2 sm:gap-3"><span className="site-header-context text-xs font-bold uppercase tracking-[.14em] text-ink/50">{context}</span><MobileNavMenu /></div> : <div className="flex shrink-0 items-center gap-2 sm:gap-3">
         <MobileNavMenu />
-        <a href={site.whatsapp(defaultWhatsappMessage)} target="_blank" rel="noopener noreferrer" className={buttonStyles("outline", "site-header-consultation hidden min-h-9 gap-1.5 px-3 text-xs sm:min-h-10 sm:px-4 sm:text-sm lg:inline-flex")}><MessageCircle size={15} />Consultation</a>
         <a href="/quote" className={buttonStyles("primary", `site-header-cta min-h-8 gap-1 px-2.5 text-[11px] sm:min-h-9 sm:gap-1.5 sm:px-4 sm:text-sm ${isEstimatePage ? "site-header-cta-active" : ""}`)} aria-current={isEstimatePage ? "page" : undefined}><span className="sm:hidden">Estimate</span><span className="hidden sm:inline">Get estimate</span><ArrowUpRight size={14} /></a>
       </div>}
     </nav>

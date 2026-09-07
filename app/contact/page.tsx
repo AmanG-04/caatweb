@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { ArrowUpRight, Mail, MessageCircle } from "lucide-react";
+import { ArrowUpRight, ExternalLink, FileText, Mail, MessageCircle } from "lucide-react";
 import Footer from "@/components/footer";
 import { SiteHeader } from "@/components/site-header";
 import { buttonStyles, Card } from "@/components/ui";
 import { defaultWhatsappMessage, site } from "@/lib/site";
+import FloatingWhatsApp from "@/components/floating-whatsapp";
 
 export const metadata: Metadata = {
   title: "Contact CAAT PowerBot | Solar in Delhi NCR",
@@ -47,8 +48,23 @@ export default function ContactPage() {
             </Card>
           ))}
         </div>
+        <div className="container-wide mt-6">
+          <a
+            href="https://drive.google.com/drive/folders/1VDJCP4I6PV7MJlPkpE64gLiy23yVDRCF?usp=sharing"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-between gap-4 rounded-3xl border border-ink/10 bg-white p-6 shadow-soft transition hover:border-teal/40 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal"
+          >
+            <span className="flex items-center gap-4">
+              <span className="grid h-11 w-11 place-items-center rounded-xl bg-lime text-teal"><FileText size={21} aria-hidden="true" /></span>
+              <span><span className="block text-lg font-black tracking-tight">Technical documentation</span><span className="mt-1 block text-sm text-ink/60">Brochures and product documents</span></span>
+            </span>
+            <ExternalLink className="shrink-0 text-teal" size={18} aria-hidden="true" />
+          </a>
+        </div>
       </section>
       <Footer />
+      <FloatingWhatsApp />
     </main>
   );
 }

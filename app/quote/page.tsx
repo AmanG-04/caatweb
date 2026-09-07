@@ -8,6 +8,7 @@ import { ArrowLeft, ArrowRight, Check, Sun, Upload } from "lucide-react";
 import { Button, Card } from "@/components/ui";
 import { SiteHeader } from "@/components/site-header";
 import { quoteFormSchema, type QuoteFormData, type QuoteFormInput } from "@/lib/validation";
+import FloatingWhatsApp from "@/components/floating-whatsapp";
 
 type ExtractedFields = {
   provider?: string | null;
@@ -52,14 +53,44 @@ export default function QuotePage() {
   const systemType = useWatch({ control, name: "systemType" });
   const batteryRequired = useWatch({ control, name: "batteryRequired" });
   const targetSavingsPercent = Number(useWatch({ control, name: "targetSavingsPercent" }) ?? 50);
+  const pincode = useWatch({ control, name: "pincode" });
   const lastAutofilledPincode = useRef("");
 
   useEffect(() => {
     if (systemType !== "hybrid") setValue("batteryRequired", "no", { shouldValidate: true });
   }, [setValue, systemType]);
 
+  useEffect(() => {
+    if (!pincode || !/^[1-9]\d{5}$/.test(String(pincode)) || lastAutofilledPincode.current === pincode) return;
+
+    const controller = new AbortController();
+    const timer = window.setTimeout(async () => {
+      try {
+        const response = await fetch(`/api/pincode/${pincode}`, { signal: controller.signal });
+        const result = await response.json() as { success?: boolean; data?: { city?: string; state?: string } };
+        if (!response.ok || !result.success || !result.data?.city || !result.data.state) return;
+        lastAutofilledPincode.current = pincode;
+        setValue("city", result.data.city, { shouldValidate: true });
+        setValue("state", result.data.state, { shouldValidate: true });
+      } catch {
+        // City and state remain editable when the lookup service is unavailable.
+      }
+    }, 250);
+
+    return () => {
+      window.clearTimeout(timer);
+      controller.abort();
+    };
+  }, [pincode, setValue]);
+
   const moveToPersonalDetails = async () => {
     if (await trigger(["propertyType", "roofType", "ownership", "systemType", "batteryRequired", "monthlyUnits", "pricePerUnit", "targetSavingsPercent"])) setStep(2);
+  };
+
+  const startManualEntry = () => {
+    setError("");
+    setBillStatus("Manual entry selected. Enter your average monthly units and unit price below.");
+    setStep(1);
   };
 
   const applyExtractedFields = (fields: ExtractedFields) => {
@@ -112,15 +143,10 @@ export default function QuotePage() {
   };
 
   const submit = async (data: QuoteFormData, allowDuplicate = false) => {
-    if (!billObjectKey) {
-      setError("Upload your electricity bill to continue.");
-      setStep(0);
-      return;
-    }
     setIsSubmitting(true);
     setError("");
     try {
-      const response = await fetch("/api/lead", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...data, billObjectKey, allowDuplicate }) });
+       const response = await fetch("/api/lead", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...data, billObjectKey, allowDuplicate }) });
       const result = await readResult(response, "Estimate service did not return a valid response.");
       if (response.status === 409 && result.error?.code === "DUPLICATE_QUOTE" && result.error.existingQuote) {
         setDuplicate(result.error.existingQuote);
@@ -161,36 +187,35 @@ export default function QuotePage() {
               <div>
                 <h1 className="text-3xl font-black">Start with your electricity bill.</h1>
                  <p className="mt-3 text-cream/75">We use your bill to suggest a general solar-system size. It is the quickest and most useful way to start.</p>
-                 <label className="mt-8 block text-left">
-                   <span className="flex items-center justify-between text-sm font-bold text-white">
-                     <span>How much of your bill do you want to save?</span>
-                     <output className="rounded-full bg-lime px-3 py-1 text-xs font-black text-ink">{targetSavingsPercent}%</output>
-                   </span>
-                   <input type="range" min="10" max="100" step="5" defaultValue="100" {...register("targetSavingsPercent")} className="mt-4 w-full accent-lime" aria-label="Target bill savings percentage" />
-                   <span className="mt-2 flex justify-between text-xs text-cream/60"><span>10%</span><span>100%</span></span>
-                 </label>
-                <label className="mt-8 flex cursor-pointer flex-col items-center justify-center gap-4 rounded-[1.75rem] border-2 border-dashed border-lime/70 bg-night/45 px-6 py-12 text-center transition-colors hover:bg-teal/40">
+                 <label className="mt-8 flex cursor-pointer flex-col items-center justify-center gap-4 rounded-[1.75rem] border-2 border-dashed border-lime/70 bg-night/45 px-6 py-12 text-center transition-colors hover:bg-teal/40">
                   <input className="sr-only" type="file" accept="application/pdf,image/png,image/jpeg" disabled={isUploading} onChange={(event) => void uploadBill(event.target.files?.[0] ?? null)} />
                   <span className="grid h-16 w-16 place-items-center rounded-full bg-lime text-teal"><Upload size={28} aria-hidden="true" /></span>
-                  <span><span className="block text-xl font-black text-white">Upload electricity bill</span><span className="mt-2 block text-sm text-cream/75">PDF or clear photo, up to 10MB</span></span>
-                </label>
+                   <span><span className="block text-xl font-black text-white">Upload electricity bill</span><span className="mt-2 block text-sm text-cream/75">PDF or clear photo, up to 10MB</span></span>
+                 </label>
+                  <div className="mt-4 flex items-center gap-3 text-xs uppercase tracking-[.16em] text-cream/45" aria-hidden="true">
+                   <span className="h-px flex-1 bg-white/15" />
+                   OR
+                   <span className="h-px flex-1 bg-white/15" />
+                 </div>
+                  <button type="button" onClick={startManualEntry} className="mt-3 block w-full text-center text-xs font-bold text-cream/55 underline decoration-cream/30 underline-offset-4 hover:text-lime">Enter details manually</button>
                 {error && <p className="mt-4 text-sm text-red-300">{error}</p>}
               </div>
             ) : step === 1 ? (
               <div>
                 <h1 className="text-3xl font-black">Set up your project.</h1>
-                <p className="mt-3 text-cream/75">Choose the property and power configuration you are looking for. Your bill is still being read in the background.</p>
+                 <p className="mt-3 text-cream/75">Choose the property, unit price and power configuration. You can use a bill upload or enter the numbers manually.</p>
                 <p role="status" className="mt-5 rounded-2xl border border-lime/30 bg-teal/35 px-4 py-3 text-sm leading-6 text-cream">{billStatus}</p>
                 <div className="mt-7 grid gap-4 sm:grid-cols-2">
                    <Select required label="Property type" {...register("propertyType")} options={[["residential", "Residential"], ["commercial", "Commercial"], ["industrial", "Industrial"]]} />
                   <Select required label="Roof type" {...register("roofType")} options={[["rcc", "RCC"], ["metal", "Metal"], ["tile", "Tile"], ["ground", "Ground mount"]]} />
-                  <Select required label="Roof ownership" {...register("ownership")} options={[["owned", "Owned"], ["rented", "Rented"]]} />
                    <Input required type="number" label="Average monthly units" error={errors.monthlyUnits?.message} {...register("monthlyUnits")} />
                    <Input required type="number" min="0.01" step="0.01" label="Average price per unit (Rs.)" error={errors.pricePerUnit?.message} {...register("pricePerUnit")} />
-                   <div className="rounded-2xl border border-lime/30 bg-teal/35 p-4 text-sm text-cream/85">
-                     Target bill saving: <strong className="text-lime">{targetSavingsPercent}%</strong>. The estimate will be sized around this target.
-                   </div>
-                </div>
+                 </div>
+                 <label className="mt-7 block text-left">
+                   <span className="flex items-center justify-between text-sm font-bold text-white"><span>Target bill saving</span><output className="rounded-full bg-lime px-3 py-1 text-xs font-black text-ink">{targetSavingsPercent}%</output></span>
+                   <input type="range" min="10" max="100" step="5" defaultValue="100" {...register("targetSavingsPercent")} className="mt-4 w-full accent-lime" aria-label="Target bill savings percentage" />
+                   <span className="mt-2 flex justify-between text-xs text-cream/60"><span>10%</span><span>100%</span></span>
+                 </label>
                 <div className="mt-7">
                   <p className="mb-3 text-sm font-bold">System type<sup className="ml-1 text-red-300">*</sup></p>
                   <div className="grid gap-3 sm:grid-cols-3">
@@ -229,11 +254,11 @@ export default function QuotePage() {
                 <div className="mt-7 grid gap-4 sm:grid-cols-2">
                   <Input required label="Full name" error={errors.name?.message} {...register("name")} />
                   <Input required label="Phone" error={errors.phone?.message} {...register("phone")} />
-                  <Input required label="Email" error={errors.email?.message} {...register("email")} />
-                  <Input required label="Address" wrapperClassName="sm:col-span-2" error={errors.address?.message} {...register("address")} />
-                  <Input required label="City" error={errors.city?.message} {...register("city")} />
-                  <Input required label="State" error={errors.state?.message} {...register("state")} />
-                  <Input required label="Pincode" inputMode="numeric" maxLength={6} error={errors.pincode?.message} {...register("pincode")} />
+                   <Input required label="Email" error={errors.email?.message} {...register("email")} />
+                   <Input required label="Pincode" inputMode="numeric" maxLength={6} error={errors.pincode?.message} {...register("pincode")} />
+                   <Input required label="Address" wrapperClassName="sm:col-span-2" error={errors.address?.message} {...register("address")} />
+                   <Input required label="City" error={errors.city?.message} {...register("city")} />
+                   <Input required label="State" error={errors.state?.message} {...register("state")} />
                 </div>
                 <div className="mt-8 flex justify-between">
                   <Button type="button" variant="outline" onClick={() => setStep(1)}><ArrowLeft size={16} /> Back</Button>
@@ -259,6 +284,7 @@ export default function QuotePage() {
           </div>
         </div>
       )}
+      <FloatingWhatsApp />
     </main>
   );
 }

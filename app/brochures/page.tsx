@@ -10,6 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default function BrochuresPage() {
+  /*
   return (
     <PublicPage>
       <section className="bg-paper py-16 sm:py-24" aria-labelledby="brochures-title">
@@ -81,4 +82,6 @@ export default function BrochuresPage() {
       </section>
     </PublicPage>
   );
+  */
+  return null;
 }

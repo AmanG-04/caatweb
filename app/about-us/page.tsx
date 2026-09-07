@@ -16,6 +16,7 @@ import Footer from "@/components/footer";
 import { SiteHeader } from "@/components/site-header";
 import { buttonStyles, Card } from "@/components/ui";
 import { defaultWhatsappMessage, site } from "@/lib/site";
+import FloatingWhatsApp from "@/components/floating-whatsapp";
 
 export const metadata: Metadata = {
   title: "About CAAT PowerBot | Electrical & Solar Engineering in Delhi NCR",
@@ -187,6 +188,7 @@ export default function AboutUsPage() {
 
       {/* <section className="bg-night px-5 py-16 text-center text-white sm:px-8 sm:py-20" aria-labelledby="about-cta-title"><div className="mx-auto max-w-2xl"><p className="section-kicker section-kicker-dark mx-auto !flex w-max justify-center">Start a conversation</p><h2 id="about-cta-title" className="mt-5 text-3xl font-black leading-tight tracking-[-.035em] sm:text-4xl">Have a project that needs a considered electrical solution?</h2><p className="mx-auto mt-4 max-w-xl leading-7 text-white/70">Tell us what you are planning. We will begin with the property, the application and the outcome you need.</p><div className="mx-auto mt-8 flex max-w-max flex-col gap-3 sm:flex-row"><a href={site.whatsapp(defaultWhatsappMessage)} target="_blank" rel="noopener noreferrer" className={buttonStyles("outline", "gap-2 border-white/25 bg-white/10 text-white hover:bg-white/15")}>WhatsApp consultation <ArrowUpRight size={17} /></a></div></div></section> */}
       <Footer />
+      <FloatingWhatsApp />
     </main>
   );
 }

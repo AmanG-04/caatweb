@@ -6,6 +6,7 @@ import { ArrowUpRight, Leaf, PanelsTopLeft } from "lucide-react";
 import { buttonStyles, Card } from "@/components/ui";
 import { SiteHeader } from "@/components/site-header";
 import { site } from "@/lib/site";
+import FloatingWhatsApp from "@/components/floating-whatsapp";
 
 type Quote = {
   systemSizeKw: number;
@@ -48,6 +49,7 @@ export default function Result() {
             </Link>
           </Card>
         </div>
+        <FloatingWhatsApp />
       </main>
     );
   }
@@ -94,6 +96,7 @@ export default function Result() {
           </a>
         </div>
       </div>
+      <FloatingWhatsApp />
     </main>
   );
 }
