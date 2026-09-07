@@ -1,6 +1,6 @@
-import type { QuoteInput } from "./types";
+type QuoteSettings = { tariff: number; panelWattage: number; solarPricePerWatt: number; gst: number; labourCost: number; inverterCostPerKw: number; subsidyPerKw: number; subsidyCap: number; roofAreaPerKw: number; annualDegradation: number; annualTariffIncrease: number; co2KgPerKwh: number };
 /** Development seed only. Production values are loaded from D1 settings. */
-export const TEMPLATE_QUOTE_SETTINGS: Omit<QuoteInput,"monthlyBill"|"monthlyUnits"|"propertyType"|"roofType"> = { tariff: 8, panelWattage: 540, solarPricePerWatt: 42, gst: .08, labourCost: 8000, inverterCostPerKw: 9000, subsidyPerKw: 14500, subsidyCap: 78000, roofAreaPerKw: 100, annualDegradation: .005, annualTariffIncrease: .05, co2KgPerKwh: .82 };
+export const TEMPLATE_QUOTE_SETTINGS: QuoteSettings = { tariff: 8, panelWattage: 540, solarPricePerWatt: 42, gst: .08, labourCost: 8000, inverterCostPerKw: 9000, subsidyPerKw: 14500, subsidyCap: 78000, roofAreaPerKw: 100, annualDegradation: .005, annualTariffIncrease: .05, co2KgPerKwh: .82 };
 
 export const SETTING_FIELDS = [
   ["tariff", "Electricity tariff (₹/kWh)"], ["panelWattage", "Panel wattage (W)"],

@@ -45,12 +45,13 @@ export default function QuotePage() {
   const [error, setError] = useState("");
   const [duplicate, setDuplicate] = useState<Duplicate | null>(null);
   const [pendingData, setPendingData] = useState<QuoteFormData | null>(null);
-  const { register, handleSubmit, setValue, trigger, control, getValues, formState: { errors } } = useForm<QuoteFormInput, unknown, QuoteFormData>({
+  const { register, handleSubmit, setValue, trigger, control, formState: { errors } } = useForm<QuoteFormInput, unknown, QuoteFormData>({
     resolver: zodResolver(quoteFormSchema),
-    defaultValues: { propertyType: "residential", roofType: "rcc", ownership: "owned", systemType: "on_grid", batteryRequired: "no", pricePerUnit: 0 },
+    defaultValues: { propertyType: "residential", roofType: "rcc", ownership: "owned", systemType: "on_grid", batteryRequired: "no", pricePerUnit: 8, targetSavingsPercent: 100 },
   });
   const systemType = useWatch({ control, name: "systemType" });
   const batteryRequired = useWatch({ control, name: "batteryRequired" });
+  const targetSavingsPercent = Number(useWatch({ control, name: "targetSavingsPercent" }) ?? 50);
   const lastAutofilledPincode = useRef("");
 
   useEffect(() => {
@@ -58,7 +59,7 @@ export default function QuotePage() {
   }, [setValue, systemType]);
 
   const moveToPersonalDetails = async () => {
-    if (await trigger(["propertyType", "roofType", "ownership", "systemType", "batteryRequired", "monthlyUnits"])) setStep(2);
+    if (await trigger(["propertyType", "roofType", "ownership", "systemType", "batteryRequired", "monthlyUnits", "pricePerUnit", "targetSavingsPercent"])) setStep(2);
   };
 
   const applyExtractedFields = (fields: ExtractedFields) => {
@@ -159,7 +160,15 @@ export default function QuotePage() {
             {step === 0 ? (
               <div>
                 <h1 className="text-3xl font-black">Start with your electricity bill.</h1>
-                <p className="mt-3 text-cream/75">We use your bill to suggest a general solar-system size. It is the quickest and most useful way to start.</p>
+                 <p className="mt-3 text-cream/75">We use your bill to suggest a general solar-system size. It is the quickest and most useful way to start.</p>
+                 <label className="mt-8 block text-left">
+                   <span className="flex items-center justify-between text-sm font-bold text-white">
+                     <span>How much of your bill do you want to save?</span>
+                     <output className="rounded-full bg-lime px-3 py-1 text-xs font-black text-ink">{targetSavingsPercent}%</output>
+                   </span>
+                   <input type="range" min="10" max="100" step="5" defaultValue="100" {...register("targetSavingsPercent")} className="mt-4 w-full accent-lime" aria-label="Target bill savings percentage" />
+                   <span className="mt-2 flex justify-between text-xs text-cream/60"><span>10%</span><span>100%</span></span>
+                 </label>
                 <label className="mt-8 flex cursor-pointer flex-col items-center justify-center gap-4 rounded-[1.75rem] border-2 border-dashed border-lime/70 bg-night/45 px-6 py-12 text-center transition-colors hover:bg-teal/40">
                   <input className="sr-only" type="file" accept="application/pdf,image/png,image/jpeg" disabled={isUploading} onChange={(event) => void uploadBill(event.target.files?.[0] ?? null)} />
                   <span className="grid h-16 w-16 place-items-center rounded-full bg-lime text-teal"><Upload size={28} aria-hidden="true" /></span>
@@ -173,10 +182,14 @@ export default function QuotePage() {
                 <p className="mt-3 text-cream/75">Choose the property and power configuration you are looking for. Your bill is still being read in the background.</p>
                 <p role="status" className="mt-5 rounded-2xl border border-lime/30 bg-teal/35 px-4 py-3 text-sm leading-6 text-cream">{billStatus}</p>
                 <div className="mt-7 grid gap-4 sm:grid-cols-2">
-                  <Select required label="Property type" {...register("propertyType")} options={[["residential", "Residential"], ["commercial", "Commercial"], ["industrial", "Industrial"]]} />
+                   <Select required label="Property type" {...register("propertyType")} options={[["residential", "Residential"], ["commercial", "Commercial"], ["industrial", "Industrial"]]} />
                   <Select required label="Roof type" {...register("roofType")} options={[["rcc", "RCC"], ["metal", "Metal"], ["tile", "Tile"], ["ground", "Ground mount"]]} />
                   <Select required label="Roof ownership" {...register("ownership")} options={[["owned", "Owned"], ["rented", "Rented"]]} />
-                  <Input required type="number" label="Average monthly units" error={errors.monthlyUnits?.message} {...register("monthlyUnits")} />
+                   <Input required type="number" label="Average monthly units" error={errors.monthlyUnits?.message} {...register("monthlyUnits")} />
+                   <Input required type="number" min="0.01" step="0.01" label="Average price per unit (Rs.)" error={errors.pricePerUnit?.message} {...register("pricePerUnit")} />
+                   <div className="rounded-2xl border border-lime/30 bg-teal/35 p-4 text-sm text-cream/85">
+                     Target bill saving: <strong className="text-lime">{targetSavingsPercent}%</strong>. The estimate will be sized around this target.
+                   </div>
                 </div>
                 <div className="mt-7">
                   <p className="mb-3 text-sm font-bold">System type<sup className="ml-1 text-red-300">*</sup></p>

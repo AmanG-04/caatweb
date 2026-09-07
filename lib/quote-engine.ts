@@ -2,8 +2,7 @@ import type { QuoteInput, QuoteResult } from "./types";
 
 const YEARLY_GENERATION_PER_KW = { min: 1200, max: 1400 };
 const ROOF_AREA_PER_KW = 50;
-const ANNUAL_SAVINGS_PER_KW = { min: 7200, max: 8400 };
-const INSTALLED_COST_PER_KW_LAKH = { min: 0.6, max: 0.8 };
+const ANNUAL_GENERATION_PER_KW = YEARLY_GENERATION_PER_KW;
 
 function formatInrRange(min: number, max: number, unit: string) {
   return `Rs. ${min.toLocaleString("en-IN")}-Rs. ${max.toLocaleString("en-IN")} ${unit}`;
@@ -17,20 +16,20 @@ function formatInrRange(min: number, max: number, unit: string) {
 export function calculateQuote(input: QuoteInput): QuoteResult {
   const estimatedMonthlyUnits = Math.round(input.monthlyUnits);
   const annualUsage = estimatedMonthlyUnits * 12;
-  const systemSizeKw = Math.max(3, Math.ceil((annualUsage / YEARLY_GENERATION_PER_KW.min) * 2) / 2);
+  const targetAnnualGeneration = annualUsage * (input.targetSavingsPercent / 100);
+  const systemSizeKw = Math.max(3, Math.ceil((targetAnnualGeneration / ANNUAL_GENERATION_PER_KW.min) * 2) / 2);
   const yearlyGenerationMin = systemSizeKw * YEARLY_GENERATION_PER_KW.min;
   const yearlyGenerationMax = systemSizeKw * YEARLY_GENERATION_PER_KW.max;
-  const annualSavingsMin = Math.round((systemSizeKw * ANNUAL_SAVINGS_PER_KW.min) / 500) * 500;
-  const annualSavingsMax = Math.round((systemSizeKw * ANNUAL_SAVINGS_PER_KW.max) / 500) * 500;
-  const investmentMin = Math.ceil(systemSizeKw * INSTALLED_COST_PER_KW_LAKH.min);
-  const investmentMax = Math.ceil(systemSizeKw * INSTALLED_COST_PER_KW_LAKH.max);
+  const annualSavingsMin = Math.round((Math.min(targetAnnualGeneration, systemSizeKw * YEARLY_GENERATION_PER_KW.min) * input.pricePerUnit) / 500) * 500;
+  const annualSavingsMax = Math.round((Math.min(annualUsage, systemSizeKw * YEARLY_GENERATION_PER_KW.max) * input.pricePerUnit) / 500) * 500;
 
   return {
     estimatedMonthlyUnits,
+    pricePerUnit: input.pricePerUnit,
+    targetSavingsPercent: input.targetSavingsPercent,
     systemSizeKw,
     yearlyGenerationRange: `${yearlyGenerationMin.toLocaleString("en-IN")}-${yearlyGenerationMax.toLocaleString("en-IN")} units per year`,
     roofAreaSqFt: systemSizeKw * ROOF_AREA_PER_KW,
     annualSavingsRange: formatInrRange(annualSavingsMin, annualSavingsMax, "per year"),
-    investmentRange: `Rs. ${investmentMin}-${investmentMax} lakh`,
   };
 }

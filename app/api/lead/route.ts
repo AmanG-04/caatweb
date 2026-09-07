@@ -28,7 +28,7 @@ export async function POST(request: Request) {
       if (existing) return NextResponse.json({ success: false, error: { code: "DUPLICATE_QUOTE", message: "An estimate already exists for this phone number or email address.", existingQuote: { id: existing.id, name: existing.name, createdAt: existing.created_at, result: JSON.parse(existing.result_json) } } }, { status: 409 });
     }
 
-    const quote = calculateQuote({ monthlyUnits: d.monthlyUnits, propertyType: d.propertyType, roofType: d.roofType });
+    const quote = calculateQuote({ monthlyUnits: d.monthlyUnits, pricePerUnit: d.pricePerUnit, targetSavingsPercent: d.targetSavingsPercent, propertyType: d.propertyType, roofType: d.roofType });
     const leadId = crypto.randomUUID(); const quoteId = crypto.randomUUID();
     if (db) {
       const customerId = crypto.randomUUID();
