@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import { PageReveal } from "@/components/page-reveal";
@@ -14,6 +15,17 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={GeistMono.variable} data-scroll-behavior="smooth">
+      <head>
+        <Script async src="https://www.googletagmanager.com/gtag/js?id=G-5M9YDT334V" strategy="afterInteractive" />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-5M9YDT334V');
+          `}
+        </Script>
+      </head>
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(organizationSchema) }} />
         <PageReveal>{children}</PageReveal>
