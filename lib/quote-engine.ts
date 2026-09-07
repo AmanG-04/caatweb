@@ -1,23 +1,36 @@
 import type { QuoteInput, QuoteResult } from "./types";
 
-/** Versioned, intentionally transparent template model. All commercial values come from settings. */
+const YEARLY_GENERATION_PER_KW = { min: 1200, max: 1400 };
+const ROOF_AREA_PER_KW = 50;
+const ANNUAL_SAVINGS_PER_KW = { min: 7200, max: 8400 };
+const INSTALLED_COST_PER_KW_LAKH = { min: 0.6, max: 0.8 };
+
+function formatInrRange(min: number, max: number, unit: string) {
+  return `Rs. ${min.toLocaleString("en-IN")}-Rs. ${max.toLocaleString("en-IN")} ${unit}`;
+}
+
+/**
+ * General guide based on 1,200-1,400 annual units generated per kW, the
+ * production range supplied for 3, 5 and 10 kW systems. Size is rounded up
+ * to the next 0.5 kW so the conservative end of generation covers usage.
+ */
 export function calculateQuote(input: QuoteInput): QuoteResult {
-  const units = input.monthlyUnits;
-  const systemSizeKw = Math.max(1, Math.ceil((units / 120) * 10) / 10);
-  const panelsRequired = Math.ceil((systemSizeKw * 1000) / input.panelWattage);
-  const roofAreaSqFt = Math.ceil(systemSizeKw * input.roofAreaPerKw);
-  const baseCost = systemSizeKw * 1000 * input.solarPricePerWatt + systemSizeKw * input.labourCost + systemSizeKw * input.inverterCostPerKw;
-  const gstAmount = baseCost * input.gst;
-  const grossCost = baseCost + gstAmount;
-  const subsidy = Math.min(systemSizeKw * input.subsidyPerKw, input.subsidyCap);
-  const netCost = Math.max(0, grossCost - subsidy);
-  const estimatedMonthlyBill = units * input.tariff;
-  const monthlySavings = estimatedMonthlyBill * 0.92;
-  const annualSavings = monthlySavings * 12;
-  let twentyFiveYearSavings = 0;
-  for (let year = 0; year < 25; year++) twentyFiveYearSavings += annualSavings * Math.pow(1 + input.annualTariffIncrease, year) * Math.pow(1 - input.annualDegradation, year);
-  const paybackYears = annualSavings ? netCost / annualSavings : 0;
-  const irr = netCost ? Math.pow(Math.max(twentyFiveYearSavings / netCost, 0.0001), 1 / 25) - 1 : 0;
-  const co2OffsetKg = units * 12 * input.co2KgPerKwh;
-  return { estimatedMonthlyUnits: Math.round(units), systemSizeKw, panelsRequired, roofAreaSqFt, grossCost: Math.round(grossCost), subsidy: Math.round(subsidy), gstAmount: Math.round(gstAmount), netCost: Math.round(netCost), monthlySavings: Math.round(monthlySavings), annualSavings: Math.round(annualSavings), twentyFiveYearSavings: Math.round(twentyFiveYearSavings), co2OffsetKg: Math.round(co2OffsetKg), treesEquivalent: Math.round(co2OffsetKg / 21), paybackYears: Number(paybackYears.toFixed(1)), irr: Number((irr * 100).toFixed(1)) };
+  const estimatedMonthlyUnits = Math.round(input.monthlyUnits);
+  const annualUsage = estimatedMonthlyUnits * 12;
+  const systemSizeKw = Math.max(3, Math.ceil((annualUsage / YEARLY_GENERATION_PER_KW.min) * 2) / 2);
+  const yearlyGenerationMin = systemSizeKw * YEARLY_GENERATION_PER_KW.min;
+  const yearlyGenerationMax = systemSizeKw * YEARLY_GENERATION_PER_KW.max;
+  const annualSavingsMin = Math.round((systemSizeKw * ANNUAL_SAVINGS_PER_KW.min) / 500) * 500;
+  const annualSavingsMax = Math.round((systemSizeKw * ANNUAL_SAVINGS_PER_KW.max) / 500) * 500;
+  const investmentMin = Math.ceil(systemSizeKw * INSTALLED_COST_PER_KW_LAKH.min);
+  const investmentMax = Math.ceil(systemSizeKw * INSTALLED_COST_PER_KW_LAKH.max);
+
+  return {
+    estimatedMonthlyUnits,
+    systemSizeKw,
+    yearlyGenerationRange: `${yearlyGenerationMin.toLocaleString("en-IN")}-${yearlyGenerationMax.toLocaleString("en-IN")} units per year`,
+    roofAreaSqFt: systemSizeKw * ROOF_AREA_PER_KW,
+    annualSavingsRange: formatInrRange(annualSavingsMin, annualSavingsMax, "per year"),
+    investmentRange: `Rs. ${investmentMin}-${investmentMax} lakh`,
+  };
 }
