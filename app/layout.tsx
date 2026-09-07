@@ -14,19 +14,6 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={GeistMono.variable} data-scroll-behavior="smooth">
-      <head>
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-5M9YDT334V" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'G-5M9YDT334V');
-            `,
-          }}
-        />
-      </head>
       <body>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(organizationSchema) }} />
         <PageReveal>{children}</PageReveal>
