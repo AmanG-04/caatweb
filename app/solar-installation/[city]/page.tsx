@@ -39,7 +39,7 @@ export default async function ServiceAreaPage({ params }: PageProps) {
   };
 
   return (
-    <main className="grid-lines min-h-screen">
+    <main className="min-h-screen">
       <SiteHeader fixed />
       <div className="landing-header-space" aria-hidden="true" />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(areaSchema).replace(/</g, "\\u003c") }} />

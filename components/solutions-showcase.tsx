@@ -184,6 +184,7 @@ export function SolutionsShowcase({ initialSolutionId, initiallyExpanded = false
   const [hasSelectedSolution, setHasSelectedSolution] = useState(initiallyExpanded);
   const [isAutoPlaying, setIsAutoPlaying] = useState(!initiallyExpanded);
   const [activeIndex, setActiveIndex] = useState(initialIndex);
+  const [isCarouselReady, setIsCarouselReady] = useState(false);
   const autoplay = useRef(Autoplay({ delay: 3500, stopOnInteraction: true, stopOnMouseEnter: false }));
   const [emblaRef, emblaApi] = useEmblaCarousel({ align: "center", containScroll: false, loop: true, skipSnaps: true, startIndex: initialIndex }, [autoplay.current]);
   const activeSolution = solutions[activeIndex];
@@ -196,6 +197,7 @@ export function SolutionsShowcase({ initialSolutionId, initiallyExpanded = false
     }
 
     emblaApi.scrollTo(initialIndex, true);
+    setIsCarouselReady(true);
 
     if (initiallyExpanded) {
       autoplay.current.stop();
@@ -320,8 +322,16 @@ export function SolutionsShowcase({ initialSolutionId, initiallyExpanded = false
 
   return (
     <>
-      <section className="overflow-hidden py-7 sm:py-10" style={{ backgroundColor: "#f7f8f2" }} aria-labelledby="solutions-explorer-title" aria-roledescription="carousel">
-        <div ref={emblaRef} className="relative overflow-hidden py-1">
+      <section className="overflow-hidden py-7 sm:py-10" style={{ backgroundColor: "#f7f8f2" }} aria-labelledby="solutions-explorer-title" aria-roledescription="carousel" aria-busy={!isCarouselReady}>
+        <div className="relative">
+          {!isCarouselReady ? (
+            <div className="solutions-carousel-skeleton pointer-events-none absolute inset-0 z-10 overflow-hidden py-1" aria-hidden="true">
+              <div className="solutions-carousel-skeleton-card solutions-carousel-skeleton-card-side solutions-carousel-skeleton-card-previous" />
+              <div className="solutions-carousel-skeleton-card solutions-carousel-skeleton-card-current" />
+              <div className="solutions-carousel-skeleton-card solutions-carousel-skeleton-card-side solutions-carousel-skeleton-card-next" />
+            </div>
+          ) : null}
+          <div ref={emblaRef} className={`relative overflow-hidden py-1 transition-opacity duration-150 ${isCarouselReady ? "opacity-100" : "opacity-0"}`}>
           <div className="flex touch-pan-y">
             {solutions.map((solution, index) => {
             const isActive = index === activeIndex;
@@ -372,6 +382,7 @@ export function SolutionsShowcase({ initialSolutionId, initiallyExpanded = false
                 {isAutoPlaying ? <Pause size={15} aria-hidden="true" /> : <Play size={15} aria-hidden="true" />}
               </button>
             </div>
+          </div>
           </div>
         </div>
       </section>

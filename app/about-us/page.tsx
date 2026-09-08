@@ -90,7 +90,6 @@ export default function AboutUsPage() {
       <div className="landing-header-space" aria-hidden="true" />
 
       <section className="relative isolate overflow-hidden bg-cream" aria-labelledby="about-title">
-        <div className="about-hero-grid" aria-hidden="true" />
         <div className="container-wide sm: lg:">
           {/* <p className="section-kicker mx-auto !flex w-max justify-center">About CAAT PowerBot</p> */}
           <div className="mt-12 grid gap-12 lg:grid-cols-[1.12fr_.88fr] lg:items-center">
@@ -135,7 +134,6 @@ export default function AboutUsPage() {
       </section>
 
       <section id="our-story" className="about-story-section relative isolate overflow-hidden bg-paper py-16 sm:py-24" aria-labelledby="story-title">
-        <div className="about-grid-continuation" aria-hidden="true" />
         <div className="container-wide">
           <p className="section-kicker mx-auto !flex w-max justify-center">Our story</p>
           <div className="mt-12 grid gap-10 lg:grid-cols-[.76fr_1.24fr] lg:gap-16">

@@ -19,7 +19,7 @@ const contacts = [
 
 export default function ContactPage() {
   return (
-    <main className="grid-lines min-h-screen">
+    <main className="min-h-screen">
       <SiteHeader fixed />
       <div className="landing-header-space" aria-hidden="true" />
       <section className="hero-flow">

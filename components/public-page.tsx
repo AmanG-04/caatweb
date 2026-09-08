@@ -15,7 +15,7 @@ export function PublicPage({ eyebrow, title, description, children, gridLines = 
   const hasHeader = Boolean(eyebrow && title && description);
 
   return (
-    <main className={`${gridLines ? "grid-lines " : ""}min-h-screen`}>
+    <main className="min-h-screen">
       <SiteHeader fixed />
       <div className="landing-header-space" aria-hidden="true" />
       {hasHeader ? (
