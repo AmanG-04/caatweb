@@ -10,12 +10,12 @@ type PageProps = {
 };
 
 const solutionPages = [
-  { id: "solar", title: "Solar", description: "On-grid, off-grid and hybrid solar solutions for homes, businesses and institutions." },
-  { id: "water-heating", title: "Solar Water Heating", description: "Solar water-heating solutions including ETC and FPC systems." },
-  { id: "bess", title: "Battery Energy Storage", description: "Lithium battery energy storage solutions for critical loads and solar integration." },
-  { id: "ev-charging", title: "EV Charging", description: "EV charging infrastructure for homes, workplaces, fleets and shared parking." },
-  { id: "generators", title: "Generators", description: "Diesel and gas generator solutions for reliable backup power." },
-  { id: "maintenance", title: "Maintenance & AMC", description: "Maintenance and annual support for solar and electrical energy assets." },
+  { id: "solar", title: "Solar", description: "On-grid, off-grid and hybrid rooftop solar systems for homes, businesses and institutions in Delhi NCR, from design through commissioning." },
+  { id: "water-heating", title: "Solar Water Heating", description: "ETC and FPC solar water-heating systems for homes, businesses and institutions in Delhi NCR, sized around daily hot-water demand." },
+  { id: "bess", title: "Battery Energy Storage", description: "Lithium battery energy storage for critical loads, solar integration and backup power across homes, offices and commercial sites." },
+  { id: "ev-charging", title: "EV Charging", description: "EV charging infrastructure for homes, workplaces, fleets and shared parking, planned around electrical capacity and future use." },
+  { id: "generators", title: "Generators", description: "Diesel and gas generator solutions for homes, offices, commercial buildings and institutions that need dependable backup power." },
+  { id: "maintenance", title: "Maintenance & AMC", description: "Solar and electrical maintenance, health checks and annual support plans that help energy assets stay safe and dependable." },
 ] as const;
 
 export function generateStaticParams() {

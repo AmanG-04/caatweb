@@ -6,15 +6,13 @@ import { buttonStyles } from "@/components/ui";
 
 export const metadata: Metadata = {
   title: "Client Projects & Testimonials | CAAT PowerBot",
-  description: "Explore nine CAAT PowerBot project references across Delhi NCR, including solar, storage, electrical and backup-power work.",
+  description: "Explore CAAT PowerBot project references across Delhi NCR, including rooftop solar, battery storage, electrical and backup-power work.",
   alternates: { canonical: "/testimonials" },
 };
 
 export default function TestimonialsPage() {
   return (
-    <PublicPage
-    // eyebrow="Client projects & testimonials" title="Real systems. Real places. Real work." description="Nine references from our company profile, with customer-comment spaces ready for approved feedback."
-    >
+    <PublicPage>
       <ProjectTestimonials />
       {/* <section className="bg-white py-16 text-center sm:py-20">
         <div className="container-wide">

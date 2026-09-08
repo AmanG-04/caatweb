@@ -186,7 +186,7 @@ export default function QuotePage() {
             {step === 0 ? (
               <div>
                 <h1 className="text-3xl font-black">Start with your electricity bill.</h1>
-                 <p className="mt-3 text-cream/75">We use your bill to suggest a general solar-system size. It is the quickest and most useful way to start.</p>
+                 <p className="mt-3 text-cream/75">Use your electricity details to get a practical first estimate for a rooftop solar system. This is an initial planning guide; the final design depends on your property, roof, electrical connection and site conditions.</p>
                  <label className="mt-8 flex cursor-pointer flex-col items-center justify-center gap-4 rounded-[1.75rem] border-2 border-dashed border-lime/70 bg-night/45 px-6 py-12 text-center transition-colors hover:bg-teal/40">
                   <input className="sr-only" type="file" accept="application/pdf,image/png,image/jpeg" disabled={isUploading} onChange={(event) => void uploadBill(event.target.files?.[0] ?? null)} />
                   <span className="grid h-16 w-16 place-items-center rounded-full bg-lime text-teal"><Upload size={28} aria-hidden="true" /></span>

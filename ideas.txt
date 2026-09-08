@@ -1,0 +1,180 @@
+CAAT PowerBot: Delhi NCR SME/MSME Business Plan
+
+Core Positioning
+----------------
+CAAT PowerBot should target commercial and industrial customers who need lower electricity costs, reliable backup power, and one accountable electrical partner.
+
+Positioning statement:
+
+CAAT PowerBot helps Delhi NCR businesses audit their electricity use, reduce grid consumption, improve backup reliability, and plan solar, battery, generator, EV-charging, and maintenance projects.
+
+The business should focus on systems larger than residential subsidy projects. The strongest target range is 10-100+ kWp solar, with battery storage and electrical integration where the site needs backup or power-quality improvements.
+
+
+Flagship Service: Business Energy Audit
+---------------------------------------
+Starting price: Rs. 15,000 plus GST.
+
+Make the audit fee adjustable against a solar, battery, generator, EV-charging, or electrical project above Rs. 5 lakh.
+
+The audit includes:
+
+- Review of 6-12 months of electricity bills
+- Sanctioned-load and tariff analysis
+- Daytime versus night-time consumption review
+- Roof and shadow assessment
+- Existing DG, UPS, and battery review
+- Power-cut and critical-load assessment
+- Solar capacity recommendation
+- Battery-backup feasibility
+- Estimated annual generation and bill reduction
+- Preliminary project cost range
+- Three implementation options
+- One decision-ready PDF report
+- One management presentation or review call
+
+Do not provide detailed engineering, a final bill of quantities, or final equipment selection before the audit is purchased.
+
+
+Audit Tiers
+-----------
+Desktop bill audit:
+Best for small offices, clinics, and shops.
+Price: Rs. 7,500-12,500.
+
+Site energy audit:
+Best for offices, schools, warehouses, and small factories.
+Price: Rs. 15,000-30,000.
+
+Industrial power audit:
+Best for factories, hospitals, and large commercial sites.
+Price: Rs. 40,000-1,00,000+.
+
+Charge travel separately when the site is outside the normal Delhi NCR service area.
+
+
+Project Focus
+-------------
+10-25 kWp:
+Schools, clinics, offices, restaurants, and small commercial sites.
+
+25-100 kWp:
+Warehouses, factories, hospitals, institutions, and larger offices.
+
+100-500 kWp:
+Industrial facilities, housing societies, and large commercial buildings.
+
+100-500 kWh BESS:
+Sites with frequent outages, critical loads, peak-demand concerns, or a need to use more of their own solar power.
+
+Business customers usually care about payback, demand reduction, downtime prevention, generator fuel savings, power quality, future expansion, and maintenance responsibility. Lead with those outcomes instead of residential subsidy.
+
+
+Indicative Project Pricing
+--------------------------
+Use these as starting ranges only. Final pricing requires a site survey and scope confirmation.
+
+- Commercial rooftop solar EPC: Rs. 45-65 per W
+- Industrial rooftop solar EPC: Rs. 40-60 per W
+- Commercial BESS: Rs. 25,000-45,000 per usable kWh
+- Solar-DG-AMF integration: Rs. 1.5 lakh-5 lakh+
+- Commercial solar AMC: Rs. 1,500-2,500 per kWp per year
+- Electrical systems AMC: Rs. 30,000-1.5 lakh per year
+
+Final pricing depends on structure, cable distance, inverter selection, civil work, protection equipment, monitoring, transformer requirements, and DISCOM scope.
+
+
+Target Customers
+----------------
+- Small factories
+- Warehouses
+- Offices
+- Hospitals and clinics
+- Schools and institutions
+- Hotels, hostels, and restaurants
+- Housing societies
+- EV fleet operators
+- Commercial buildings
+
+Start with one focused geography instead of all of Delhi NCR:
+
+- Noida and Greater Noida factories
+- Ghaziabad industrial units
+- Faridabad manufacturers
+- Delhi schools and clinics
+- Gurgaon offices and warehouses
+
+
+How to Find Customers
+---------------------
+- Google Maps business listings
+- IndiaMART
+- Justdial
+- Industrial-area associations
+- BNI and chambers of commerce
+- Property managers
+- Architects and MEP consultants
+- Factory maintenance contractors
+- EV fleet operators
+- Schools, hospitals, hotels, and warehouses
+
+Build a list of 20 businesses in one area and contact them with the audit offer. Track business name, contact person, phone, email, site type, estimated size, current backup system, last contact, and next action.
+
+
+Outreach Message
+----------------
+We help Delhi NCR businesses reduce grid consumption and improve backup reliability. We review your electricity bills, sanctioned load, roof, generator, and critical loads, then provide a short power audit with solar and backup options. Would you like us to review one recent electricity bill?
+
+Do not promise a specific saving before reviewing bills and site conditions.
+
+
+Packages
+--------
+Power Saver:
+Solar EPC, bill and load review, monitoring, and net-metering support. Starting around Rs. 55-75 per W for smaller commercial systems. Minimum project value: Rs. 2.5 lakh before GST.
+
+Power Secure:
+Solar, hybrid inverter or generator integration, critical-load planning, backup recommendation, monitoring, and AMC options. Quote after the site audit because battery and generator requirements vary.
+
+Power Care:
+Solar inspection, cleaning schedule, inverter health check, electrical safety review, earthing inspection, generation reporting, and fault-response visits. Minimum AMC: Rs. 25,000 per site per year.
+
+
+Payment Terms
+-------------
+- 10%: survey and design confirmation
+- 50%: equipment procurement
+- 30%: installation and commissioning
+- 10%: handover and documentation
+
+For larger projects, tie payments to equipment delivery, installation, commissioning, and handover milestones.
+
+
+Conditions to Include in Quotes
+-------------------------------
+- Prices exclude GST unless stated otherwise.
+- Final price depends on site survey, structure, cable length, civil work, sanctioned load, DISCOM requirements, and equipment brand.
+- Battery pricing depends on usable capacity, PCS/inverter, backup duration, and critical loads.
+- Savings are estimates, not guarantees.
+- Quote validity: 15 days.
+- Civil work, transformer upgrades, DISCOM fees, scaffolding, and major cable-route work should be listed separately.
+
+
+Website Pages to Add
+--------------------
+- /commercial-solar-delhi
+- /industrial-solar-noida
+- /solar-for-factories-greater-noida
+- /solar-for-schools-delhi
+- /solar-for-hospitals-delhi-ncr
+- /battery-backup-for-businesses
+- /generator-and-solar-integration
+- /ev-charging-for-businesses
+- /business-energy-audit
+
+Each page should explain who it is for, typical system sizes, roof and load requirements, the project process, relevant project examples, maintenance and warranty information, and a clear audit enquiry CTA.
+
+
+Recommended First Move
+----------------------
+Launch a Delhi NCR SME Power Audit landing page and a one-page PDF offer. Contact 20 businesses in one focused industrial area. Use the audit as the entry product, then convert suitable customers into solar EPC, BESS, generator integration, EV-charging, and AMC projects.

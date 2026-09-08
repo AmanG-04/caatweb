@@ -23,7 +23,7 @@ const nextConfig: NextConfig = {
         headers: [{ key: "Cache-Control", value: "public, max-age=600, stale-while-revalidate=86400" }],
       },
       {
-        source: "/:path(about-us|solutions|testimonials|contact|brochures)",
+        source: "/:path(about-us|solutions|testimonials|contact)",
         headers: [{ key: "Cache-Control", value: "public, max-age=3600, stale-while-revalidate=86400" }],
       },
       {

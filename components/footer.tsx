@@ -213,7 +213,7 @@ export default function Footer() {
               rel="noopener noreferrer"
               className="mt-6 inline-flex items-center gap-2 rounded-xl border border-gold/35 bg-gold/10 px-4 py-3 font-mono text-[10px] font-bold uppercase tracking-[.14em] text-gold transition-colors hover:border-gold hover:bg-gold hover:text-night"
             >
-              Brochures & technical docs
+              Technical documentation
             </a>
           </div>
         </div>

@@ -20,8 +20,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!area) return { title: "Service area not found | CAAT PowerBot" };
 
   return {
-    title: `Solar, Generators, EV Chargers & Electrical Services in ${area.name} | CAAT PowerBot`,
-    description: `Premium solar panel installation, solar water heaters, generators, EV chargers, and electrical contracting services in ${area.name}, ${area.state}. From design to commissioning with expert support.`,
+    title: `Solar Installation in ${area.name} | CAAT PowerBot`,
+    description: `Solar, water heating, batteries, EV charging, generators and electrical services in ${area.name}, ${area.state}. Design, installation and ongoing support.`,
     alternates: { canonical: `/solar-installation/${area.slug}` },
   };
 }

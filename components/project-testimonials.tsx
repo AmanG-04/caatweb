@@ -149,7 +149,7 @@ function Project({ project, index }: { project: ProjectReference; index: number 
       <div className={reversed ? "lg:order-2" : undefined}><ProjectMedia project={project} /></div>
       <div className={reversed ? "lg:order-1" : undefined}>
         <p className="font-mono text-[11px] font-black uppercase tracking-[.18em] text-teal">{String(index + 1).padStart(2, "0")} · {project.category}</p>
-        <h3 className="mt-4 max-w-xl text-3xl font-black leading-[1.02] tracking-[-.045em] text-ink sm:text-4xl">{project.client}</h3>
+        <h2 className="mt-4 max-w-xl text-3xl font-black leading-[1.02] tracking-[-.045em] text-ink sm:text-4xl">{project.client}</h2>
         <p className="mt-4 max-w-xl text-lg font-bold leading-7 text-ink/80">{project.system}</p>
         <p className="mt-5 max-w-xl text-base leading-7 text-ink/65">{project.scope}</p>
         <div className="mt-6 flex flex-wrap gap-3 text-xs font-bold text-ink/65">

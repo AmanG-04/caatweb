@@ -17,7 +17,6 @@ const routes = [
   "/solutions/maintenance",
   "/testimonials",
   "/blogbot",
-  "/brochures",
   "/contact",
 ];
 

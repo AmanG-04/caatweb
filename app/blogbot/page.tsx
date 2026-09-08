@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "BlogBot | CAAT PowerBot",
-  description: "Solar notes, practical guides and updates from CAAT PowerBot.",
+  description: "Practical solar guides, inverter explainers, equipment notes and energy updates from CAAT PowerBot for homes and businesses.",
   alternates: { canonical: "/blogbot" },
 };
 

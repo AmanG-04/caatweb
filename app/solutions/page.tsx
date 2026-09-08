@@ -4,7 +4,7 @@ import { SolutionsShowcase } from "@/components/solutions-showcase";
 
 export const metadata: Metadata = {
   title: "Solar Solutions | CAAT PowerBot",
-  description: "Explore rooftop solar, hybrid power, battery backup and support services from CAAT PowerBot in Delhi NCR.",
+  description: "Explore rooftop solar, water heating, battery storage, EV charging, generators and maintenance services from CAAT PowerBot in Delhi NCR.",
   alternates: { canonical: "/solutions" },
 };
 

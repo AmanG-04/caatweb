@@ -80,9 +80,10 @@ export function ProjectTimeline() {
         </div>
         <div className="project-timeline-layout mt-0 grid gap-10 lg:gap-16">
           <div className="project-timeline-intro-column xl:max-w-none">
-<h3 className="section-title !mt-1 !max-w-none">
+<h2 className="section-title !mt-1 !max-w-none">
   Consultation&nbsp;to commissioning, handled.
-</h3>          <p className="section-copy !mt-2">Five steps, one accountable team. Each scroll moves through one clear stage of your project.</p>
+ </h2>
+          <p className="section-copy !mt-2">Five steps, one accountable team. Each scroll moves through one clear stage of your project.</p>
           <p className="project-timeline-hint" aria-hidden="true">SCROLL THROUGH THE STEPS <span>→</span></p>
         </div>
           <div className="project-timeline-experience">

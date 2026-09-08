@@ -161,6 +161,24 @@ export const solutions = [
 
 export type SolutionId = (typeof solutions)[number]["id"];
 
+const solutionH1Titles: Record<SolutionId, string> = {
+  solar: "Rooftop Solar Solutions in Delhi NCR",
+  "water-heating": "Solar Water Heating Systems in Delhi NCR",
+  bess: "Battery Energy Storage Systems in Delhi NCR",
+  "ev-charging": "EV Charging Installation in Delhi NCR",
+  generators: "Diesel and Gas Generator Solutions in Delhi NCR",
+  maintenance: "Solar and Electrical Maintenance Services",
+};
+
+const solutionPageCopy: Record<SolutionId, string> = {
+  solar: "We design on-grid, off-grid and hybrid rooftop solar systems around your electricity use, roof, connection and backup requirement. The work covers system planning, quality components, installation, commissioning and practical support after switch-on.",
+  "water-heating": "Solar water heating can reduce the electricity or gas used for everyday hot water. We help select ETC or FPC technology, storage capacity and an installation arrangement that suits the property, water demand, roof space and local conditions.",
+  bess: "Battery energy storage keeps selected equipment running when the grid is unavailable and can help a solar system use more of its own energy. We size the battery around critical loads, expected outage duration, autonomy and the way the site operates.",
+  "ev-charging": "A reliable EV charging installation starts with more than choosing a charger. We review parking, electrical capacity, cable routes, protection and future expansion before installing a convenient charging point for a home, workplace, fleet or shared parking area.",
+  generators: "Generator capacity should follow the loads that must remain available, their starting current, expected runtime, ventilation and available space. We support diesel and gas generator selection, installation, changeover integration, commissioning and ongoing maintenance.",
+  maintenance: "Regular maintenance helps solar and electrical assets remain safe, visible and dependable after installation. Support can include inspections, cleaning guidance, performance review, fault response and an annual maintenance plan shaped around the equipment and the cost of downtime.",
+};
+
 export function SolutionsShowcase({ initialSolutionId, initiallyExpanded = false }: { initialSolutionId?: SolutionId; initiallyExpanded?: boolean }) {
   const initialIndex = Math.max(0, solutions.findIndex((solution) => solution.id === initialSolutionId));
   const [hasSelectedSolution, setHasSelectedSolution] = useState(initiallyExpanded);
@@ -185,15 +203,15 @@ export function SolutionsShowcase({ initialSolutionId, initiallyExpanded = false
   }, [emblaApi, initialIndex, initiallyExpanded]);
 
   useEffect(() => {
-    if (!initiallyExpanded || window.location.hash !== "#solution-details") {
+    if (!initiallyExpanded || !new URLSearchParams(window.location.search).has("focus")) {
       return;
     }
 
-    const timeoutId = window.setTimeout(() => {
-      document.getElementById("solution-details")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 150);
+    const frameId = window.requestAnimationFrame(() => {
+      document.getElementById("solutions-page-title")?.scrollIntoView({ behavior: "auto", block: "start" });
+    });
 
-    return () => window.clearTimeout(timeoutId);
+    return () => window.cancelAnimationFrame(frameId);
   }, [initiallyExpanded]);
 
   useEffect(() => {
@@ -290,13 +308,13 @@ export function SolutionsShowcase({ initialSolutionId, initiallyExpanded = false
     setIsAutoPlaying(false);
 
     if (!initiallyExpanded || activeSolution.id !== detailSolution.id) {
-      window.location.assign(`/solutions/${activeSolution.id}#solution-details`);
+      window.location.assign(`/solutions/${activeSolution.id}?focus=title`);
       return;
     }
 
     setHasSelectedSolution(true);
     window.setTimeout(() => {
-      document.getElementById("solution-details")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      document.getElementById("solution-details-title")?.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 50);
   }
 
@@ -327,7 +345,7 @@ export function SolutionsShowcase({ initialSolutionId, initiallyExpanded = false
                       </span>
                       <span className="font-mono text-[10px] font-bold uppercase tracking-[.24em] text-gold">{solution.eyebrow}</span>
                     </span>
-                    <span id={isActive ? "solutions-explorer-title" : undefined} className="mt-5 block text-4xl font-black leading-none tracking-[-.055em] sm:text-5xl">{solution.shortTitle}</span>
+                     <span id={isActive ? "solutions-explorer-title" : undefined} className="mt-5 block text-4xl font-black leading-none tracking-[-.055em] sm:text-5xl">{solution.shortTitle}</span>
                     {isActive ? <span className="mt-4 block font-mono text-[10px] font-bold uppercase tracking-[.22em] text-white/70">Tap to know more</span> : null}
                   </span>
                 </button>
@@ -358,14 +376,33 @@ export function SolutionsShowcase({ initialSolutionId, initiallyExpanded = false
         </div>
       </section>
 
-      {hasSelectedSolution ? <>
-      <section id="solution-details" className="bg-white py-16 sm:py-24" aria-labelledby="solution-details-title">
-        <div className="container-wide">
-          <div className="mx-auto max-w-3xl text-center">
-            <p className="section-kicker mx-auto !flex w-max justify-center">{detailSolution.shortTitle}</p>
-            <h2 id="solution-details-title" className="section-title mx-auto">{detailSolution.detailHeading}</h2>
-            <p className="section-copy mx-auto">{detailSolution.detailIntro}</p>
+      <div className="bg-white px-5 pb-5 pt-10 text-center sm:pb-6 sm:pt-14">
+        <h1 id="solutions-page-title" className="section-title !mt-0 mx-auto max-w-5xl">
+          {initialSolutionId ? solutionH1Titles[initialSolutionId] : "Energy Solutions for Homes and Businesses"}
+        </h1>
+        {initiallyExpanded && initialSolutionId ? (
+          <p className="mx-auto mt-5 max-w-3xl text-left text-base leading-7 text-ink/70">
+            {solutionPageCopy[initialSolutionId]}
+          </p>
+        ) : !initiallyExpanded ? (
+          <div className="mx-auto mt-5 max-w-3xl text-center text-base leading-7 text-ink/70">
+            <p>
+              Use the carousel above to explore the service that matches your requirement. Select a solution to see how CAAT PowerBot approaches its design, installation and ongoing support.
+            </p>
+            <p className="mt-4">
+              Compare the options by the problem you need to solve: lower daytime electricity use with rooftop solar, hot water with solar heating, continuity for essential loads with battery storage, convenient charging for an electric vehicle, dependable backup with a generator, or long-term performance support through maintenance. Tap the card that best describes your requirement to continue.
+            </p>
           </div>
+        ) : null}
+      </div>
+
+      {hasSelectedSolution ? <>
+      <section id="solution-details" className="bg-white pb-16 pt-4 sm:pb-24 sm:pt-6" aria-labelledby="solution-details-title">
+          <div className="container-wide">
+            <div className="mx-auto max-w-3xl text-center">
+             <h2 id="solution-details-title" className="scroll-mt-24 mx-auto max-w-2xl text-xl font-bold leading-7 tracking-tight text-ink sm:text-2xl">{detailSolution.detailHeading}</h2>
+             <p className="section-copy mx-auto">{detailSolution.detailIntro}</p>
+            </div>
           {detailSolution.id === "solar" ? <div className="mx-auto mt-10 max-w-5xl overflow-hidden rounded-[1.75rem] border border-ink/10 bg-cream p-3 sm:p-4">
             <Image src="/solutions/solarcompare.png" alt="Comparison of on-grid, off-grid and hybrid solar power systems" width={1600} height={900} className="h-auto w-full rounded-[1.25rem]" />
           </div> : null}

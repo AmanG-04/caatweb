@@ -19,7 +19,7 @@ import { defaultWhatsappMessage, site } from "@/lib/site";
 import FloatingWhatsApp from "@/components/floating-whatsapp";
 
 export const metadata: Metadata = {
-  title: "About CAAT PowerBot | Electrical & Solar Engineering in Delhi NCR",
+  title: "About CAAT PowerBot | Solar & Electrical Engineering",
   description: "Learn about us: an electrical engineering, trading and contracting company founded in 2020 and serving projects across Delhi NCR.",
   alternates: { canonical: "/about-us" },
 };

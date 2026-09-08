@@ -16,7 +16,8 @@ function formatDate(value: string) {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const post = await findPublishedBlogPost((await params).slug);
   if (!post) return { title: "BlogBot | CAAT PowerBot" };
-  return { title: `${post.title} | CAAT BlogBot`, description: post.content.slice(0, 160), alternates: { canonical: `/blogbot/${post.slug}` } };
+  const title = `${post.title.slice(0, 38).trimEnd()} | CAAT BlogBot`;
+  return { title, description: post.content.slice(0, 155), alternates: { canonical: `/blogbot/${post.slug}` } };
 }
 
 export default async function BlogArticlePage({ params }: PageProps) {
