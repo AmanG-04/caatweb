@@ -59,11 +59,11 @@ export default async function SolutionPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{
           __html: jsonLd({
             "@context": "https://schema.org",
-            "@type": "Product",
+            "@type": "Service",
             name: `${solution.title} by CAAT PowerBot`,
             description: solution.description,
-            brand: { "@type": "Brand", name: "CAAT PowerBot" },
-            category: "Energy equipment and installation service",
+            provider: { "@type": "Organization", name: "CAAT PowerBot LLP" },
+            serviceType: solution.title,
             areaServed: ["Delhi", "Gurgaon", "Noida", "Greater Noida", "Ghaziabad", "Faridabad"],
             url: `https://caatpowerbot.com/solutions/${solution.id}`,
           }),
