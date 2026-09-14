@@ -7,7 +7,7 @@ export default function LeadCta() {
     <section className="bg-paper px-5 py-14 sm:px-8 sm:py-20" aria-labelledby="lead-cta-title">
       <div className="container-wide overflow-hidden rounded-[2rem] bg-night px-6 py-10 text-center text-white shadow-[0_28px_80px_rgba(16,42,42,.2)] sm:px-10 lg:px-14 lg:py-12">
         <div className="mx-auto max-w-2xl">
-          <p className="section-kicker section-kicker-dark">Your next step</p>
+          {/* <p className="section-kicker section-kicker-dark">Your next step</p> */}
           <h2 id="lead-cta-title" className="mt-5 text-3xl font-black leading-tight tracking-[-.035em] sm:text-4xl">
             Have an electricity bill? Turn it into a practical solar estimate.
           </h2>

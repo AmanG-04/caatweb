@@ -145,9 +145,9 @@ export default function HowItWorks() {
     <section id="how-it-works" className="bg-night py-14 sm:py-18">
       <div className="container-wide">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="section-kicker section-kicker-dark">
+          {/* <p className="section-kicker section-kicker-dark">
             How it works
-          </p>
+          </p> */}
           <h2 className="section-title section-title-light mx-auto">
             From sunlight to switchboard.
           </h2>

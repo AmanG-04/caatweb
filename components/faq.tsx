@@ -12,7 +12,7 @@ export default function FAQ() {
     <section id="faq" className="bg-paper py-14 sm:py-8">
       <div className="container-wide">
         <div className="mx-auto max-w-3xl text-center">
-            <p className="section-kicker">Straight answers</p>
+            {/* <p className="section-kicker">Straight answers</p> */}
             <h2 className="section-title mx-auto">
               Questions every roof owner asks.
             </h2>

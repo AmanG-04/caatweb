@@ -3,11 +3,19 @@ import { Check } from "lucide-react";
 
 const subsidyRows = [
   {
-    state: "Delhi & Uttar Pradesh",
+    state: "Delhi",
     values: [
-      { total: "₹40,000", detail: "Central ₹30k · State ₹10k" },
-      { total: "₹80,000", detail: "Central ₹60k · State ₹20k" },
-      { total: "₹1,08,000", detail: "Central ₹78k · State ₹30k" },
+      { total: "₹56,000", detail: "Central ₹30k · Delhi ₹26k" },
+      { total: "₹1,12,000", detail: "Central ₹60k · Delhi ₹52k" },
+      { total: "₹1,56,000", detail: "Central ₹78k · Delhi ₹78k" },
+    ],
+  },
+  {
+    state: "Uttar Pradesh",
+    values: [
+      { total: "₹45,000", detail: "Central ₹30k · UPNEDA ₹15k" },
+      { total: "₹90,000", detail: "Central ₹60k · UPNEDA ₹30k" },
+      { total: "₹1,08,000", detail: "Central ₹78k · UPNEDA ₹30k cap" },
     ],
   },
   {
@@ -28,7 +36,7 @@ export default function SubsidyInfo() {
     <section id="subsidy" className="bg-paper py-14 sm:py-18">
       <div className="container-wide">
         <div className="text-center">
-          <p className="section-kicker">Government subsidy</p>
+          {/* <p className="section-kicker">Government subsidy</p> */}
         </div>
 
         <div className="mt-9 grid gap-10 lg:grid-cols-[.68fr_1.32fr] lg:items-start lg:gap-16">
@@ -86,10 +94,10 @@ export default function SubsidyInfo() {
                 </thead>
                 <tbody>
                   {subsidyRows.map((row, rowIndex) => (
-                    <tr key={row.state} className={rowIndex === 0 ? "border-b border-ink/10" : ""}>
-                      <th scope="row" className="bg-cream/70 px-5 py-5 text-left text-sm font-bold leading-5 text-ink">{row.state}</th>
+                    <tr key={row.state}>
+                      <th scope="row" className={`bg-cream/70 px-5 py-5 text-left text-sm font-bold leading-5 text-ink ${rowIndex < subsidyRows.length - 1 ? "border-b border-ink/10" : ""}`}>{row.state}</th>
                       {row.values.map((value, index) => (
-                        <td key={`${row.state}-${index}`} className="border-l border-ink/10 px-4 py-5 text-center">
+                        <td key={`${row.state}-${index}`} className={`border-l border-ink/10 px-4 py-5 text-center ${rowIndex < subsidyRows.length - 1 ? "border-b border-ink/10" : ""}`}>
                           <span className="block whitespace-nowrap text-base font-black tracking-tight text-ink">{value.total}</span>
                           <span className="mt-1.5 block whitespace-nowrap text-[10px] font-semibold text-ink/70">{value.detail}</span>
                         </td>
@@ -100,15 +108,12 @@ export default function SubsidyInfo() {
               </table>
             </div>
             <div className="mt-7 rounded-2xl border border-ink/10 bg-white p-5">
-              <p className="text-sm leading-7 text-ink/70">
-                Eligible homeowners in Delhi, Uttar Pradesh, and Haryana can receive support under the PM Surya Ghar: Muft Bijli Yojana.
-              </p>
-              <p className="mt-5 font-mono text-[10px] font-bold uppercase tracking-[.18em] text-teal">Basic eligibility</p>
-              <ul className="mt-3 flex flex-wrap gap-2.5">
+              <p className="font-mono text-[10px] font-bold uppercase tracking-[.18em] text-teal">Basic eligibility</p>
+              <ul className="mt-4 grid gap-3 sm:grid-cols-2">
                 {eligibility.map((item) => (
-                  <li key={item} className="flex items-center gap-2.5 rounded-full border border-ink/10 bg-cream px-3 py-2 text-xs font-semibold text-ink/65">
-                    <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-lime/70 text-teal"><Check size={12} strokeWidth={2.5} /></span>
-                    {item}
+                  <li key={item} className="flex items-center gap-3 rounded-xl border border-ink/10 bg-cream px-4 py-3 text-sm font-bold text-ink/70">
+                    <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-lime/70 text-teal"><Check size={13} strokeWidth={2.5} /></span>
+                    <span>{item}</span>
                   </li>
                 ))}
               </ul>

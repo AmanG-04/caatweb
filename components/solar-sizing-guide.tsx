@@ -9,7 +9,7 @@ export function SolarSizingGuide() {
     <section className="bg-white py-14 sm:py-18" aria-labelledby="solar-sizing-title">
       <div className="container-wide">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="section-kicker">Solar planning data</p>
+          {/* <p className="section-kicker">Solar planning data</p> */}
           <h2 id="solar-sizing-title" className="section-title mx-auto">
             What size rooftop solar system do I need for my home in Delhi NCR?
           </h2>
@@ -42,6 +42,20 @@ export function SolarSizingGuide() {
         <p className="mx-auto mt-4 max-w-5xl text-center text-xs leading-5 text-ink/55">
           Generation and savings vary with shade, orientation, season, system design, electricity tariff, net-metering terms and actual consumption. Final capacity and pricing require a site survey and electricity-bill review.
         </p>
+        <div className="mx-auto mt-10 grid max-w-5xl gap-5 md:grid-cols-2">
+          <article className="rounded-3xl border border-ink/10 bg-white p-6 shadow-soft">
+            <h3 className="text-xl font-black tracking-tight">Solar panel price for a home</h3>
+            <p className="mt-4 text-sm leading-7 text-ink/70">
+              The total price depends on system capacity, panel and inverter selection, mounting structure, wiring, protection equipment, installation complexity and whether battery backup is included. A useful comparison should look at the complete installed system, not only the panel price.
+            </p>
+          </article>
+          <article className="rounded-3xl border border-ink/10 bg-white p-6 shadow-soft">
+            <h3 className="text-xl font-black tracking-tight">When battery backup makes sense</h3>
+            <p className="mt-4 text-sm leading-7 text-ink/70">
+              A basic on-grid system can lower daytime grid use but normally shuts down during a power cut. Choose a hybrid system with battery storage when essential loads such as lights, fans, internet, pumps or equipment must continue during an outage.
+            </p>
+          </article>
+        </div>
       </div>
     </section>
   );

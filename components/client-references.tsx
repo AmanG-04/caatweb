@@ -51,7 +51,7 @@ export function ClientReferences() {
     <section id="references" className="reference-section overflow-hidden bg-paper py-14">
       <div className="container-wide">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="section-kicker">Client references</p>
+          {/* <p className="section-kicker">Client references</p> */}
           <h2 className="section-title mx-auto">Real systems. Real places. Real work.</h2>
           <p className="section-copy mx-auto">A selection of solar, storage, and hybrid power projects delivered by CAAT PowerBot across Delhi NCR.</p>
         </div>

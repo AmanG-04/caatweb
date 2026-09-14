@@ -16,7 +16,7 @@ export default function TestimonialsPage() {
       <ProjectTestimonials />
       {/* <section className="bg-white py-16 text-center sm:py-20">
         <div className="container-wide">
-          <p className="section-kicker">Your project</p>
+           <p className="section-kicker">Your project</p>
           <h2 className="section-title mx-auto">See what your roof could support.</h2>
           <p className="section-copy mx-auto">Start with your electricity use for a practical first estimate, then discuss the details that are specific to your property.</p>
           <a href="/quote" className={buttonStyles("primary", "mt-8 gap-2 px-6")}>Get my solar estimate <ArrowUpRight size={17} /></a>

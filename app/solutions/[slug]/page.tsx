@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   return {
-    title: `${solution.title} | CAAT PowerBot Solutions`,
+    title: solution.id === "solar" ? "Rooftop Solar Installation in Delhi NCR | CAAT PowerBot" : `${solution.title} | CAAT PowerBot Solutions`,
     description: solution.description,
     alternates: {
       canonical: `/solutions/${solution.id}`,

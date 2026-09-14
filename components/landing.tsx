@@ -45,7 +45,7 @@ export function Landing() {
       <section id="services" className="bg-paper py-14 sm:py-18">
         <div className="container-wide">
           <div className="mx-auto max-w-3xl text-center">
-            <p className="section-kicker">Why CAAT PowerBot</p>
+            {/* <p className="section-kicker">Why CAAT PowerBot</p> */}
             <h2 className="section-title mx-auto">One Trusted Partner. From Consultation to Lifetime Support</h2>
           </div>
           {/* <p className="section-copy">Start with the numbers that matter, then move forward with clear support across design, paperwork, installation and maintenance.</p> */}
@@ -61,7 +61,7 @@ export function Landing() {
       <section id="about" className="bg-paper py-14 sm:py-18">
         <div className="container-wide">
           <div className="text-center">
-            <p className="section-kicker">About CAAT PowerBot</p>
+             {/* <p className="section-kicker">About CAAT PowerBot</p> */}
           </div>
           <div className="mt-9 grid gap-6 md:gap-10 md:grid-cols-[.7fr_1.3fr] md:items-center">
             <div className="rounded-[2rem] border border-ink/10 bg-white p-8 shadow-soft">

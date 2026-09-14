@@ -40,7 +40,7 @@ export default function Result() {
         <SiteHeader context="Solar estimate" />
         <div className="grid min-h-[calc(100vh-9rem)] place-items-center p-5">
           <Card className="max-w-lg border border-ink/10 p-8 text-center sm:p-10">
-            <p className="section-kicker">Solar estimate</p>
+            {/* <p className="section-kicker">Solar estimate</p> */}
             <h1 className="mt-5 text-3xl font-black tracking-tight">No estimate found on this device.</h1>
             <p className="mt-4 leading-7 text-ink/65">Complete the calculator first and your result will appear here.</p>
             <Link href="/quote" className={buttonStyles("primary", "mt-7 gap-2")}>

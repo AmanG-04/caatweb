@@ -45,7 +45,7 @@ export default async function ServiceAreaPage({ params }: PageProps) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(areaSchema).replace(/</g, "\\u003c") }} />
       <section className="hero-flow border-b border-ink/10">
         <div className="container-wide py-12 sm:py-16">
-          <p className="section-kicker">Energy Solutions in {area.name}</p>
+          {/* <p className="section-kicker">Energy Solutions in {area.name}</p> */}
           <h1 className="page-title mt-5 max-w-4xl">Premium Energy & Electrical Solutions for {area.name}.</h1>
           <p className="section-copy mt-6 max-w-2xl">{area.description}</p>
            <a href="/quote" className={buttonStyles("primary", "mt-8 gap-2 px-6")}>
@@ -58,7 +58,7 @@ export default async function ServiceAreaPage({ params }: PageProps) {
       <section className="bg-paper py-12 sm:py-16">
         <div className="container-wide">
           <div className="mb-12 text-center">
-            <p className="section-kicker">What We Offer</p>
+            {/* <p className="section-kicker">What We Offer</p> */}
             <h2 className="section-title mx-auto">Complete Energy & Electrical Solutions</h2>
           </div>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -121,7 +121,7 @@ export default async function ServiceAreaPage({ params }: PageProps) {
       {area.projects.length > 0 && (
         <section className="bg-white py-12 sm:py-16">
           <div className="container-wide max-w-5xl">
-            <p className="section-kicker">Local work</p>
+             {/* <p className="section-kicker">Local work</p> */}
             <h2 className="section-title">Projects in and around {area.name}.</h2>
             <div className="mt-7 grid gap-4 md:grid-cols-2">
               {area.projects.map((project) => (

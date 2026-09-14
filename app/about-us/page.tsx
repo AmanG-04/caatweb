@@ -133,9 +133,9 @@ export default function AboutUsPage() {
         </div>
       </section>
 
-      <section id="our-story" className="about-story-section relative isolate overflow-hidden bg-paper py-16 sm:py-24" aria-labelledby="story-title">
+       <section id="our-story" className="about-story-section relative isolate overflow-hidden bg-paper py-12 sm:py-16" aria-labelledby="story-title">
         <div className="container-wide">
-          <p className="section-kicker mx-auto !flex w-max justify-center">Our story</p>
+           {/* <p className="section-kicker mx-auto !flex w-max justify-center">Our story</p> */}
           <div className="mt-12 grid gap-10 lg:grid-cols-[.76fr_1.24fr] lg:gap-16">
           <div className="lg:sticky lg:top-32 lg:self-start">
             <h2 id="story-title" className="section-title !mt-5">A power company that keeps learning.</h2>
@@ -149,18 +149,56 @@ export default function AboutUsPage() {
         </div>
       </section>
 
-      <section className="bg-night py-16 text-white sm:py-24" aria-labelledby="values-title">
+      <section className="bg-paper py-12 sm:py-16" aria-labelledby="direction-title">
         <div className="container-wide">
-          <div className="mx-auto max-w-3xl text-center"><p className="section-kicker section-kicker-dark mx-auto !flex w-max justify-center">What we stand for</p><h2 id="values-title" className="mx-auto mt-5 text-4xl font-black leading-[1.02] tracking-[-.055em] sm:text-5xl">Good engineering should feel clear, considered and dependable.</h2></div>
+          <div className="mx-auto max-w-3xl text-center">
+            {/* <p className="section-kicker mx-auto !flex w-max justify-center">Where we are going</p> */}
+            <h2 id="direction-title" className="section-title mx-auto">The direction behind our work.</h2>
+          </div>
+          <div className="mx-auto mt-12 grid max-w-6xl gap-5 lg:grid-cols-2">
+            <article className="rounded-3xl border border-ink/10 bg-white p-7 shadow-soft sm:p-9">
+              <p className="font-mono text-[11px] font-bold uppercase tracking-[.2em] text-teal">Vision</p>
+              <p className="mt-5 text-lg leading-8 text-ink/75">
+                To build a cleaner, smarter and more reliable energy future by making sustainable power and energy-storage solutions accessible, dependable and economically viable for every customer.
+              </p>
+            </article>
+            <article className="rounded-3xl border border-ink/10 bg-white p-7 shadow-soft sm:p-9">
+              <p className="font-mono text-[11px] font-bold uppercase tracking-[.2em] text-teal">Mission</p>
+              <p className="mt-5 text-lg leading-8 text-ink/75">
+                To deliver high-quality solar, energy-storage and power solutions through strong engineering, premium products, professional execution and dependable after-sales support. We help customers reduce energy costs, improve power reliability and move towards a cleaner future.
+              </p>
+            </article>
+            <article className="rounded-3xl border border-ink/10 bg-white p-7 shadow-soft sm:p-9">
+              <p className="font-mono text-[11px] font-bold uppercase tracking-[.2em] text-teal">Purpose</p>
+              <p className="mt-5 text-lg leading-8 text-ink/75">
+                To empower people and businesses with reliable, sustainable and intelligent energy solutions.
+              </p>
+              <p className="mt-4 leading-7 text-ink/65">
+                We exist to solve real power challenges: reducing dependence on conventional energy, improving energy efficiency, providing backup and storage, and enabling customers to generate and manage their own clean power.
+              </p>
+            </article>
+            <article className="rounded-3xl border border-teal bg-teal p-7 text-white shadow-soft sm:p-9">
+              <p className="font-mono text-[11px] font-bold uppercase tracking-[.2em] text-gold">Our core promise</p>
+              <p className="mt-5 text-3xl font-black leading-tight tracking-[-.04em] sm:text-4xl">
+                Premium Energy Solutions. Built to Perform.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-night py-12 text-white sm:py-16" aria-labelledby="values-title">
+        <div className="container-wide">
+          <div className="mx-auto max-w-3xl text-center">{/* <p className="section-kicker section-kicker-dark mx-auto !flex w-max justify-center">How we work</p> */}<h2 id="values-title" className="mx-auto mt-5 text-4xl font-black leading-[1.02] tracking-[-.055em] sm:text-5xl">The principles behind every installation.</h2></div>
           <div className="mt-10 grid divide-y divide-white/10 border-y border-white/10 sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
             {principles.map(([title, body], index) => <div key={title} className="p-6 first:pl-0 sm:px-6 sm:first:pl-0 lg:min-h-64 lg:px-7"><p className="font-mono text-xs font-bold tracking-[.2em] text-gold">0{index + 1}</p><h3 className="mt-8 text-xl font-black tracking-tight">{title}</h3><p className="mt-4 text-sm leading-7 text-white/60">{body}</p></div>)}
           </div>
         </div>
       </section>
 
-      <section className="bg-white py-16 sm:py-24" aria-labelledby="people-title">
+      <section className="bg-white py-12 sm:py-16" aria-labelledby="people-title">
         <div className="container-wide">
-          <p className="section-kicker mx-auto !flex w-max justify-center">People</p>
+          {/* <p className="section-kicker mx-auto !flex w-max justify-center">People</p> */}
           <div className="mt-12 grid gap-10 lg:grid-cols-[.85fr_1.15fr] lg:items-center">
           <div className="relative mx-auto w-full max-w-md">
             <div className="absolute -inset-4 -z-10 rotate-3 rounded-[2rem] bg-lime/60" aria-hidden="true" />
@@ -172,14 +210,16 @@ export default function AboutUsPage() {
         </div>
       </section>
 
-      <section className="bg-white py-16 sm:py-24" aria-labelledby="credentials-title">
-        <div className="container-wide"><p className="section-kicker mx-auto !flex w-max justify-center">Credentials</p>
+      <section className="bg-white py-12 sm:py-16" aria-labelledby="credentials-title">
+        <div className="container-wide">
+          {/* <p className="section-kicker mx-auto !flex w-max justify-center">Credentials</p> */}
+          <h2 id="credentials-title" className="section-title mx-auto text-center">Credentials</h2>
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{certificates.map(({ title, image, alt }) => <Card key={title} className="group overflow-hidden border border-ink/10 p-3 transition-transform duration-300 hover:-translate-y-1"><div className="relative aspect-[.78] overflow-hidden rounded-2xl bg-cream"><Image src={image} alt={alt} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" className="object-contain p-2 transition-transform duration-500 group-hover:scale-105" /></div><p className="px-2 pb-1 pt-4 text-sm font-black tracking-tight">{title}</p></Card>)}</div>
         </div>
       </section>
 
-      <section className="bg-paper py-16 sm:py-24" aria-labelledby="work-title">
-        <div className="container-wide"><p className="section-kicker mx-auto !flex w-max justify-center">Where we work</p><div className="mt-12 grid gap-10 lg:grid-cols-[.8fr_1.2fr] lg:items"><div><h2 id="work-title" className="section-title !mt-0">Rooted in the Nations Heart.</h2><p className="section-copy">We started in Delhi and grew with the momentum of the region. Today, our work reaches across Delhi, Gurgaon, Noida and Greater Noida, helping homes, institutions and businesses power up with rooftop solar and battery solutions.</p><p className="mt-6 border-l-2 border-lime pl-4 text-sm leading-7 text-ink/60">As demand grows, so does our radius—guided by the projects that matter and the people we serve.</p></div><ServiceFootprintMap /></div>
+      <section className="bg-paper py-12 sm:py-16" aria-labelledby="work-title">
+        <div className="container-wide">{/* <p className="section-kicker mx-auto !flex w-max justify-center">Where we work</p> */}<div className="mt-12 grid gap-10 lg:grid-cols-[.8fr_1.2fr] lg:items"><div><h2 id="work-title" className="section-title !mt-0">Rooted in the Nations Heart.</h2><p className="section-copy">We started in Delhi and grew with the momentum of the region. Today, our work reaches across Delhi, Gurgaon, Noida and Greater Noida, helping homes, institutions and businesses power up with rooftop solar and battery solutions.</p><p className="mt-6 border-l-2 border-lime pl-4 text-sm leading-7 text-ink/60">As demand grows, so does our radius, guided by the projects that matter and the people we serve.</p></div><ServiceFootprintMap /></div>
         {/* <p className="container-wide mt-8 border-t border-ink/10 pt-6 text-sm leading-7 text-ink/55">Wider references: Bangalore &middot; Hyderabad &middot; Kolkata &middot; Bihar &middot; Himachal Pradesh</p> */}
         </div>
       </section>

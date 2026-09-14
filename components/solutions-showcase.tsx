@@ -32,8 +32,8 @@ export const solutions = [
     imageAlt: "Solar panels on a roof under a clear sky",
     icon: PanelsTopLeft,
     variants: ["On-grid systems", "Off-grid systems", "Hybrid systems"],
-    detailHeading: "Three solar routes. One decision: how should your power behave?",
-    detailIntro: "Compare the role of the grid, batteries and backup before choosing a solar system. The right answer is driven by outages, essential loads and your available roof.",
+    detailHeading: "Choose the right rooftop solar system for your home or business",
+    detailIntro: "Compare on-grid, off-grid and hybrid solar systems by the role of the grid, batteries and backup. The right answer is driven by outages, essential loads and your available roof.",
     adviceTitle: "Start with your outage requirement.",
     adviceBody: "If lower bills are the priority, on-grid may be right. If power continuity matters, compare hybrid and off-grid systems around the loads you need to keep running.",
     detailLayout: "grid-cols-1 md:grid-cols-3",
@@ -171,7 +171,7 @@ const solutionH1Titles: Record<SolutionId, string> = {
 };
 
 const solutionPageCopy: Record<SolutionId, string> = {
-  solar: "We design on-grid, off-grid and hybrid rooftop solar systems around your electricity use, roof, connection and backup requirement. The work covers system planning, quality components, installation, commissioning and practical support after switch-on.",
+  solar: "We design and install rooftop solar panel systems for homes, businesses and institutions across Delhi NCR. Your electricity use, roof area, connection type and backup requirement determine whether an on-grid, hybrid or off-grid solar system is the right fit. The work covers system planning, quality components, installation, commissioning and practical support after switch-on.",
   "water-heating": "Solar water heating can reduce the electricity or gas used for everyday hot water. We help select ETC or FPC technology, storage capacity and an installation arrangement that suits the property, water demand, roof space and local conditions.",
   bess: "Battery energy storage keeps selected equipment running when the grid is unavailable and can help a solar system use more of its own energy. We size the battery around critical loads, expected outage duration, autonomy and the way the site operates.",
   "ev-charging": "A reliable EV charging installation starts with more than choosing a charger. We review parking, electrical capacity, cable routes, protection and future expansion before installing a convenient charging point for a home, workplace, fleet or shared parking area.",
@@ -454,7 +454,7 @@ export function SolutionsShowcase({ initialSolutionId, initiallyExpanded = false
 
       {/* <section className="bg-night px-5 py-16 text-center text-white sm:px-8 sm:py-20" aria-labelledby="solutions-cta-title">
         <div className="mx-auto max-w-2xl">
-          <p className="section-kicker section-kicker-dark mx-auto !flex w-max justify-center">Start with the requirement</p>
+           <p className="section-kicker section-kicker-dark mx-auto !flex w-max justify-center">Start with the requirement</p>
           <h2 id="solutions-cta-title" className="mt-5 text-3xl font-black leading-tight tracking-[-.035em] sm:text-4xl">Tell us what needs power. We will help define the right next step.</h2>
           <p className="mx-auto mt-4 max-w-xl leading-7 text-white/70">For a solar estimate, start with your electricity bill. For another solution, start a consultation and tell us about the site.</p>
           <div className="mx-auto mt-8 flex max-w-max flex-col gap-3 sm:flex-row">

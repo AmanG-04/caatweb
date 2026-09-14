@@ -21,7 +21,7 @@ export function PublicPage({ eyebrow, title, description, children, gridLines = 
       {hasHeader ? (
         <section className="hero-flow border-b border-ink/10 bg-cream/80">
           <div className="container-wide py-16 sm:py-24">
-            <p className="section-kicker">{eyebrow}</p>
+            {/* <p className="section-kicker">{eyebrow}</p> */}
             <h1 className="page-title mt-5 max-w-4xl">{title}</h1>
             <p className="section-copy mt-6 max-w-2xl">{description}</p>
           </div>

@@ -76,7 +76,7 @@ export function ProjectTimeline() {
     <section id="process" className="project-timeline" >
       <div className="container-wide">
         <div className="text-center">
-          <p className="section-kicker">How a project runs</p>
+          {/* <p className="section-kicker">How a project runs</p> */}
         </div>
         <div className="project-timeline-layout mt-0 grid gap-10 lg:gap-16">
           <div className="project-timeline-intro-column xl:max-w-none">
