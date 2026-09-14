@@ -28,6 +28,7 @@ type ApiResult = {
 };
 
 type Duplicate = { id: string; name: string; createdAt: string; result: Record<string, unknown> };
+type BillStage = "idle" | "uploading" | "extracting" | "ready";
 
 async function readResult(response: Response, fallback: string): Promise<ApiResult> {
   const text = await response.text();
@@ -42,6 +43,7 @@ export default function QuotePage() {
   const [billObjectKey, setBillObjectKey] = useState<string>();
   const [billStatus, setBillStatus] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+  const [billStage, setBillStage] = useState<BillStage>("idle");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [duplicate, setDuplicate] = useState<Duplicate | null>(null);
@@ -89,6 +91,7 @@ export default function QuotePage() {
 
   const startManualEntry = () => {
     setError("");
+    setBillStage("idle");
     setBillStatus("Manual entry selected. Enter your average monthly units and unit price below.");
     setStep(1);
   };
@@ -112,6 +115,7 @@ export default function QuotePage() {
     }
     setBillName(file.name);
     setIsUploading(true);
+    setBillStage("uploading");
     setBillStatus("Uploading your bill…");
     try {
       const form = new FormData();
@@ -122,6 +126,7 @@ export default function QuotePage() {
       if (!upload.ok || !objectKey) throw new Error(uploadResult.error?.message ?? "Bill upload failed.");
       setBillObjectKey(objectKey);
       setStep(1);
+      setBillStage("extracting");
       setBillStatus("Reading your bill in the background. You can choose your system preferences while we work.");
       void (async () => {
         try {
@@ -129,14 +134,17 @@ export default function QuotePage() {
           const extractionResult = await readResult(extraction, "Bill reading did not return a valid response.");
           if (!extraction.ok || !extractionResult.data?.fields) throw new Error(extractionResult.error?.message ?? "We could not read this bill automatically.");
           applyExtractedFields(extractionResult.data.fields);
+          setBillStage("ready");
           setBillStatus("Bill read. Your personal details have been filled where available; please verify them on the next step.");
         } catch (extractionError) {
+          setBillStage("ready");
           setBillStatus(extractionError instanceof Error ? `${extractionError.message} Please enter your average monthly units manually.` : "We could not read this bill automatically. Please enter your average monthly units manually.");
         }
       })();
     } catch (uploadError) {
       setError(uploadError instanceof Error ? uploadError.message : "Bill upload failed.");
       setBillName("");
+      setBillStage("idle");
     } finally {
       setIsUploading(false);
     }
@@ -169,6 +177,8 @@ export default function QuotePage() {
     router.push(`/quote/result?id=${duplicate.id}`);
   };
 
+  const isBillProcessing = isUploading || billStage === "extracting";
+
   return (
     <main className="quote-flow min-h-screen py-4">
       <SiteHeader context="Solar estimate" />
@@ -182,7 +192,22 @@ export default function QuotePage() {
               </div>
             ))}
           </div>
-          <Card className="quote-form-panel">
+          <Card className={`quote-form-panel ${isBillProcessing ? "is-processing" : ""}`}>
+            {isBillProcessing ? (
+              <div className="bill-processing-overlay" role="status" aria-live="polite">
+                <div className="bill-processing-signal" aria-hidden="true">
+                  <span />
+                  <span />
+                  <span />
+                </div>
+                <p className="bill-processing-label">
+                  {isUploading ? "Uploading your bill" : "Extracting bill details"}
+                </p>
+                <p className="bill-processing-copy">
+                  {isUploading ? "Securely sending your file" : "Reading usage and account details"}
+                </p>
+              </div>
+            ) : null}
             {step === 0 ? (
               <div>
                 <h1 className="text-3xl font-black">Start with your electricity bill.</h1>
@@ -191,7 +216,7 @@ export default function QuotePage() {
                   <input className="sr-only" type="file" accept="application/pdf,image/png,image/jpeg" disabled={isUploading} onChange={(event) => void uploadBill(event.target.files?.[0] ?? null)} />
                   <span className="grid h-16 w-16 place-items-center rounded-full bg-lime text-teal"><Upload size={28} aria-hidden="true" /></span>
                    <span><span className="block text-xl font-black text-white">Upload electricity bill</span><span className="mt-2 block text-sm text-cream/75">PDF or clear photo, up to 10MB</span></span>
-                 </label>
+                  </label>
                   <div className="mt-4 flex items-center gap-3 text-xs uppercase tracking-[.16em] text-cream/45" aria-hidden="true">
                    <span className="h-px flex-1 bg-white/15" />
                    OR
@@ -204,7 +229,7 @@ export default function QuotePage() {
               <div>
                 <h1 className="text-3xl font-black">Set up your project.</h1>
                  <p className="mt-3 text-cream/75">Choose the property, unit price and power configuration. You can use a bill upload or enter the numbers manually.</p>
-                <p role="status" className="mt-5 rounded-2xl border border-lime/30 bg-teal/35 px-4 py-3 text-sm leading-6 text-cream">{billStatus}</p>
+                 <p role="status" className="mt-5 rounded-2xl border border-lime/30 bg-teal/35 px-4 py-3 text-sm leading-6 text-cream">{billStatus}</p>
                 <div className="mt-7 grid gap-4 sm:grid-cols-2">
                    <Select required label="Property type" {...register("propertyType")} options={[["residential", "Residential"], ["commercial", "Commercial"], ["industrial", "Industrial"]]} />
                   <Select required label="Roof type" {...register("roofType")} options={[["rcc", "RCC"], ["metal", "Metal"], ["tile", "Tile"], ["ground", "Ground mount"]]} />
