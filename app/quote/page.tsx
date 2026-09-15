@@ -50,7 +50,7 @@ export default function QuotePage() {
   const [pendingData, setPendingData] = useState<QuoteFormData | null>(null);
   const { register, handleSubmit, setValue, trigger, control, formState: { errors } } = useForm<QuoteFormInput, unknown, QuoteFormData>({
     resolver: zodResolver(quoteFormSchema),
-    defaultValues: { propertyType: "residential", roofType: "rcc", ownership: "owned", systemType: "on_grid", batteryRequired: "no", pricePerUnit: 8, targetSavingsPercent: 100 },
+    defaultValues: { propertyType: "residential", roofType: "rcc", ownership: "owned", systemType: "on_grid", batteryRequired: "no", targetSavingsPercent: 100 },
   });
   const systemType = useWatch({ control, name: "systemType" });
   const batteryRequired = useWatch({ control, name: "batteryRequired" });

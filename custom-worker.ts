@@ -45,7 +45,7 @@ export default {
     ctx.waitUntil((async () => {
       try {
       const newLeads = await env.DB.prepare(
-        "SELECT id, name, phone, email, created_at FROM leads WHERE datetime(created_at) >= datetime('now', '-1 day') ORDER BY datetime(created_at) DESC"
+        "SELECT l.id, c.name, c.phone, c.email, l.created_at FROM leads l JOIN customers c ON c.id = l.customer_id WHERE datetime(l.created_at) >= datetime('now', '-1 day') ORDER BY datetime(l.created_at) DESC"
       )
         .all<LeadDigestItem>();
 

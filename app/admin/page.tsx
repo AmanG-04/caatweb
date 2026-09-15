@@ -8,7 +8,7 @@ import { SETTING_FIELDS, TEMPLATE_QUOTE_SETTINGS } from "@/lib/settings";
 type Lead = {
   id: string; name: string; phone: string; email: string; address?: string; city?: string; state?: string; pincode?: string;
   property_type: string; roof_type: string; ownership: string; system_type?: string; battery_required?: number;
-  monthly_bill: number; monthly_units?: number; price_per_unit?: number; provider?: string; bill_object_key?: string; site_photo_object_key?: string;
+  monthly_units?: number; price_per_unit?: number; provider?: string; bill_object_key?: string; site_photo_object_key?: string; quote_result_json?: string | null;
   status: string; created_at?: string;
 };
 
@@ -18,6 +18,9 @@ type BlogPost = {
   slug: string;
   excerpt: string;
   content: string;
+  image_object_key: string | null;
+  image_alt: string | null;
+  image_placement: "top" | "middle" | "end";
   status: "draft" | "published";
   published_at: string | null;
   created_at: string;
@@ -27,7 +30,7 @@ type BlogPost = {
 type BlogDraft = Omit<BlogPost, "id" | "published_at" | "created_at" | "updated_at">;
 
 const statuses = ["new", "called", "site_visit", "proposal_sent", "won", "lost"];
-const emptyBlog: BlogDraft = { title: "", slug: "", excerpt: "", content: "", status: "draft" };
+const emptyBlog: BlogDraft = { title: "", slug: "", excerpt: "", content: "", image_object_key: null, image_alt: "", image_placement: "top", status: "draft" };
 const readable = (value?: string | number) => String(value ?? "-").replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
 
 const formatIndiaTimestamp = (value?: string | null) => {
@@ -39,6 +42,16 @@ const formatIndiaTimestamp = (value?: string | null) => {
 
 function slugify(value: string) {
   return value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
+function getSuggestedSystemSize(lead: Lead) {
+  if (!lead.quote_result_json) return "-";
+  try {
+    const result = JSON.parse(lead.quote_result_json) as { systemSizeKw?: number };
+    return typeof result.systemSizeKw === "number" ? `${result.systemSizeKw} kW` : "-";
+  } catch {
+    return "-";
+  }
 }
 
 async function responseMessage(response: Response) {
@@ -59,8 +72,10 @@ export default function Admin() {
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
   const [blogDraft, setBlogDraft] = useState<BlogDraft>(emptyBlog);
   const [editingBlogId, setEditingBlogId] = useState<string | null>(null);
+  const [blogSlugEdited, setBlogSlugEdited] = useState(false);
   const [blogMessage, setBlogMessage] = useState("");
   const [savingBlog, setSavingBlog] = useState(false);
+  const [uploadingBlogImage, setUploadingBlogImage] = useState(false);
 
   const login = async (event: FormEvent) => {
     event.preventDefault();
@@ -101,6 +116,17 @@ export default function Admin() {
     setSelectedLead((current) => current?.id === leadId ? { ...current, status } : current);
   };
 
+  const deleteLead = async (lead: Lead) => {
+    if (!window.confirm(`Delete the estimate for ${lead.name}? This permanently removes the lead and its related files.`)) return;
+    const response = await fetch(`/api/admin/leads/${encodeURIComponent(lead.id)}`, { method: "DELETE" });
+    if (!response.ok) {
+      setError(await responseMessage(response));
+      return;
+    }
+    setSelectedLead(null);
+    await load(search);
+  };
+
   const saveSettings = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSettingsMessage("");
@@ -109,7 +135,7 @@ export default function Admin() {
   };
 
   const exportCsv = () => {
-    const csv = ["Name,Phone,Email,City,Monthly Bill,Status", ...leads.map((lead) => [lead.name, lead.phone, lead.email, lead.city, lead.monthly_bill, lead.status].map((value) => `"${String(value ?? "").replaceAll('"', '""')}"`).join(","))].join("\n");
+    const csv = ["Name,Phone,Email,City,Suggested System,Status", ...leads.map((lead) => [lead.name, lead.phone, lead.email, lead.city, getSuggestedSystemSize(lead), lead.status].map((value) => `"${String(value ?? "").replaceAll('"', '""')}"`).join(","))].join("\n");
     const url = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
     const link = document.createElement("a");
     link.href = url;
@@ -121,12 +147,39 @@ export default function Admin() {
   const resetBlogForm = () => {
     setBlogDraft(emptyBlog);
     setEditingBlogId(null);
+    setBlogSlugEdited(false);
     setBlogMessage("");
+  };
+
+  const uploadBlogImage = async (file: File | undefined) => {
+    if (!file) return;
+    if (!['image/png', 'image/jpeg'].includes(file.type) || file.size > 10 * 1024 * 1024) {
+      setBlogMessage("Use a PNG or JPEG image under 10MB.");
+      return;
+    }
+
+    setUploadingBlogImage(true);
+    setBlogMessage("");
+    try {
+      const form = new FormData();
+      form.append("kind", "blog-image");
+      form.append("file", file);
+      const response = await fetch("/api/upload", { method: "POST", body: form });
+      const payload = await response.json() as { data?: { objectKey?: string }; error?: { message?: string } };
+      if (!response.ok || !payload.data?.objectKey) throw new Error(payload.error?.message ?? "The blog image could not be uploaded.");
+      setBlogDraft((current) => ({ ...current, image_object_key: payload.data?.objectKey ?? null }));
+      setBlogMessage("Blog image uploaded.");
+    } catch (uploadError) {
+      setBlogMessage(uploadError instanceof Error ? uploadError.message : "The blog image could not be uploaded.");
+    } finally {
+      setUploadingBlogImage(false);
+    }
   };
 
   const editBlog = (post: BlogPost) => {
     setEditingBlogId(post.id);
-    setBlogDraft({ title: post.title, slug: post.slug, excerpt: post.excerpt, content: post.content, status: post.status });
+    setBlogDraft({ title: post.title, slug: post.slug, excerpt: post.excerpt, content: post.content, image_object_key: post.image_object_key, image_alt: post.image_alt ?? "", image_placement: post.image_placement ?? "top", status: post.status });
+    setBlogSlugEdited(true);
     setBlogMessage("");
     document.getElementById("blogbot-admin")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
@@ -172,28 +225,33 @@ export default function Admin() {
       <div className="mx-auto max-w-6xl">
         <div className="flex items-center justify-between gap-4"><div><p className="font-black text-teal">caat powerbot / admin</p><h1 className="mt-2 text-4xl font-black">Lead operations.</h1></div><button onClick={() => setLogged(false)} className="text-sm font-bold">Sign out</button></div>
 
-        <div className="mt-10 grid gap-4 md:grid-cols-4">{[["Today’s leads", leads.length.toString()], ["Total leads", leads.length.toString()], ["Revenue estimate", inr(leads.reduce((total, lead) => total + Number(lead.monthly_bill || 0) * 40, 0))], ["Site visits", leads.filter((lead) => lead.status === "site_visit").length.toString()]].map(([label, value]) => <Card key={label}><p className="text-sm text-ink/50">{label}</p><b className="mt-3 block text-3xl">{value}</b></Card>)}</div>
+         <div className="mt-10 grid gap-4 md:grid-cols-3">{[["Total leads", leads.length.toString()], ["Suggested systems", leads.filter((lead) => getSuggestedSystemSize(lead)).length.toString()], ["Site visits", leads.filter((lead) => lead.status === "site_visit").length.toString()]].map(([label, value]) => <Card key={label}><p className="text-sm text-ink/50">{label}</p><b className="mt-3 block text-3xl">{value}</b></Card>)}</div>
 
         <Card className="mt-6 overflow-x-auto"><div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="text-xl font-black">Leads</h2><p className="mt-1 text-sm text-ink/50">Select a lead to view all submitted details.</p></div><div className="flex gap-2"><input className="rounded-full border px-4 py-2 text-sm" placeholder="Search leads" value={search} onChange={(event) => setSearch(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") void load(search); }} /><Button type="button" variant="outline" onClick={exportCsv}>Export CSV</Button></div></div>
-          <table className="mt-6 w-full min-w-[720px] text-left text-sm"><thead className="text-ink/50"><tr><th className="pb-3">Customer</th><th>City</th><th>Monthly bill</th><th>Status</th></tr></thead><tbody>{leads.map((lead) => <Fragment key={lead.id}><tr onClick={() => setSelectedLead((current) => current?.id === lead.id ? null : lead)} className={`cursor-pointer border-t border-ink/10 transition hover:bg-cream/70 ${selectedLead?.id === lead.id ? "bg-cream" : ""}`} aria-expanded={selectedLead?.id === lead.id}><td className="py-4"><b>{lead.name}</b><br /><span className="text-xs text-ink/50">{lead.phone} · {lead.email}</span><span className="ml-2 text-xs font-bold text-teal">{selectedLead?.id === lead.id ? "Hide details" : "View details"}</span></td><td>{lead.city}</td><td>{inr(Number(lead.monthly_bill))}</td><td onClick={(event) => event.stopPropagation()}><select className="rounded-full border px-3 py-2 text-xs" value={lead.status} onChange={(event) => void updateStatus(lead.id, event.target.value)}>{statuses.map((status) => <option value={status} key={status}>{status.replaceAll("_", " ")}</option>)}</select></td></tr>{selectedLead?.id === lead.id && <tr className="border-b border-ink/10"><td colSpan={4} className="bg-cream/60 p-5"><LeadDetails lead={lead} onClose={() => setSelectedLead(null)} /></td></tr>}</Fragment>)}</tbody></table>
+           <table className="mt-6 w-full min-w-[720px] text-left text-sm"><thead className="text-ink/50"><tr><th className="pb-3">Customer</th><th>City</th><th>Suggested system</th><th>Status</th></tr></thead><tbody>{leads.map((lead) => <Fragment key={lead.id}><tr onClick={() => setSelectedLead((current) => current?.id === lead.id ? null : lead)} className={`cursor-pointer border-t border-ink/10 transition hover:bg-cream/70 ${selectedLead?.id === lead.id ? "bg-cream" : ""}`} aria-expanded={selectedLead?.id === lead.id}><td className="py-4"><b>{lead.name}</b><br /><span className="text-xs text-ink/50">{lead.phone} · {lead.email}</span><span className="ml-2 text-xs font-bold text-teal">{selectedLead?.id === lead.id ? "Hide details" : "View details"}</span></td><td>{lead.city}</td><td>{getSuggestedSystemSize(lead)}</td><td onClick={(event) => event.stopPropagation()}><select className="rounded-full border px-3 py-2 text-xs" value={lead.status} onChange={(event) => void updateStatus(lead.id, event.target.value)}>{statuses.map((status) => <option value={status} key={status}>{status.replaceAll("_", " ")}</option>)}</select></td></tr>{selectedLead?.id === lead.id && <tr className="border-b border-ink/10"><td colSpan={4} className="bg-cream/60 p-5"><LeadDetails lead={lead} onClose={() => setSelectedLead(null)} onDelete={() => void deleteLead(lead)} /></td></tr>}</Fragment>)}</tbody></table>
           {leads.length === 0 && <p className="py-10 text-center text-sm text-ink/50">No persisted leads yet. Submit a public estimate to populate this table.</p>}</Card>
 
-        <Card className="mt-6"><div className="flex items-center justify-between gap-4"><div><h2 className="text-xl font-black">Estimate settings</h2><p className="mt-1 text-sm text-ink/50">These values control new estimate calculations.</p></div>{settingsMessage && <p className="text-sm font-semibold text-teal">{settingsMessage}</p>}</div><form onSubmit={saveSettings} className="mt-6 grid gap-4 md:grid-cols-3">{SETTING_FIELDS.map(([key, label]) => <label key={key} className="text-sm"><span className="mb-2 block font-bold">{label}</span><input className="w-full rounded-2xl border p-3" type="number" step="any" value={settings[key] ?? ""} onChange={(event) => setSettings((current) => ({ ...current, [key]: Number(event.target.value) }))} /></label>)}<div className="md:col-span-3"><Button>Save settings</Button></div></form></Card>
-
-        <Card id="blogbot-admin" className="mt-6 border border-ink/10"><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="font-mono text-[11px] font-bold uppercase tracking-[.18em] text-teal">BlogBot</p><h2 className="mt-2 text-2xl font-black">Write and manage posts.</h2><p className="mt-1 max-w-xl text-sm text-ink/55">Drafts stay private. Published posts go live on the public BlogBot page.</p></div>{blogMessage && <p className="text-sm font-semibold text-teal">{blogMessage}</p>}</div>
-          <form onSubmit={saveBlog} className="mt-7 grid gap-4"><div className="grid gap-4 md:grid-cols-[1fr_.55fr]"><label className="text-sm font-bold">Post title<input className="mt-2 w-full rounded-2xl border p-3 font-normal" value={blogDraft.title} onChange={(event) => setBlogDraft((current) => ({ ...current, title: event.target.value, slug: current.slug || slugify(event.target.value) }))} minLength={3} maxLength={160} required /></label><label className="text-sm font-bold">URL slug<input className="mt-2 w-full rounded-2xl border p-3 font-normal" value={blogDraft.slug} onChange={(event) => setBlogDraft((current) => ({ ...current, slug: slugify(event.target.value) }))} pattern="[a-z0-9]+(-[a-z0-9]+)*" minLength={3} maxLength={160} required /></label></div>
+         <Card id="blogbot-admin" className="mt-6 border border-ink/10"><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="font-mono text-[11px] font-bold uppercase tracking-[.18em] text-teal">BlogBot</p><h2 className="mt-2 text-2xl font-black">Write and manage posts.</h2><p className="mt-1 max-w-xl text-sm text-ink/55">Drafts stay private. Published posts go live on the public BlogBot page.</p></div>{blogMessage && <p className="text-sm font-semibold text-teal">{blogMessage}</p>}</div>
+           <form onSubmit={saveBlog} className="mt-7 grid gap-4"><div className="grid gap-4 md:grid-cols-[1fr_.55fr]"><label className="text-sm font-bold">Post title<input className="mt-2 w-full rounded-2xl border p-3 font-normal" value={blogDraft.title} onChange={(event) => setBlogDraft((current) => ({ ...current, title: event.target.value, slug: blogSlugEdited ? current.slug : slugify(event.target.value) }))} minLength={3} maxLength={160} required /></label><label className="text-sm font-bold">URL slug<input className="mt-2 w-full rounded-2xl border p-3 font-normal" value={blogDraft.slug} onChange={(event) => { setBlogSlugEdited(true); setBlogDraft((current) => ({ ...current, slug: slugify(event.target.value) })); }} pattern="[a-z0-9]+(-[a-z0-9]+)*" minLength={3} maxLength={160} required /></label></div>
+             <div className="grid gap-4 rounded-2xl border border-ink/10 bg-cream/40 p-4 md:grid-cols-[1fr_.6fr]"><div><label className="text-sm font-bold">Featured image<input className="mt-2 block w-full text-sm font-normal" type="file" accept="image/png,image/jpeg" disabled={uploadingBlogImage} onChange={(event) => void uploadBlogImage(event.target.files?.[0])} /></label>{blogDraft.image_object_key && <p className="mt-2 text-xs text-ink/55">Image uploaded and attached to this post.</p>}<label className="mt-4 block text-sm font-bold">Image alt text<input className="mt-2 w-full rounded-2xl border p-3 font-normal" value={blogDraft.image_alt ?? ""} onChange={(event) => setBlogDraft((current) => ({ ...current, image_alt: event.target.value }))} maxLength={160} placeholder="Describe the image" /></label></div><label className="text-sm font-bold">Image placement<select className="mt-2 w-full rounded-2xl border p-3 font-normal" value={blogDraft.image_placement} onChange={(event) => setBlogDraft((current) => ({ ...current, image_placement: event.target.value as BlogDraft["image_placement"] }))}><option value="top">Top of article</option><option value="middle">Middle of article</option><option value="end">End of article</option></select></label></div>
             <label className="text-sm font-bold">Article content<textarea className="mt-2 min-h-56 w-full rounded-2xl border p-3 font-normal" value={blogDraft.content} onChange={(event) => setBlogDraft((current) => ({ ...current, content: event.target.value }))} minLength={20} maxLength={50000} required /><span className="mt-1 block text-xs font-normal text-ink/45">Use a blank line to start a new paragraph.</span></label>
             <div className="flex flex-wrap items-center justify-between gap-4"><label className="flex items-center gap-3 text-sm font-bold">Visibility<select className="rounded-full border bg-white px-4 py-2 font-normal" value={blogDraft.status} onChange={(event) => setBlogDraft((current) => ({ ...current, status: event.target.value as BlogPost["status"] }))}><option value="draft">Draft — private</option><option value="published">Published — public</option></select></label><div className="flex gap-2"><Button type="button" variant="outline" onClick={resetBlogForm}>Cancel</Button><Button disabled={savingBlog}>{savingBlog ? "Saving…" : editingBlogId ? "Update post" : "Create post"}</Button></div></div>
-          </form>
-          <div className="mt-10 border-t border-ink/10 pt-7"><h3 className="text-lg font-black">Existing posts</h3>{blogs.length === 0 ? <p className="mt-4 text-sm text-ink/55">No posts have been created yet.</p> : <div className="mt-4 divide-y divide-ink/10">{blogs.map((post) => <article key={post.id} className="flex flex-col gap-4 py-5 sm:flex-row sm:items-center sm:justify-between"><div><div className="flex flex-wrap items-center gap-2"><h4 className="font-black">{post.title}</h4><span className={`rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-[.12em] ${post.status === "published" ? "bg-lime text-teal" : "bg-cream text-ink/55"}`}>{post.status}</span></div><p className="mt-1 text-sm text-ink/55">/{post.slug} · Updated {formatIndiaTimestamp(post.updated_at)}</p></div><div className="flex gap-2"><Button type="button" variant="outline" className="min-h-9 px-4 py-2" onClick={() => editBlog(post)}>Edit</Button><Button type="button" variant="outline" className="min-h-9 border-red-200 px-4 py-2 text-red-700" onClick={() => void deleteBlog(post)}>Delete</Button></div></article>)}</div>}</div>
-        </Card>
+           </form>
+           <div className="mt-10 border-t border-ink/10 pt-7"><h3 className="text-lg font-black">Existing posts</h3>{blogs.length === 0 ? <p className="mt-4 text-sm text-ink/55">No posts have been created yet.</p> : <div className="mt-4 divide-y divide-ink/10">{blogs.map((post) => <article key={post.id} className="flex flex-col gap-4 py-5 sm:flex-row sm:items-center sm:justify-between"><div><div className="flex flex-wrap items-center gap-2"><h4 className="font-black">{post.title}</h4><span className={`rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-[.12em] ${post.status === "published" ? "bg-lime text-teal" : "bg-cream text-ink/55"}`}>{post.status}</span></div><p className="mt-1 text-sm text-ink/55">/{post.slug} · Updated {formatIndiaTimestamp(post.updated_at)}</p></div><div className="flex gap-2"><Button type="button" variant="outline" className="min-h-9 px-4 py-2" onClick={() => editBlog(post)}>Edit</Button><Button type="button" variant="outline" className="min-h-9 border-red-200 px-4 py-2 text-red-700" onClick={() => void deleteBlog(post)}>Delete</Button></div></article>)}</div>}</div>
+         </Card>
+
+         <details className="mt-6 rounded-3xl border border-ink/10 bg-white p-6 shadow-sm">
+           <summary className="cursor-pointer list-none text-xl font-black">Estimate settings <span className="ml-2 text-sm font-normal text-ink/50">Advanced</span></summary>
+           <div className="mt-2 flex items-center justify-between gap-4"><p className="text-sm text-ink/50">These values control new estimate calculations.</p>{settingsMessage && <p className="text-sm font-semibold text-teal">{settingsMessage}</p>}</div>
+           <form onSubmit={saveSettings} className="mt-6 grid gap-4 md:grid-cols-3">{SETTING_FIELDS.map(([key, label]) => <label key={key} className="text-sm"><span className="mb-2 block font-bold">{label}</span><input className="w-full rounded-2xl border p-3" type="number" step="any" value={settings[key] ?? ""} onChange={(event) => setSettings((current) => ({ ...current, [key]: Number(event.target.value) }))} /></label>)}<div className="md:col-span-3"><Button>Save settings</Button></div></form>
+         </details>
       </div>
     </main>
   );
 }
 
-function LeadDetails({ lead, onClose }: { lead: Lead; onClose: () => void }) {
+function LeadDetails({ lead, onClose, onDelete }: { lead: Lead; onClose: () => void; onDelete: () => void }) {
   const fileLink = (kind: "bill" | "site-photo", label: string) => <a href={`/api/admin/leads/${encodeURIComponent(lead.id)}/file?kind=${kind}`} target="_blank" rel="noreferrer" className="mt-1 inline-block text-sm font-bold text-teal underline underline-offset-4">{label}</a>;
-  const data = [["Name", lead.name], ["Phone", lead.phone], ["Email", lead.email], ["Address", [lead.address, lead.city, lead.state, lead.pincode].filter(Boolean).join(", ") || "-"], ["Property type", readable(lead.property_type)], ["Roof type", readable(lead.roof_type)], ["Ownership", readable(lead.ownership)], ["System type", readable(lead.system_type)], ["Battery required", lead.battery_required ? "Yes" : "No"], ["Monthly usage", lead.monthly_units ? `${Number(lead.monthly_units).toLocaleString("en-IN")} units` : "-"], ["Price per unit", lead.price_per_unit ? inr(Number(lead.price_per_unit)) : "Not recorded for this older lead"], ["Electricity provider", lead.provider || "-"], ["Bill upload", lead.bill_object_key ? fileLink("bill", "View uploaded bill") : "Not available"], ["Site photo", lead.site_photo_object_key ? fileLink("site-photo", "View site photo") : "Not provided"], ["Submitted (IST)", formatIndiaTimestamp(lead.created_at)]];
-  return <div className="rounded-2xl border border-teal/30 bg-white p-5 shadow-sm"><div className="flex items-start justify-between gap-4"><div>{/* <p className="section-kicker">Lead details</p> */}<h2 className="mt-2 text-2xl font-black">{lead.name}</h2></div><Button type="button" variant="outline" onClick={onClose}>Close</Button></div><div className="mt-6 grid gap-x-8 gap-y-4 sm:grid-cols-2">{data.map(([label, value], index) => <div key={`${String(label)}-${index}`}><p className="text-xs font-bold uppercase tracking-wide text-ink/45">{label}</p><p className="mt-1 break-words text-sm font-semibold">{value}</p></div>)}</div></div>;
+  const data = [["Name", lead.name], ["Phone", lead.phone], ["Email", lead.email], ["Address", [lead.address, lead.city, lead.state, lead.pincode].filter(Boolean).join(", ") || "-"], ["Property type", readable(lead.property_type)], ["Roof type", readable(lead.roof_type)], ["Ownership", readable(lead.ownership)], ["System type", readable(lead.system_type)], ["Battery required", lead.battery_required ? "Yes" : "No"], ["Monthly usage", lead.monthly_units ? `${Number(lead.monthly_units).toLocaleString("en-IN")} units` : "-"], ["Suggested system size", getSuggestedSystemSize(lead)], ["Price per unit", lead.price_per_unit ? inr(Number(lead.price_per_unit)) : "Not recorded"], ["Electricity provider", lead.provider || "-"], ["Bill upload", lead.bill_object_key ? fileLink("bill", "View uploaded bill") : "Not available"], ["Site photo", lead.site_photo_object_key ? fileLink("site-photo", "View site photo") : "Not provided"], ["Submitted (IST)", formatIndiaTimestamp(lead.created_at)]];
+  return <div className="rounded-2xl border border-teal/30 bg-white p-5 shadow-sm"><div className="flex items-start justify-between gap-4"><div><h2 className="mt-2 text-2xl font-black">{lead.name}</h2></div><div className="flex gap-2"><Button type="button" variant="outline" onClick={onClose}>Close</Button><Button type="button" variant="outline" className="border-red-200 text-red-700" onClick={onDelete}>Delete</Button></div></div><div className="mt-6 grid gap-x-8 gap-y-4 sm:grid-cols-2">{data.map(([label, value], index) => <div key={`${String(label)}-${index}`}><p className="text-xs font-bold uppercase tracking-wide text-ink/45">{label}</p><p className="mt-1 break-words text-sm font-semibold">{value}</p></div>)}</div></div>;
 }

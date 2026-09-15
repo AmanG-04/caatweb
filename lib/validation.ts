@@ -22,6 +22,9 @@ export const blogPostSchema = z.object({
   slug: z.string().trim().min(3).max(160).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Use lowercase words separated by hyphens."),
   excerpt: z.string().trim().max(360).optional().default(""),
   content: z.string().trim().min(20).max(50000),
+  imageObjectKey: z.string().trim().max(300).optional().default(""),
+  imageAlt: z.string().trim().max(160).optional().default(""),
+  imagePlacement: z.enum(["top", "middle", "end"]).default("top"),
   status: z.enum(["draft", "published"]),
 }).strict();
 

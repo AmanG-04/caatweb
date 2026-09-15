@@ -7,13 +7,16 @@ export type BlogPost = {
   slug: string;
   excerpt: string;
   content: string;
+  image_object_key: string | null;
+  image_alt: string | null;
+  image_placement: "top" | "middle" | "end";
   status: "draft" | "published";
   published_at: string | null;
   created_at: string;
   updated_at: string;
 };
 
-const selectFields = "id, title, slug, excerpt, content, status, published_at, created_at, updated_at";
+const selectFields = "id, title, slug, excerpt, content, image_object_key, image_alt, image_placement, status, published_at, created_at, updated_at";
 const publicCacheTtlMs = 5 * 60 * 1000;
 
 let publishedPostsCache: { value: BlogPost[]; expiresAt: number } | null = null;
@@ -72,8 +75,8 @@ export async function createBlogPost(input: BlogPostInput, adminId: string): Pro
   if (!db) return null;
 
   const id = crypto.randomUUID();
-  await db.prepare("INSERT INTO blog_posts (id, title, slug, excerpt, content, status, published_at, author_id) VALUES (?, ?, ?, ?, ?, ?, CASE WHEN ? = 'published' THEN CURRENT_TIMESTAMP ELSE NULL END, ?)")
-    .bind(id, input.title, input.slug, input.excerpt, input.content, input.status, input.status, adminId).run();
+  await db.prepare("INSERT INTO blog_posts (id, title, slug, excerpt, content, image_object_key, image_alt, image_placement, status, published_at, author_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CASE WHEN ? = 'published' THEN CURRENT_TIMESTAMP ELSE NULL END, ?)")
+    .bind(id, input.title, input.slug, input.excerpt, input.content, input.imageObjectKey || null, input.imageAlt || null, input.imagePlacement, input.status, input.status, adminId).run();
   clearPublishedPostCache();
   return db.prepare(`SELECT ${selectFields} FROM blog_posts WHERE id = ?`).bind(id).first<BlogPost>();
 }
@@ -85,8 +88,8 @@ export async function updateBlogPost(id: string, input: BlogPostInput): Promise<
   const existing = await db.prepare("SELECT id FROM blog_posts WHERE id = ? LIMIT 1").bind(id).first<{ id: string }>();
   if (!existing) return null;
 
-  await db.prepare("UPDATE blog_posts SET title = ?, slug = ?, excerpt = ?, content = ?, status = ?, published_at = CASE WHEN ? = 'published' AND published_at IS NULL THEN CURRENT_TIMESTAMP WHEN ? = 'draft' THEN NULL ELSE published_at END, updated_at = CURRENT_TIMESTAMP WHERE id = ?")
-    .bind(input.title, input.slug, input.excerpt, input.content, input.status, input.status, input.status, id).run();
+  await db.prepare("UPDATE blog_posts SET title = ?, slug = ?, excerpt = ?, content = ?, image_object_key = ?, image_alt = ?, image_placement = ?, status = ?, published_at = CASE WHEN ? = 'published' AND published_at IS NULL THEN CURRENT_TIMESTAMP WHEN ? = 'draft' THEN NULL ELSE published_at END, updated_at = CURRENT_TIMESTAMP WHERE id = ?")
+    .bind(input.title, input.slug, input.excerpt, input.content, input.imageObjectKey || null, input.imageAlt || null, input.imagePlacement, input.status, input.status, input.status, id).run();
   clearPublishedPostCache();
   return db.prepare(`SELECT ${selectFields} FROM blog_posts WHERE id = ?`).bind(id).first<BlogPost>();
 }
