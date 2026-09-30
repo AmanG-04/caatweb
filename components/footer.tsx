@@ -222,13 +222,27 @@ export default function Footer() {
           <SunDivider />
         </div>
 
-        <div className="mt-8 flex flex-col items-center justify-between gap-4 sm:flex-row">
-          <p className="text-center text-xs text-white/50">
+        <div className="mt-8 grid items-baseline justify-items-center gap-2 lg:grid-cols-[1fr_auto_1fr] lg:gap-x-4">
+          <p className="text-center text-xs leading-5 text-white/50 lg:justify-self-start lg:text-left">
             © 2026 CAAT Powerbot LLP · All rights reserved
           </p>
-          <p className="font-mono text-[11px] uppercase tracking-[0.28em] text-gold/70">
+          <p className="font-mono text-[11px] leading-5 uppercase tracking-[0.28em] text-gold/70">
             Solar · EV · Power
           </p>
+          <a
+            href="https://www.linkedin.com/in/aman-gupta-engg/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Developed by Aman Gupta — LinkedIn (opens in a new tab)"
+            className="inline-flex items-center gap-2 rounded text-[11px] leading-5 text-white/70 transition-colors hover:text-gold-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold motion-reduce:transition-none lg:justify-self-end"
+          >
+            <span>
+              Developed by Aman Gupta
+            </span>
+            <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-[3px] bg-[#0a66c2] text-white">
+              <SocialLogo platform="linkedin" />
+            </span>
+          </a>
         </div>
       </div>
     </footer>
