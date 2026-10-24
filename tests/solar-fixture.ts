@@ -16,7 +16,7 @@ export function fixture(): Project {
     },
   });
   return { ...emptyProject("NCR fixture"), address: "Delhi test site", location: center,
-    settings: { ...emptyProject("test").settings, selectedPanelCount: 2, requestConfirmed: true, requestedBy: "Test requester" },
+    settings: { ...emptyProject("test").settings, selectedPanelCount: 2, requestConfirmed: true, requestedBy: "Test requester", confirmedBuildingName: "buildings/test" },
     id: "project-test", revision: 1, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), solarExpired: false,
     solar: { provider: "google-solar", requestedLocation: center, requestedAddress: "Delhi test site", insights, fetchedAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 29 * 86400000).toISOString(), mask: null, maskWarning: null } };
 }

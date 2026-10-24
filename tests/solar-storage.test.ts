@@ -4,6 +4,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { D1DatabaseLike } from "../lib/cloudflare";
 import { fixture } from "./solar-fixture";
 import { emptyProject } from "../lib/solar/model";
+import { emptyHybrid, hybridSchema } from "../lib/solar/hybrid-model";
+import { generateHybridLayout } from "../lib/solar/hybrid-engine";
 
 const environment = vi.hoisted(() => ({ DB: undefined as D1DatabaseLike | undefined, BILLS_BUCKET: undefined as unknown }));
 vi.mock("@/lib/cloudflare", () => ({ getEnv: () => environment }));
@@ -74,5 +76,13 @@ describe("Solar persistence, retention, concurrency and authorization", () => {
     await expect(authorize(new Request("https://site.test/api/admin/solar-projects", { headers: { cookie: `admin_token=${viewer}` } }))).rejects.toMatchObject({ status: 403 });
     await expect(authorize(new Request("https://site.test/api/admin/solar-projects", { headers: { cookie: `admin_token=${admin}`, origin: "https://other.test" } }), true)).rejects.toMatchObject({ status: 403 });
     expect(await authorize(new Request("https://site.test/api/admin/solar-projects", { headers: { cookie: `admin_token=${admin}`, origin: "https://site.test" } }), true)).toMatchObject({ role: "admin" });
+  });
+  it("persists survey geometry and explicit array positions without Google coverage", async () => {
+    const project = await createProject(emptyProject("Survey only"), "admin");
+    const hybrid = hybridSchema.parse({ ...emptyHybrid(), mode: "survey", origin: { latitude: 28.6, longitude: 77.2 }, sections: [{ id: "roof", name: "Roof", points: [{ x: 0, y: 0 }, { x: 10, y: 0 }, { x: 10, y: 8 }, { x: 0, y: 8 }], verified: true }] });
+    hybrid.layout = await generateHybridLayout(hybrid);
+    const saved = await saveProject(project.id, { ...project, settings: { ...project.settings, hybrid } }, project.revision);
+    expect(saved.settings.hybrid).toEqual(hybrid); expect(saved.solar).toBeNull();
+    expect(saved.settings.hybrid.layout?.panels.length).toBeGreaterThan(0);
   });
 });

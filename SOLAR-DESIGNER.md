@@ -5,10 +5,14 @@
 The implemented workflow follows the revised request: an **automated Google Solar layout generator**, not a manual satellite drawing tool.
 
 1. Open **Admin → Solar Site Designer** and create a project.
-2. Enter an address, authored coordinates, or a Google satellite map pin.
+2. Enter the full house/site address and click **Find address on map**. Review the returned address match, then click the exact rooftop centre. Alternatively enter authored coordinates or choose a map pin directly.
 3. Record who requested the address-specific energy-system design and confirm their request.
-4. **Generate + save PDF** resolves an address if needed, requests Building Insights, requests the georeferenced raster roof mask, applies Google's ranked panel suggestions, and stores an immutable PDF layout in R2.
-5. Select Google's panel-count alternatives, name each design version, add notes, and save additional PDF versions. Compare counts/capacity in the workspace and download PDFs to compare drawings.
+4. **Generate review layout** resolves an unambiguous rooftop address if no pin is supplied, requests Building Insights and the georeferenced raster roof mask, and displays Google's ranked panel suggestions. Approximate or ambiguous addresses require a rooftop pin. No permanent PDF is created at this stage.
+5. Review the dashed cyan detected-building bounding box and numbered roof sections. Hide panels to inspect the imagery; exclude sections you do not want to use. Confirm that the detected building is the intended house/site, then **Save PDF version**. Name each alternative and compare its count/capacity and downloaded drawing.
+
+Google selects the nearest known building centre within approximately 50 metres; it can return a neighbour or merge roofs across adjoining properties. A pin is a search point, not an exact property-boundary selection. The bounding box is provider metadata, not a traced roof polygon. Do not confirm a result that covers the wrong house. Existing PDFs remain immutable; an existing generation needs building confirmation before another export.
+
+Roof mask failures now identify the failed stage. **Retry roof mask only** requests fresh Data Layers without regenerating panel positions or extending the original live-data expiry. Compressed raster decoding explicitly runs without decoder workers for Cloudflare compatibility. Error diagnostics contain stage/category only, not signed URLs or keys. Live verification of the originally reported production mask is still required.
 
 Projects and settings use D1; PDF versions use the existing private R2 bucket. There is no browser-only persistence. All pages and endpoints require the existing admin token and `admin` role. No separate login is added. Existing login sessions now resume on the dashboard; logout clears the actual session cookie.
 
@@ -63,6 +67,16 @@ Point-in-polygon checks against Google's published 6 May 2026 coverage GeoJSON:
 [Coverage polygons are approximate](https://developers.google.com/maps/documentation/solar/coverage); a building can still return `404`. No credentialed building request or live satellite zoom/imagery inspection has been performed. Requests use `requiredQuality=BASE`; no imagery dates or measurement-accuracy claims are invented.
 
 ## Geometry
+
+### Hybrid surveyed flat-site workflow
+
+Select **Surveyed flat-roof / ground layout**. Enter an independent WGS84 survey origin and East/North metre offsets for each boundary, obstacle and access path. No drawing input is taken from Google satellite imagery. Concave polygons are accepted; self-intersections are rejected. Enter boundary setbacks, obstacle clearances and local-datum heights. Flat rooftops and flat ground sections use horizontal geometry; sloped-roof remounting is not included in the custom array engine.
+
+Configure actual module dimensions/rating, portrait/landscape, panel tilt, panel gap and **row clear horizontal gap**. **180° true south is the array default** for India, independent of Google roof-plane azimuth. It is a reasonable fixed-array starting direction, not a site-specific annual-generation guarantee; no energy or shading calculation is implemented. Zero tilt is the neutral starter geometry, not an installation recommendation.
+
+Preview compares four grid offsets at the chosen azimuth and selects the highest panel count. It tests complete projected footprints against polygon-clipped usable areas, setbacks, exclusions and optional current Solar roof-mask coverage. It does not claim global optimality or shadow-safe row spacing. Earlier sections own overlaps to avoid duplicate panels. Preview is cancellable and yields to the browser; it does not replace the saved array until **Apply preview** is selected. Input edits mark the applied layout stale and block export until recalculated. All layout positions and settings persist through D1 in the versioned hybrid settings schema; existing project schema-v1 records load with defaults.
+
+The survey drawing, Google-map overlay, 3D preview and independent vector PDF share the saved metric geometry. Independently surveyed layouts remain editable without Google coverage. Mask-constrained layouts require current provider data and are removed when that data expires; fixed-media PDFs remain retained. Survey verification is user-recorded, not inferred from imagery.
 
 WGS84 locations are converted through `proj4` into a site-centred UTM frame, with grid convergence rotated into true-east/true-north axes. Coordinates are metres: X east, Y north, Z up. Azimuth is clockwise from true north (0° north, 90° east); segment azimuth points downslope. Panel surface dimensions are projected using segment pitch and orientation. Geometry is independent of screen pixels and zoom. 3D and PDF use the same provider result/panel corners. Mask decoding uses its actual GeoTIFF UTM transform and northing resolution, not an axis-aligned latitude/longitude image stretch.
 

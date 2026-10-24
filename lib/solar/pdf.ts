@@ -5,9 +5,12 @@ import { SolarError } from "./provider";
 import { database } from "./store";
 import { getEnv } from "@/lib/cloudflare";
 import { PNG } from "pngjs";
+import { createHybridPdf } from "./hybrid-pdf";
+import { layoutIssues } from "./hybrid-engine";
 
 const clean = (value: string) => value.replace(/[^\x20-\x7E]/g, "?");
 export async function createLayoutPdf(project: Project) {
+  if (project.settings.hybrid.mode === "survey") return createHybridPdf(project);
   const solar = project.solar;
   if (!solar) throw new SolarError("NO_DESIGN", "Generate a current layout before exporting.", 422);
   const pdf = await PDFDocument.create(); const font = await pdf.embedFont(StandardFonts.Helvetica); const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
@@ -73,6 +76,7 @@ export async function createLayoutPdf(project: Project) {
     note(`First panel projected edges: ${distance(corners[0], corners[1]).toFixed(2)} x ${distance(corners[1], corners[2]).toFixed(2)} m.`);
   }
   note("Roof mask is raster coverage and may include neighbouring roofs. Exact segment boundaries and obstacle geometry are not supplied. Panel positions use Google's reference dimensions; no custom setbacks or shading analysis performed.");
+  if (project.settings.excludedSegments.length) note(`Panels excluded on roof sections: ${project.settings.excludedSegments.map(index => index + 1).join(", ")}. Remaining panel positions unchanged.`);
   if (solar.maskWarning) note(`Mask: ${solar.maskWarning}`);
   text("Source: Includes solar data from Google", 30, 78, 10);
   text("Google Maps", 30, 61, 12);
@@ -88,12 +92,18 @@ export async function createLayoutPdf(project: Project) {
 }
 export async function persistLayoutPdf(project: Project) {
   if (!project.settings.requestConfirmed || !project.settings.requestedBy.trim()) throw new SolarError("USER_REQUEST_REQUIRED", "Record who requested this address-specific design before permanently storing a PDF.", 422);
+  const hybrid = project.settings.hybrid;
+  if (hybrid.mode === "survey") {
+    if (!hybrid.layout || !hybrid.origin) throw new SolarError("NO_DESIGN", "Apply a surveyed layout before exporting.", 422);
+    const issues = layoutIssues(hybrid, project.solar?.mask, project.solar?.fetchedAt);
+    if (issues.length) throw new SolarError("GEOMETRY_CONFLICT", issues[0], 422);
+  } else if (!project.solar || project.settings.confirmedBuildingName !== project.solar.insights.name) throw new SolarError("BUILDING_CONFIRMATION_REQUIRED", "Confirm that Google's detected building is the intended house before saving its PDF.", 422);
   const bucket = getEnv().BILLS_BUCKET;
   if (!bucket) throw new SolarError("STORAGE_UNAVAILABLE", "R2 storage is required for permanent PDF design versions.", 503);
   const bytes = await createLayoutPdf(project), id = crypto.randomUUID(), key = `solar-designs/${project.id}/${id}.pdf`;
   await bucket.put(key, Uint8Array.from(bytes).buffer, { httpMetadata: { contentType: "application/pdf" } });
   try {
-    const watts = project.solar!.insights.solarPotential.panelCapacityWatts, count = selectedPanels(project).length;
+    const watts = hybrid.mode === "survey" ? hybrid.layout!.settings.watts : project.solar!.insights.solarPotential.panelCapacityWatts, count = hybrid.mode === "survey" ? hybrid.layout!.panels.length : selectedPanels(project).length;
     await database().prepare("INSERT INTO solar_exports(id,project_id,name,design_revision,panel_count,capacity_kwp,object_key,created_at) VALUES(?,?,?,?,?,?,?,?)")
       .bind(id, project.id, project.settings.versionName, project.revision, count, capacityKwp(count, watts), key, new Date().toISOString()).run();
   } catch (error) { await bucket.delete?.(key); throw error; }

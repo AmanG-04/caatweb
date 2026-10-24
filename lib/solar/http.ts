@@ -22,7 +22,7 @@ export async function body(request: Request) {
   while (true) {
     const part = await reader.read(); if (part.done) break;
     size += part.value.byteLength;
-    if (size > 16000) { await reader.cancel(); throw new SolarError("BODY_TOO_LARGE", "Project settings must be smaller than 16 KB.", 413); }
+    if (size > 1500000) { await reader.cancel(); throw new SolarError("BODY_TOO_LARGE", "Project settings must be smaller than 1.5 MB.", 413); }
     chunks.push(part.value);
   }
   const bytes = new Uint8Array(size); let offset = 0;

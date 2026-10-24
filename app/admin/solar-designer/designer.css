@@ -29,6 +29,8 @@
 .solar-panel h3 { font-size: 14px; font-weight: 800; margin: 18px 0 10px; }
 .solar-fields { display: grid; gap: 14px; }
 .solar-fields .solar-checkbox { display: flex; gap: 10px; align-items: start; }
+.solar-shell .solar-checkbox { display: flex; gap: 10px; align-items: start; }
+.solar-layer-controls { display: flex; flex-wrap: wrap; gap: 16px; margin: 12px 0; }
 .solar-coordinates { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .solar-canvas { position: relative; width: 100%; height: min(65vh,720px); min-height: 440px; overflow: hidden; border-radius: 22px; border: 1px solid #bdcebe; background: #e8eee3; }
 .solar-map-host { position: absolute; inset: 0; }
@@ -47,6 +49,11 @@
 .solar-segments th, .solar-segments td { padding: 10px; border-bottom: 1px solid #dce6d6; }
 .solar-preview-controls { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
 .solar-preview-controls button { background: white; border: 1px solid #b8c9be; padding: 8px 12px; border-radius: 999px; }
+.solar-survey-form { display: grid; gap: 14px; padding: 16px; border: 1px solid #dce6d6; border-radius: 16px; background: #f7f8f2; }
+.solar-array-fields { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+.solar-survey-list { display: grid; gap: 10px; }
+.solar-survey-canvas svg { width: 100%; height: 100%; padding: 24px; }
+.solar-survey-caption { position: absolute; bottom: 12px; left: 16px; font-size: 12px; color: #102a2a; }
 @media (max-width: 1250px) { .solar-workspace { grid-template-columns: 260px minmax(0,1fr); } .solar-summary { grid-column: 1 / -1; } .solar-summary-stats { display: grid; grid-template-columns: repeat(3,1fr); column-gap: 24px; } }
 @media (max-width: 760px) { .solar-shell { padding: 16px; } .solar-banner { padding: 24px; } .solar-topbar { grid-template-columns: 1fr; } .solar-workspace { grid-template-columns: 1fr; } .solar-workspace > .solar-location { order: 1; } .solar-workspace > .solar-drawing { order: 0; } .solar-workspace > .solar-summary { order: 2; } .solar-canvas { height: 50vh; min-height: 340px; } .solar-summary-stats { grid-template-columns: 1fr 1fr; } }
 @media (prefers-reduced-motion: reduce) { .solar-shell * { scroll-behavior: auto; transition: none !important; animation: none !important; } }

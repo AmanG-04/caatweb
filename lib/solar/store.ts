@@ -1,6 +1,7 @@
 import { getEnv } from "@/lib/cloudflare";
 import { projectInputSchema, solarResultSchema, type DesignExport, type Project, type ProjectInput, type SolarResult } from "./model";
 import { SolarError } from "./provider";
+import { layoutIssues, usableSections } from "./hybrid-engine";
 
 type Row = { id: string; name: string; address: string; latitude: number | null; longitude: number | null; revision: number; schema_version: number; settings_json: string; solar_json: string | null; solar_expires_at: string | null; created_at: string; updated_at: string };
 export function database() {
@@ -9,7 +10,7 @@ export function database() {
   return db;
 }
 export async function purgeExpiredSolarData() {
-  await database().prepare("UPDATE solar_projects SET solar_json=NULL WHERE solar_expires_at <= ? AND solar_json IS NOT NULL").bind(new Date().toISOString()).run();
+  await database().prepare("UPDATE solar_projects SET solar_json=NULL, settings_json=CASE WHEN json_extract(settings_json,'$.hybrid.layout.settings.maskConstraint')=1 THEN json_set(settings_json,'$.hybrid.layout',NULL) ELSE settings_json END WHERE solar_expires_at <= ? AND solar_json IS NOT NULL").bind(new Date().toISOString()).run();
 }
 function decode(row: Row): Project {
   const expired = Boolean(row.solar_expires_at && row.solar_expires_at <= new Date().toISOString());
@@ -33,12 +34,27 @@ export async function findProject(id: string) {
   return decode(row);
 }
 export async function createProject(input: ProjectInput, adminId: string) {
+  usableSections(input.settings.hybrid);
   const id = crypto.randomUUID(), now = new Date().toISOString();
   await database().prepare("INSERT INTO solar_projects(id,name,address,latitude,longitude,settings_json,created_by,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?)")
     .bind(id, input.name, input.address, input.location?.latitude ?? null, input.location?.longitude ?? null, JSON.stringify(input.settings), adminId, now, now).run();
   return findProject(id);
 }
 export async function saveProject(id: string, input: ProjectInput, revision: number) {
+  if (new TextEncoder().encode(JSON.stringify(input.settings)).byteLength > 1000000) throw new SolarError("DESIGN_TOO_LARGE", "Survey layout settings exceed 1 MB. Split the site into smaller projects.", 422);
+  const existing = await findProject(id);
+  if (existing.revision !== revision) throw new SolarError("REVISION_CONFLICT", "This project changed in another session. Reload before saving.", 409);
+  if (input.settings.selectedPanelCount > (existing.solar?.insights.solarPotential.solarPanels.length ?? 0)) throw new SolarError("VALIDATION_ERROR", "Selected panel count exceeds the current provider result.", 400);
+  if (input.settings.excludedSegments.some(index => index >= (existing.solar?.insights.solarPotential.roofSegmentStats.length ?? 0))) throw new SolarError("VALIDATION_ERROR", "An excluded roof section does not exist in the current building result.", 400);
+  try {
+    usableSections(input.settings.hybrid);
+    // Allow stale layouts while editing, but reject newly submitted invalid
+    // footprints. Export separately enforces that the applied layout is current.
+    if (input.settings.hybrid.layout && input.settings.hybrid.layout.id !== existing.settings.hybrid.layout?.id) {
+      const issues = layoutIssues(input.settings.hybrid, existing.solar?.mask, existing.solar?.fetchedAt);
+      if (issues.length) throw new Error(issues[0]);
+    }
+  } catch (error) { throw new SolarError("GEOMETRY_INVALID", error instanceof Error ? error.message : "Invalid survey geometry.", 400); }
   const row = await database().prepare("UPDATE solar_projects SET name=?,address=?,latitude=?,longitude=?,settings_json=?,revision=revision+1,updated_at=? WHERE id=? AND revision=? RETURNING id")
     .bind(input.name, input.address, input.location?.latitude ?? null, input.location?.longitude ?? null, JSON.stringify(input.settings), new Date().toISOString(), id, revision).first();
   if (!row) throw new SolarError("REVISION_CONFLICT", "This project changed in another session. Reload the latest project before editing; your edits have not overwritten it.", 409);
@@ -48,7 +64,7 @@ export async function storeGeneration(id: string, solar: SolarResult, revision: 
   const serialized = JSON.stringify(solar);
   if (new TextEncoder().encode(serialized).byteLength > 1800000) throw new SolarError("DESIGN_TOO_LARGE", "This building result exceeds D1's supported row size. Choose a smaller site.", 422);
   const project = await findProject(id);
-  const settings = { ...project.settings, selectedPanelCount: count };
+  const settings = { ...project.settings, selectedPanelCount: count, confirmedBuildingName: "", excludedSegments: [] };
   // Keep authored coordinates separate. API/geocoder coordinates only live in
   // the expiring provider result, never permanent project location columns.
   const row = await database().prepare("UPDATE solar_projects SET solar_json=?,solar_expires_at=?,settings_json=?,revision=revision+1,updated_at=? WHERE id=? AND revision=? RETURNING id")
@@ -59,7 +75,7 @@ export async function storeGeneration(id: string, solar: SolarResult, revision: 
 export async function duplicateProject(id: string, adminId: string) {
   const project = await findProject(id);
   // Duplicate authored project settings, not Google's expiring content or fixed exports.
-  return createProject({ ...project, name: `${project.name.slice(0, 110)} copy`, settings: { ...project.settings, selectedPanelCount: 0 } }, adminId);
+  return createProject({ ...project, name: `${project.name.slice(0, 110)} copy`, settings: { ...project.settings, selectedPanelCount: 0, confirmedBuildingName: "", excludedSegments: [] } }, adminId);
 }
 export async function listExports(id: string) {
   await findProject(id);

@@ -1,7 +1,8 @@
 import { describe, expect, it, vi, afterEach } from "vitest";
 import { writeArrayBuffer } from "geotiff";
 vi.mock("@/lib/cloudflare", () => ({ getEnv: () => ({}) }));
-import { readRoofMask } from "../lib/solar/provider";
+import { decodeRoofMask, readRoofMask } from "../lib/solar/provider";
+import { compressedRoofTiff } from "./solar-tiff-fixture";
 
 afterEach(() => vi.restoreAllMocks());
 describe("Google roof-mask binary decoding", () => {
@@ -21,5 +22,13 @@ describe("Google roof-mask binary decoding", () => {
     const fetch = vi.spyOn(globalThis, "fetch");
     await expect(readRoofMask("https://untrusted.test/mask.tiff")).rejects.toMatchObject({ code: "INVALID_MASK_URL" });
     expect(fetch).not.toHaveBeenCalled();
+  });
+  it("reports the decoder stage for invalid binary content without leaking provider URLs", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    await expect(decodeRoofMask(new Uint8Array([1, 2, 3]).buffer)).rejects.toMatchObject({ code: "MASK_DECODE_FAILED", message: expect.stringContaining("read-image") });
+  });
+  it("decodes Deflate-compressed mask pixels with the explicit no-worker pool", async () => {
+    const mask = await decodeRoofMask(compressedRoofTiff());
+    expect(mask.runs).toEqual([[0, 0, 2], [1, 1, 1]]);
   });
 });

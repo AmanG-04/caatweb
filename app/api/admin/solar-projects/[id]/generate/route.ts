@@ -2,7 +2,6 @@ import { z } from "zod";
 import { authorize, body, failure, json } from "@/lib/solar/http";
 import { acquireJob, findProject, releaseJob, storeGeneration } from "@/lib/solar/store";
 import { googleSolarProvider, SolarError } from "@/lib/solar/provider";
-import { persistLayoutPdf } from "@/lib/solar/pdf";
 import { getEnv } from "@/lib/cloudflare";
 
 export const dynamic = "force-dynamic";
@@ -23,13 +22,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     solar.requestedAddress = project.address;
     const count = Math.min(solar.insights.solarPotential.maxArrayPanelsCount, solar.insights.solarPotential.solarPanels.length);
     const saved = await storeGeneration(id, solar, project.revision, count);
-    try {
-      const exportId = await persistLayoutPdf(saved);
-      return json({ project: saved, exportId });
-    } catch {
-      // Never disguise an R2/PDF failure as a permanently saved design.
-      return json({ project: saved, exportId: null, warning: "Layout generated, but its PDF could not be stored. Retry 'Save PDF version' before the live data expires." });
-    }
+    return json({ project: saved, exportId: null, warning: "Review the detected building and roof sections, then confirm the building and save its PDF. Generation alone has not created a permanent PDF." });
   } catch (error) { return failure(error); }
   finally { if (id && token) await releaseJob(id, token).catch(() => undefined); }
 }

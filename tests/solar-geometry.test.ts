@@ -63,4 +63,10 @@ describe("Solar metric geometry and versioned data", () => {
     expect(capacityKwp(25, 540)).toBe(13.5);
     expect(capacityKwp(0, 400)).toBe(0);
   });
+  it("removes excluded roof sections without moving or inventing remaining panels", () => {
+    const project = fixture(); project.settings.excludedSegments = [0];
+    expect(selectedPanels(project)).toHaveLength(0);
+    project.settings.excludedSegments = [];
+    expect(selectedPanels(project)).toHaveLength(2);
+  });
 });

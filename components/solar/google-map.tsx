@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { Location, Project } from "@/lib/solar/model";
 import { selectedPanels } from "@/lib/solar/model";
 import { localFrame, maskGeo, panelCorners } from "@/lib/solar/geometry";
+import { hybridPanelCorners, usableSections } from "@/lib/solar/hybrid-engine";
 
 let loader: Promise<void> | undefined;
 function loadMaps(key: string) {
@@ -21,7 +22,7 @@ function loadMaps(key: string) {
   return loader;
 }
 
-export default function GoogleMap({ browserKey, project, pinMode, onPin }: { browserKey: string | null; project: Project; pinMode: boolean; onPin: (location: Location) => void }) {
+export default function GoogleMap({ browserKey, project, pinMode, onPin, searchLocation, showPanels, showMask }: { browserKey: string | null; project: Project; pinMode: boolean; onPin: (location: Location) => void; searchLocation: Location | null; showPanels: boolean; showMask: boolean }) {
   const host = useRef<HTMLDivElement>(null), mapRef = useRef<google.maps.Map | null>(null), projectRef = useRef(project), pinRef = useRef(onPin);
   const [status, setStatus] = useState("Loading Google satellite imagery…"), [ready, setReady] = useState(false), [retry, setRetry] = useState(0);
   projectRef.current = project; pinRef.current = onPin;
@@ -52,9 +53,21 @@ export default function GoogleMap({ browserKey, project, pinMode, onPin }: { bro
   }, [ready, pinMode]);
   useEffect(() => {
     const map = mapRef.current; if (!map || !ready) return;
-    const location = project.solar?.insights.center ?? project.location;
+    const location = searchLocation ?? project.location ?? project.solar?.insights.center;
     if (location) map.panTo({ lat: location.latitude, lng: location.longitude });
-  }, [ready, project.location?.latitude, project.location?.longitude, project.solar?.fetchedAt]);
+  }, [ready, searchLocation, project.location?.latitude, project.location?.longitude, project.solar?.fetchedAt]);
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !ready || !project.solar || searchLocation) return;
+    const box = project.solar.insights.boundingBox;
+    map.fitBounds({ south: box.sw.latitude, west: box.sw.longitude, north: box.ne.latitude, east: box.ne.longitude }, 70);
+  }, [ready, project.solar?.fetchedAt]);
+  useEffect(() => {
+    const map = mapRef.current, hybrid = project.settings.hybrid;
+    if (!map || !ready || hybrid.mode !== "survey" || !hybrid.origin || !hybrid.sections.length || searchLocation) return;
+    const frame = localFrame(hybrid.origin), locations = hybrid.sections.flatMap(section => section.points.map(frame.toGeo));
+    map.fitBounds({ south: Math.min(...locations.map(p => p.latitude)), north: Math.max(...locations.map(p => p.latitude)), west: Math.min(...locations.map(p => p.longitude)), east: Math.max(...locations.map(p => p.longitude)) }, 60);
+  }, [ready, project.settings.hybrid.origin, project.settings.hybrid.sections, project.settings.hybrid.mode]);
   useEffect(() => {
     const map = mapRef.current; if (!map || !ready) return;
     const canvas = document.createElement("canvas"); canvas.style.position = "absolute"; canvas.style.pointerEvents = "none";
@@ -71,7 +84,7 @@ export default function GoogleMap({ browserKey, project, pinMode, onPin }: { bro
       const point = (location: Location) => { const p = projection.fromLatLngToDivPixel(new google.maps.LatLng(location.latitude, location.longitude)); return p ? { x: p.x - topLeft.x, y: p.y - topLeft.y } : { x: -10000, y: -10000 }; };
       const current = projectRef.current, solar = current.solar;
       if (solar) {
-        if (solar.mask) {
+        if (solar.mask && showMask) {
           ctx.fillStyle = "rgba(216,243,106,.35)";
           // Render original raster cells through the map projection, no tracing.
           for (const [y, x, n] of solar.mask.runs) {
@@ -81,10 +94,31 @@ export default function GoogleMap({ browserKey, project, pinMode, onPin }: { bro
         }
         const frame = localFrame(solar.insights.center);
         ctx.fillStyle = "rgba(13,26,60,.85)"; ctx.strokeStyle = "#d8f36a"; ctx.lineWidth = 1;
-        for (const panel of selectedPanels(current)) {
+        for (const panel of showPanels && current.settings.hybrid.mode !== "survey" ? selectedPanels(current) : []) {
           const corners = panelCorners(solar.insights, panel, frame).map(p => point(frame.toGeo(p)));
           ctx.beginPath(); corners.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)); ctx.closePath(); ctx.fill(); ctx.stroke();
         }
+        const box = solar.insights.boundingBox;
+        const corners = [box.sw, { latitude: box.sw.latitude, longitude: box.ne.longitude }, box.ne, { latitude: box.ne.latitude, longitude: box.sw.longitude }].map(point);
+        ctx.strokeStyle = "#50e4ef"; ctx.lineWidth = 2; ctx.setLineDash([6, 4]);
+        ctx.beginPath(); corners.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)); ctx.closePath(); ctx.stroke(); ctx.setLineDash([]);
+        ctx.font = "bold 12px sans-serif"; ctx.textAlign = "center";
+        solar.insights.solarPotential.roofSegmentStats.forEach((segment, index) => {
+          const p = point(segment.center); ctx.fillStyle = "#102a2a"; ctx.fillRect(p.x - 11, p.y - 10, 22, 20); ctx.fillStyle = "#fff"; ctx.fillText(String(index + 1), p.x, p.y + 4);
+        });
+      }
+      const hybrid = current.settings.hybrid;
+      if (hybrid.mode === "survey" && hybrid.origin) {
+        const frame = localFrame(hybrid.origin);
+        const polygon = (points: { x: number; y: number }[], fill: string, stroke: string) => {
+          const corners = points.map(p => point(frame.toGeo(p))); ctx.beginPath(); corners.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)); ctx.closePath(); ctx.fillStyle = fill; ctx.strokeStyle = stroke; ctx.lineWidth = 1.5; ctx.fill(); ctx.stroke();
+        };
+        for (const section of hybrid.sections) polygon(section.points, "rgba(15,118,110,.12)", "#fff");
+        ctx.setLineDash([4, 4]);
+        for (const section of usableSections(hybrid)) for (const poly of section.polygons) for (const ring of poly) polygon(ring.map(([x, y]) => ({ x, y })), "transparent", "#d8f36a");
+        ctx.setLineDash([]);
+        for (const exclusion of hybrid.exclusions) polygon(exclusion.points, "rgba(220,90,70,.45)", "#ffd0c4");
+        if (showPanels && hybrid.layout) for (const panel of hybrid.layout.panels) polygon(hybridPanelCorners(panel, hybrid.layout.settings, hybrid.sections.find(s => s.id === panel.sectionId)?.height ?? 0), "rgba(13,26,60,.85)", "#d8f36a");
       }
       const pin = current.location ?? solar?.insights.center;
       if (pin) { const p = point(pin); ctx.beginPath(); ctx.arc(p.x, p.y, 7, 0, Math.PI * 2); ctx.fillStyle = "#fff"; ctx.fill(); ctx.strokeStyle = "#0f766e"; ctx.lineWidth = 3; ctx.stroke(); }
@@ -92,7 +126,7 @@ export default function GoogleMap({ browserKey, project, pinMode, onPin }: { bro
     overlay.setMap(map);
     const observer = new ResizeObserver(() => overlay.draw()); if (host.current) observer.observe(host.current);
     return () => { observer.disconnect(); overlay.setMap(null); };
-  }, [ready, project.solar, project.settings.selectedPanelCount, project.location]);
+  }, [ready, project.solar, project.settings.selectedPanelCount, project.settings.excludedSegments, project.settings.hybrid, project.location, showPanels, showMask]);
   return (
     <div className="solar-canvas" aria-label="Google satellite site map">
       <div ref={host} className="solar-map-host" />

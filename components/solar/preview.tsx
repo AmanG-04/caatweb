@@ -5,12 +5,13 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { panelCorners, localFrame } from "@/lib/solar/geometry";
 import { selectedPanels, type Project } from "@/lib/solar/model";
+import { hybridPanelCorners } from "@/lib/solar/hybrid-engine";
 
 export default function Preview({ project }: { project: Project }) {
   const host = useRef<HTMLDivElement>(null), controlsRef = useRef<OrbitControls | null>(null), resetRef = useRef<(() => void) | null>(null);
   const [error, setError] = useState("");
   useEffect(() => {
-    if (!host.current || !project.solar) return;
+    if (!host.current || !project.solar && project.settings.hybrid.mode !== "survey") return;
     const container = host.current;
     let renderer: THREE.WebGLRenderer;
     try { renderer = new THREE.WebGLRenderer({ antialias: true }); }
@@ -19,7 +20,7 @@ export default function Preview({ project }: { project: Project }) {
     const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 10000);
     const controls = new OrbitControls(camera, renderer.domElement); controls.enableDamping = false; controlsRef.current = controls;
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); container.appendChild(renderer.domElement);
-    const solar = project.solar, frame = localFrame(solar.insights.center);
+    const solar = project.solar, hybrid = project.settings.hybrid;
     const group = new THREE.Group(); scene.add(group);
     const meshes: THREE.BufferGeometry[] = [], materials: THREE.Material[] = [];
     const addQuad = (corners: { x: number; y: number; z: number }[], color: string, wireframe = false) => {
@@ -30,12 +31,31 @@ export default function Preview({ project }: { project: Project }) {
       group.add(new THREE.Mesh(geometry, material)); meshes.push(geometry); materials.push(material);
     };
     // Segment rectangles are ONLY plane bounding-box wireframes, not invented roofs.
+    if (hybrid.mode === "survey") {
+      for (const section of hybrid.sections) {
+        const shape = new THREE.Shape(section.points.map(p => new THREE.Vector2(p.x, p.y)));
+        const geometry = new THREE.ShapeGeometry(shape); geometry.rotateX(-Math.PI / 2); geometry.translate(0, section.height, 0);
+        const material = new THREE.MeshBasicMaterial({ color: "#789984", side: THREE.DoubleSide });
+        group.add(new THREE.Mesh(geometry, material)); meshes.push(geometry); materials.push(material);
+      }
+      for (const exclusion of hybrid.exclusions) {
+        const sectionHeight = hybrid.sections[0]?.height ?? 0;
+        const shape = new THREE.Shape(exclusion.points.map(p => new THREE.Vector2(p.x, p.y)));
+        const geometry = new THREE.ExtrudeGeometry(shape, { depth: Math.max(0.02, exclusion.height), bevelEnabled: false });
+        geometry.rotateX(-Math.PI / 2); geometry.translate(0, sectionHeight, 0);
+        const material = new THREE.MeshBasicMaterial({ color: "#c97b6f", side: THREE.DoubleSide });
+        group.add(new THREE.Mesh(geometry, material)); meshes.push(geometry); materials.push(material);
+      }
+      if (hybrid.layout) for (const panel of hybrid.layout.panels) addQuad(hybridPanelCorners(panel, hybrid.layout.settings, hybrid.sections.find(s => s.id === panel.sectionId)?.height ?? 0), "#d8f36a");
+    } else if (solar) {
+    const frame = localFrame(solar.insights.center);
     for (const segment of solar.insights.solarPotential.roofSegmentStats) {
       const sw = frame.toLocal(segment.boundingBox.sw), ne = frame.toLocal(segment.boundingBox.ne), c = frame.toLocal(segment.center), az = segment.azimuthDegrees * Math.PI / 180;
       const corners = [{ x: sw.x, y: sw.y }, { x: ne.x, y: sw.y }, { x: ne.x, y: ne.y }, { x: sw.x, y: ne.y }].map(p => ({ ...p, z: segment.planeHeightAtCenterMeters - ((p.x - c.x) * Math.sin(az) + (p.y - c.y) * Math.cos(az)) * Math.tan(segment.pitchDegrees * Math.PI / 180) }));
       addQuad(corners, "#91ad98", true);
     }
     for (const panel of selectedPanels(project)) addQuad(panelCorners(solar.insights, panel, frame), "#d8f36a");
+    }
     const box = new THREE.Box3().setFromObject(group), center = box.isEmpty() ? new THREE.Vector3() : box.getCenter(new THREE.Vector3()), size = box.isEmpty() ? 30 : Math.max(10, box.getSize(new THREE.Vector3()).length());
     const reset = () => { camera.position.set(center.x + size * 0.7, center.y + size * 0.7, center.z + size * 0.7); controls.target.copy(center); controls.update(); renderer.render(scene, camera); };
     resetRef.current = reset;
@@ -44,11 +64,11 @@ export default function Preview({ project }: { project: Project }) {
     const resize = () => { camera.aspect = container.clientWidth / container.clientHeight; camera.updateProjectionMatrix(); renderer.setSize(container.clientWidth, container.clientHeight); draw(); };
     const observer = new ResizeObserver(resize); observer.observe(container); resize(); reset();
     return () => { observer.disconnect(); controls.dispose(); meshes.forEach(mesh => mesh.dispose()); materials.forEach(material => material.dispose()); renderer.dispose(); renderer.domElement.remove(); controlsRef.current = null; resetRef.current = null; };
-  }, [project.solar, project.settings.selectedPanelCount]);
+  }, [project.solar, project.settings.selectedPanelCount, project.settings.excludedSegments, project.settings.hybrid]);
   return (
     <div>
       <div className="solar-canvas" ref={host} aria-label="Schematic 3D solar geometry preview">
-        {(!project.solar || error) && (
+        {(!project.solar && project.settings.hybrid.mode !== "survey" || error) && (
           <p className="solar-map-status" role="status">{error || "Generate a layout to view its 3D geometry."}</p>
         )}
       </div>
@@ -58,7 +78,7 @@ export default function Preview({ project }: { project: Project }) {
         <button onClick={() => { const control = controlsRef.current; if (control) { const offset = control.object.position.clone().sub(control.target).multiplyScalar(1.25); control.object.position.copy(control.target).add(offset); control.update(); } }}>Zoom out</button>
         <button onClick={() => resetRef.current?.()}>Reset view</button>
       </div>
-      <p className="solar-canvas-caption">Geometry preview only. Wireframes are segment plane bounding boxes, not actual roof outlines or reconstructed buildings. Panels use API reference sizes, pitch and height. No obstacles, terrain, thickness, shadows or energy analysis. Drag to orbit; scroll to zoom.</p>
+      <p className="solar-canvas-caption">Geometry preview only. Wireframes are segment plane bounding boxes, not actual roof outlines or reconstructed buildings. Panels use API reference sizes and pitch; vertical coordinates are elevations above sea level, not measured building heights. No obstacles, terrain, thickness, shadows or energy analysis. Drag to orbit; scroll to zoom.</p>
     </div>
   );
 }

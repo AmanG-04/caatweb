@@ -6,9 +6,14 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui";
 import { capacityKwp, imageryDate, projectInputSchema, selectedPanels, type DesignExport, type Project, type ProjectInput } from "@/lib/solar/model";
 import { api, endpoint } from "./api";
+import { distance, localFrame, polygonArea } from "@/lib/solar/geometry";
+import type { Location } from "@/lib/solar/model";
+import { layoutIssues, usableSections } from "@/lib/solar/hybrid-engine";
 
 const GoogleMap = dynamic(() => import("./google-map"), { ssr: false, loading: () => <p role="status">Loading map renderer…</p> });
 const Preview = dynamic(() => import("./preview"), { ssr: false, loading: () => <p role="status">Loading 3D geometry…</p> });
+const HybridControls = dynamic(() => import("./hybrid-controls"));
+const SurveyCanvas = dynamic(() => import("./survey-canvas"));
 type Config = { enabled: boolean; solarConfigured: boolean; browserKey: string | null; database: boolean; storage: boolean; dailyLimit: number };
 const authored = (project: Project): ProjectInput => projectInputSchema.parse(project);
 const fingerprint = (project: Project) => JSON.stringify(authored(project));
@@ -16,8 +21,11 @@ const fingerprint = (project: Project) => JSON.stringify(authored(project));
 export default function Workspace({ id }: { id: string }) {
   const [project, setProject] = useState<Project | null>(null), [configuration, setConfiguration] = useState<Config | null>(null);
   const [versions, setVersions] = useState<DesignExport[]>([]), [status, setStatus] = useState("Loading…"), [error, setError] = useState("");
-  const [warning, setWarning] = useState(""), [busy, setBusy] = useState(false), [view, setView] = useState<"2d" | "3d">("2d"), [pinMode, setPinMode] = useState(false);
+  const [warning, setWarning] = useState(""), [busy, setBusy] = useState(false), [view, setView] = useState<"2d" | "3d" | "survey">("2d"), [pinMode, setPinMode] = useState(false);
   const [dirty, setDirty] = useState(false), [lat, setLat] = useState(""), [lng, setLng] = useState("");
+  const [searching, setSearching] = useState(false), [searchResults, setSearchResults] = useState<{ location: Location; label: string; approximate: boolean }[]>([]);
+  const [searchLocation, setSearchLocation] = useState<Location | null>(null);
+  const [showPanels, setShowPanels] = useState(true), [showMask, setShowMask] = useState(true);
   const current = useRef<Project | null>(null), savedFingerprint = useRef(""), revision = useRef(0), inFlight = useRef<Promise<boolean> | null>(null), blocked = useRef(false), busyRef = useRef(false);
   const undoStack = useRef<ProjectInput[]>([]), redoStack = useRef<ProjectInput[]>([]);
   const [historyTick, setHistoryTick] = useState(0);
@@ -99,20 +107,33 @@ export default function Workspace({ id }: { id: string }) {
     };
     window.addEventListener("keydown", key); return () => window.removeEventListener("keydown", key);
   }, []);
-  const run = async (kind: "generate" | "export") => {
+  const run = async (kind: "generate" | "export" | "mask") => {
     if (busyRef.current) return;
     if (kind === "generate" && current.current?.solar && !window.confirm("Regenerate Google's layout? The live layout will be replaced. Saved PDF versions remain available.")) return;
     busyRef.current = true; setBusy(true); setError(""); setWarning(""); setPinMode(false);
     try {
       if (!await save()) return;
-      setStatus(kind === "generate" ? "Generating layout and saving PDF…" : "Saving permanent PDF version…");
+      setStatus(kind === "generate" ? "Finding building and generating a review layout…" : kind === "mask" ? "Downloading roof mask…" : "Saving permanent PDF version…");
       if (kind === "generate") {
         const result = await api<{ project: Project; exportId: string | null; warning?: string }>(`${endpoint(id)}/generate`, "POST", { revision: revision.current });
         accept(result.project); setWarning(result.warning ?? ""); undoStack.current = []; redoStack.current = []; setHistoryTick(tick => tick + 1);
+      } else if (kind === "mask") {
+        const result = await api<{ project: Project }>(`${endpoint(id)}/mask`, "POST", { revision: revision.current });
+        accept(result.project);
       } else await api(`${endpoint(id)}/exports`, "POST", { revision: revision.current });
       await refreshVersions(); setStatus("Saved");
     } catch (error) { setError(error instanceof Error ? error.message : "Operation failed."); setStatus("Operation failed"); }
     finally { busyRef.current = false; setBusy(false); }
+  };
+  const searchAddress = async () => {
+    if (busyRef.current || searching || !current.current) return;
+    setSearching(true); setError(""); setSearchResults([]);
+    try {
+      const result = await api<{ items: { location: Location; label: string; approximate: boolean }[] }>(`${endpoint(id)}/locate`, "POST", { address: current.current.address });
+      setSearchResults(result.items); setView("2d");
+      if (result.items[0]) setSearchLocation(result.items[0].location);
+    } catch (error) { setError(error instanceof Error ? error.message : "Address search failed."); }
+    finally { setSearching(false); }
   };
   const leave = (event: React.MouseEvent) => { if (dirty && !window.confirm("Leave with unsaved edits? Save first to keep these changes.")) event.preventDefault(); };
   if (!project) return (
@@ -123,10 +144,17 @@ export default function Workspace({ id }: { id: string }) {
       <Button className="mt-5" onClick={() => void load()}>Retry</Button>
     </main>
   );
-  const potential = project.solar?.insights.solarPotential, count = selectedPanels(project).length;
+  const hybrid = project.settings.hybrid, surveyMode = hybrid.mode === "survey";
+  const hybridIssues = surveyMode ? layoutIssues(hybrid, project.solar?.mask, project.solar?.fetchedAt) : [];
+  const usable = surveyMode ? usableSections(hybrid).reduce((sum, section) => sum + section.area, 0) : null;
+  const surveyArea = surveyMode ? hybrid.sections.reduce((sum, section) => sum + polygonArea(section.points), 0) : null;
+  const potential = project.solar?.insights.solarPotential, count = surveyMode ? hybrid.layout?.panels.length ?? 0 : selectedPanels(project).length;
+  const rating = surveyMode ? hybrid.layout?.settings.watts ?? hybrid.array.watts : potential?.panelCapacityWatts ?? 0;
   const permittedCounts = potential ? [...new Set([0, ...potential.solarPanelConfigs.map(item => item.panelsCount), Math.min(potential.maxArrayPanelsCount, potential.solarPanels.length)])].filter(value => value <= potential.solarPanels.length).sort((a, b) => a - b) : [0];
   const generatedAtLocation = project.solar?.requestedLocation;
   const moved = Boolean(project.solar && (project.address !== project.solar.requestedAddress || (generatedAtLocation && project.location && (Math.abs(generatedAtLocation.latitude - project.location.latitude) > 0.00001 || Math.abs(generatedAtLocation.longitude - project.location.longitude) > 0.00001))));
+  const confirmed = Boolean(project.solar && project.settings.confirmedBuildingName === project.solar.insights.name && !moved);
+  const buildingDistance = project.solar ? distance({ x: 0, y: 0 }, localFrame(project.solar.requestedLocation).toLocal(project.solar.insights.center)) : null;
   return (
     <main className="solar-shell">
       <nav className="solar-nav" aria-label="Admin tools">
@@ -146,7 +174,7 @@ export default function Workspace({ id }: { id: string }) {
           <Button variant="outline" disabled={busy || !undoStack.current.length} onClick={() => history("undo")} title="Undo settings (Ctrl/Cmd Z)">Undo</Button>
           <Button variant="outline" disabled={busy || !redoStack.current.length} onClick={() => history("redo")} title="Redo settings (Ctrl/Cmd Shift Z)">Redo</Button>
           <Button variant="outline" disabled={busy} onClick={() => void save()}>Save</Button>
-          <Button disabled={busy || !project.solar || moved} onClick={() => void run("export")}>Save PDF version</Button>
+          <Button disabled={busy || (surveyMode ? !hybrid.layout || hybridIssues.length > 0 : !confirmed)} onClick={() => void run("export")}>Save PDF version</Button>
         </div>
       </div>
       {error && (
@@ -166,10 +194,19 @@ export default function Workspace({ id }: { id: string }) {
           <h2>1. Locate the building</h2>
           <div className="solar-fields">
             <label>
-              Site address
-              <textarea rows={3} maxLength={400} disabled={busy} value={project.address} onChange={event => edit(value => ({ ...value, address: event.target.value, location: null }))} />
+              House / site address
+              <textarea rows={3} maxLength={400} disabled={busy || searching} placeholder="House number, street, locality, city, PIN code" value={project.address} onChange={event => { edit(value => ({ ...value, address: event.target.value, location: null, settings: { ...value.settings, confirmedBuildingName: "" } })); setSearchResults([]); setSearchLocation(null); setLat(""); setLng(""); }} />
             </label>
-            <p className="solar-canvas-caption">An address is resolved by the approved Google Geocoding API when generating. Enter coordinates to skip geocoding. Check the returned building before using the PDF.</p>
+            <Button variant="outline" disabled={busy || searching || !configuration?.enabled || !configuration.solarConfigured || project.address.trim().length < 3} onClick={() => void searchAddress()}>{searching ? "Searching address…" : "Find address on map"}</Button>
+            <p className="solar-canvas-caption">The address helps find the neighbourhood and labels your PDF. Search it first, then click the exact rooftop centre. A house address alone may resolve to a street or locality. Choosing a pin makes that pin the input to Solar, rather than searching the address again.</p>
+            {searchResults.map((result, index) => (
+              <article className="solar-version" key={index}>
+                <p>{result.label}</p>
+                <p className="solar-canvas-caption">{result.approximate ? "Approximate address match — locate the rooftop visually." : "Rooftop address match — still verify the house visually."}</p>
+                <Button variant="outline" className="mt-2" onClick={() => { setSearchLocation(result.location); setView("2d"); setPinMode(true); }}>Show match; choose rooftop pin</Button>
+                <p translate="no" className="solar-canvas-caption">Google Maps</p>
+              </article>
+            ))}
             <div className="solar-coordinates">
               <label>
                 Latitude
@@ -183,7 +220,7 @@ export default function Workspace({ id }: { id: string }) {
             <Button variant="outline" disabled={busy} onClick={() => {
               const latitude = Number(lat), longitude = Number(lng);
               if (!lat.trim() || !lng.trim() || !Number.isFinite(latitude) || !Number.isFinite(longitude) || Math.abs(latitude) > 85 || Math.abs(longitude) > 180) { setError("Enter latitude between -85 and 85 and longitude between -180 and 180."); return; }
-              edit(value => ({ ...value, location: { latitude, longitude } }));
+              edit(value => ({ ...value, location: { latitude, longitude }, settings: { ...value.settings, confirmedBuildingName: "" } })); setSearchLocation(null);
             }}>Apply coordinates</Button>
             <Button variant="outline" aria-pressed={pinMode} disabled={busy || !configuration?.browserKey || view !== "2d"} onClick={() => setPinMode(value => !value)}>{pinMode ? "Cancel pin (Escape)" : "Choose map pin"}</Button>
             <p className="solar-canvas-caption">{pinMode ? "Click the building centre. Map gestures still pan; Escape cancels pin mode." : "Pan and zoom to inspect imagery. Satellite tracing is disabled."}</p>
@@ -196,22 +233,54 @@ export default function Workspace({ id }: { id: string }) {
               <input type="checkbox" disabled={busy} checked={project.settings.requestConfirmed} onChange={event => edit(value => ({ ...value, settings: { ...value.settings, requestConfirmed: event.target.checked } }))} />
               This requester asked for an energy-system design at this address.
             </label>
-            <Button disabled={busy || !configuration?.enabled || !configuration.solarConfigured || !configuration.storage || !project.settings.requestConfirmed || !project.settings.requestedBy.trim()} onClick={() => void run("generate")}>{busy ? "Working…" : project.solar ? "Regenerate + save PDF" : "Generate + save PDF"}</Button>
+            <Button disabled={busy || searching || !configuration?.enabled || !configuration.solarConfigured || !configuration.storage || !project.settings.requestConfirmed || !project.settings.requestedBy.trim()} onClick={() => void run("generate")}>{busy ? "Working…" : project.solar ? "Regenerate review layout" : "Generate review layout"}</Button>
+            <p className="solar-canvas-caption">Google chooses the nearest known building within roughly 50 m. It may merge adjacent roofs or return a neighbouring house. Review the detected-building box before creating a PDF.</p>
             <p className="solar-canvas-caption">Calls Google Building Insights and Data Layers; may incur approved account charges. Application cap: {configuration?.dailyLimit ?? "—"} requests/day per backend service. Browser map usage needs Google Cloud quotas separately.</p>
           </div>
         </aside>
         <section className="solar-drawing" aria-label="Design visualization">
           <div className="solar-tabs" aria-label="Design view">
             <Button variant="outline" aria-pressed={view === "2d"} onClick={() => setView("2d")}>2D satellite layout</Button>
+            <Button variant="outline" aria-pressed={view === "survey"} onClick={() => { setView("survey"); setPinMode(false); }}>Survey drawing</Button>
             <Button variant="outline" aria-pressed={view === "3d"} onClick={() => { setView("3d"); setPinMode(false); }}>3D geometry</Button>
           </div>
+          <div className="solar-layer-controls">
+            <label className="solar-checkbox">
+              <input type="checkbox" checked={showPanels} onChange={event => setShowPanels(event.target.checked)} />
+              Show suggested panels
+            </label>
+            <label className="solar-checkbox">
+              <input type="checkbox" checked={showMask} onChange={event => setShowMask(event.target.checked)} />
+              Show raster roof mask
+            </label>
+          </div>
           {view === "2d" ? (
-            <GoogleMap browserKey={configuration?.browserKey ?? null} project={project} pinMode={pinMode} onPin={location => { edit(value => ({ ...value, location })); setLat(String(location.latitude)); setLng(String(location.longitude)); setPinMode(false); }} />
+            <GoogleMap browserKey={configuration?.browserKey ?? null} project={project} pinMode={pinMode} searchLocation={searchLocation} showPanels={showPanels} showMask={showMask} onPin={location => { edit(value => ({ ...value, location, settings: { ...value.settings, confirmedBuildingName: "" } })); setLat(String(location.latitude)); setLng(String(location.longitude)); setPinMode(false); setSearchLocation(null); }} />
+          ) : view === "survey" ? (
+            <SurveyCanvas design={hybrid} />
           ) : (
             <Preview project={project} />
           )}
+          <HybridControls project={project} disabled={busy} onChange={value => edit(current => ({ ...current, settings: { ...current.settings, hybrid: value } }))} />
           <p className="solar-canvas-caption">Lime raster: Google's roof mask. Navy rectangles: Google's suggested panel positions with actual API reference dimensions. North is true north; measurements use local metres. Mask may include other buildings; no exact segment boundaries or obstacle polygons are available.</p>
-          {project.solar?.maskWarning && <p role="status" className="solar-warning mt-3">{project.solar.maskWarning} Roof mask is unavailable; no substitute boundary has been drawn.</p>}
+          {project.solar?.maskWarning && (
+            <div role="status" className="solar-warning mt-3">
+              <p>{project.solar.maskWarning} The suggested panel positions are available, but roof-mask alignment cannot be checked yet.</p>
+              <Button variant="outline" className="mt-3" disabled={busy || moved} onClick={() => void run("mask")}>Retry roof mask only</Button>
+              <p className="solar-canvas-caption">Requests fresh Data Layers without regenerating panels. Uses the approved Google account quota.</p>
+            </div>
+          )}
+          {project.solar && (
+            <div className="solar-panel mt-4">
+              <h2>3. Is this the correct house?</h2>
+              <p className="text-sm">The dashed cyan box is Google’s detected building bounding box, not an exact roof boundary. Its centre is {buildingDistance?.toFixed(1)} m from the requested point.</p>
+              <p className="solar-canvas-caption">Google Solar data and the current satellite basemap may use different imagery. Rotations come from detected roof-plane azimuths; they are not a tidy-array design. If the box covers the wrong house or multiple properties, do not confirm it. Move the pin and regenerate.</p>
+              <label className="solar-checkbox mt-4">
+                <input type="checkbox" disabled={busy || moved} checked={confirmed} onChange={event => edit(value => ({ ...value, settings: { ...value.settings, confirmedBuildingName: event.target.checked ? value.solar!.insights.name : "" } }))} />
+                I checked the detected building on the map; it is the intended house/site.
+              </label>
+            </div>
+          )}
           {potential && (
             <div className="solar-panel solar-segments">
               <h2>Detected roof planes</h2>
@@ -220,9 +289,10 @@ export default function Workspace({ id }: { id: string }) {
                 <thead>
                   <tr>
                     <th scope="col">Section</th>
+                    <th scope="col">Include panels</th>
                     <th scope="col">Pitch</th>
                     <th scope="col">Azimuth</th>
-                    <th scope="col">Height</th>
+                    <th scope="col">Elevation ASL</th>
                     <th scope="col">Horizontal m²</th>
                     <th scope="col">Surface m²</th>
                   </tr>
@@ -231,6 +301,9 @@ export default function Workspace({ id }: { id: string }) {
                   {potential.roofSegmentStats.map((segment, index) => (
                     <tr key={index}>
                       <th scope="row">{index + 1}</th>
+                      <td>
+                        <input type="checkbox" aria-label={`Include panels on roof section ${index + 1}`} disabled={busy} checked={!project.settings.excludedSegments.includes(index)} onChange={event => edit(value => ({ ...value, settings: { ...value.settings, excludedSegments: event.target.checked ? value.settings.excludedSegments.filter(item => item !== index) : [...value.settings.excludedSegments, index] } }))} />
+                      </td>
                       <td>{segment.pitchDegrees.toFixed(1)}°</td>
                       <td>{segment.azimuthDegrees.toFixed(1)}°</td>
                       <td>{segment.planeHeightAtCenterMeters.toFixed(1)} m</td>
@@ -240,6 +313,7 @@ export default function Workspace({ id }: { id: string }) {
                   ))}
                 </tbody>
               </table>
+              <p className="solar-canvas-caption">Roof section numbers are shown on the map. Excluding a section removes its suggested panels from the summary, preview and future PDF; it does not redraw the roof or optimise the remaining layout. Height is elevation above sea level, not building height.</p>
             </div>
           )}
         </section>
@@ -252,19 +326,22 @@ export default function Workspace({ id }: { id: string }) {
             </div>
             <div className="solar-stat">
               <span>DC capacity</span>
-              <strong>{potential ? capacityKwp(count, potential.panelCapacityWatts).toFixed(2) : "0.00"} kWp</strong>
+              <strong>{capacityKwp(count, rating).toFixed(2)} kWp</strong>
             </div>
             <div className="solar-stat">
               <span>Horizontal roof</span>
-              <strong>{potential?.wholeRoofStats.groundAreaMeters2.toFixed(1) ?? "—"} m²</strong>
+              <strong>{surveyMode ? Math.abs(surveyArea ?? 0).toFixed(1) : potential?.wholeRoofStats.groundAreaMeters2.toFixed(1) ?? "—"} m²</strong>
             </div>
             <div className="solar-stat">
               <span>Roof surface</span>
-              <strong>{potential?.wholeRoofStats.areaMeters2.toFixed(1) ?? "—"} m²</strong>
+              <strong>{surveyMode ? Math.abs(surveyArea ?? 0).toFixed(1) : potential?.wholeRoofStats.areaMeters2.toFixed(1) ?? "—"} m²</strong>
             </div>
           </div>
-          <p className="solar-canvas-caption">Usable area after setbacks: not calculated. Google's placement is not a custom-clearance check or a guaranteed globally optimal layout.</p>
-          {potential && (
+          <p className="solar-canvas-caption">{surveyMode ? `Usable horizontal area after setbacks, exclusions and section-overlap removal: ${usable?.toFixed(2)} m². Flat-section assumption. ${hybridIssues.join(" ")}` : "Usable area after setbacks: not calculated. Google's placement is not a custom-clearance check or a guaranteed globally optimal layout."}</p>
+          {surveyMode && (
+            <p className="solar-canvas-caption">{hybrid.layout?.settings.label ?? hybrid.array.label} · {rating} W · Array {hybrid.layout?.settings.azimuth ?? hybrid.array.azimuth}° true azimuth · Tilt {hybrid.layout?.settings.tilt ?? hybrid.array.tilt}°. Row spacing is a clear horizontal gap.</p>
+          )}
+          {potential && !surveyMode && (
             <div className="solar-fields mt-5">
               <p className="text-sm">Google reference module: <strong>{potential.panelCapacityWatts} W</strong>, {(potential.panelHeightMeters * 1000).toFixed(0)} × {(potential.panelWidthMeters * 1000).toFixed(0)} mm. No manufacturer/model supplied. Changing module dimensions would require a separate placement calculation.</p>
               <label>
@@ -311,7 +388,7 @@ export default function Workspace({ id }: { id: string }) {
           </div>
         </aside>
       </div>
-      <p className="solar-footnote">Buildings only, subject to Google Solar coverage. Ground-mounted sites, manual boundary/obstacle editing and custom-module placement are outside this automated workflow. No energy estimates, quotations, EPC operations, structural checks or sun/shadow simulation.</p>
+      <p className="solar-footnote">Google reference layouts depend on building coverage. Survey layouts support independently entered flat-roof and flat-ground boundaries, exclusions and module-sized arrays. True south is the default, not a verified energy optimum. No satellite boundary tracing, energy estimates, quotations, structural checks or shadow simulation.</p>
       <span hidden>{historyTick}</span>
     </main>
   );

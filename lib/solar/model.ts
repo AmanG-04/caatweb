@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { hybridSchema } from "./hybrid-model";
 
 export const locationSchema = z.object({ latitude: z.number().finite().min(-85).max(85), longitude: z.number().finite().min(-180).max(180) });
 const positive = z.number().finite().positive();
@@ -8,6 +9,9 @@ export const settingsSchema = z.object({
   requestedBy: z.string().trim().max(160).default(""),
   requestConfirmed: z.boolean().default(false),
   notes: z.string().max(2000).default(""),
+  confirmedBuildingName: z.string().max(250).default(""),
+  excludedSegments: z.array(z.number().int().nonnegative().max(4999)).max(5000).default([]),
+  hybrid: hybridSchema.default(() => hybridSchema.parse({})),
 });
 export const projectInputSchema = z.object({
   schemaVersion: z.literal(1),
@@ -66,7 +70,7 @@ export type Project = ProjectInput & { id: string; revision: number; createdAt: 
 export type DesignExport = { id: string; name: string; design_revision: number; panel_count: number; capacity_kwp: number; created_at: string };
 export const emptyProject = (name: string): ProjectInput => ({ schemaVersion: 1, name, address: "", location: null, settings: settingsSchema.parse({}) });
 export function selectedPanels(project: Pick<Project, "solar" | "settings">) {
-  return project.solar?.insights.solarPotential.solarPanels.slice(0, project.settings.selectedPanelCount) ?? [];
+  return project.solar?.insights.solarPotential.solarPanels.slice(0, project.settings.selectedPanelCount).filter(panel => !project.settings.excludedSegments.includes(panel.segmentIndex)) ?? [];
 }
 export function capacityKwp(count: number, watts: number) { return count * watts / 1000; }
 export function imageryDate(date?: { year: number; month: number; day: number }) {

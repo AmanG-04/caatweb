@@ -31,7 +31,7 @@ export default function ProjectList() {
       <header className="solar-banner">
         <p className="solar-kicker">CAAT PowerBot / internal design workspace</p>
         <h1>Solar Site Designer.</h1>
-        <p>Locate a building. Generate a reference layout. Save the design as a PDF.</p>
+        <p>Find an address, verify the rooftop, review a reference layout and save a PDF.</p>
       </header>
       <Card className="mt-6">
         <form onSubmit={event => { event.preventDefault(); void action(async () => { await api<Project>("/api/admin/solar-projects", "POST", emptyProject(name)); setName(""); }); }} className="solar-create">

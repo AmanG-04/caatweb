@@ -11,8 +11,11 @@
 		"binding": "ASSETS"
 	},
 	"vars": {
+		"GOOGLE_MAPS_BROWSER_KEY": "",
 		"NEXT_PUBLIC_SITE_URL": "https://caatpowerbot.com",
-		"NEXT_PUBLIC_COMPANY_NAME": "CAAT PowerBot LLP"
+		"NEXT_PUBLIC_COMPANY_NAME": "CAAT PowerBot LLP",
+		"SOLAR_DAILY_REQUEST_LIMIT": "20",
+		"SOLAR_GOOGLE_ENABLED": "true"
 	},
 	"d1_databases": [
 		{
