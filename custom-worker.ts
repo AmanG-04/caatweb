@@ -37,6 +37,14 @@ export default {
       return;
     }
 
+    // Google Solar editable data is temporary; permanent requested-design PDFs
+    // are fixed media in R2 and are not included in this cleanup.
+    ctx.waitUntil(env.DB.prepare(
+      "UPDATE solar_projects SET solar_json=NULL WHERE solar_expires_at <= ? AND solar_json IS NOT NULL"
+    ).bind(new Date().toISOString()).run().catch(() => {
+      console.error("Solar data retention cleanup failed. Check designer migration.");
+    }));
+
     if (!env.RESEND_API_KEY) {
       console.error("Daily lead digest cron failed: RESEND_API_KEY is not configured.");
       return;

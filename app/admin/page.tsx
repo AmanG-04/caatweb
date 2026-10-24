@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, Fragment, useEffect, useState } from "react";
+import Link from "next/link";
 import { Button, Card } from "@/components/ui";
 import { inr } from "@/lib/utils";
 import { SETTING_FIELDS, TEMPLATE_QUOTE_SETTINGS } from "@/lib/settings";
@@ -82,7 +83,7 @@ export default function Admin() {
     setError("");
     const response = await fetch("/api/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ adminId, password }) });
     if (!response.ok) {
-      setError("Admin ID or password is incorrect.");
+      setError(await responseMessage(response));
       return;
     }
     setLogged(true);
@@ -109,6 +110,12 @@ export default function Admin() {
   useEffect(() => {
     if (logged) void load();
   }, [logged]);
+
+  useEffect(() => {
+    void fetch("/api/auth/session", { cache: "no-store" }).then((response) => {
+      if (response.ok) setLogged(true);
+    }).catch(() => undefined);
+  }, []);
 
   const updateStatus = async (leadId: string, status: string) => {
     await fetch("/api/lead/status", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ leadId, status }) });
@@ -223,7 +230,23 @@ export default function Admin() {
   return (
     <main className="min-h-screen p-6 md:p-10">
       <div className="mx-auto max-w-6xl">
-        <div className="flex items-center justify-between gap-4"><div><p className="font-black text-teal">caat powerbot / admin</p><h1 className="mt-2 text-4xl font-black">Lead operations.</h1></div><button onClick={() => setLogged(false)} className="text-sm font-bold">Sign out</button></div>
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <p className="font-black text-teal">caat powerbot / admin</p>
+            <h1 className="mt-2 text-4xl font-black">Lead operations.</h1>
+          </div>
+          <button onClick={() => { void fetch("/api/auth/logout", { method: "POST" }).then(() => setLogged(false)); }} className="text-sm font-bold">
+            Sign out
+          </button>
+        </div>
+        <nav aria-label="Admin tools" className="mt-6 flex flex-wrap gap-3">
+          <Link href="/admin" className="rounded-full border border-ink/20 bg-white px-5 py-3 text-sm font-bold" aria-current="page">
+            Lead operations
+          </Link>
+          <Link href="/admin/solar-designer" className="rounded-full bg-lime px-5 py-3 text-sm font-bold focus-visible:outline focus-visible:outline-2 focus-visible:outline-teal">
+            Solar Site Designer
+          </Link>
+        </nav>
 
          <div className="mt-10 grid gap-4 md:grid-cols-3">{[["Total leads", leads.length.toString()], ["Suggested systems", leads.filter((lead) => getSuggestedSystemSize(lead)).length.toString()], ["Site visits", leads.filter((lead) => lead.status === "site_visit").length.toString()]].map(([label, value]) => <Card key={label}><p className="text-sm text-ink/50">{label}</p><b className="mt-3 block text-3xl">{value}</b></Card>)}</div>
 
