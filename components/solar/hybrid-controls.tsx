@@ -39,7 +39,7 @@ export default function HybridControls({ project, disabled, onChange }: { projec
   }
   const issues = (() => { try { return layoutIssues(design, project.solar?.mask, project.solar?.fetchedAt); } catch (error) { return [String(error)]; } })();
   return (
-    <section className="solar-panel mt-4" aria-label="Hybrid flat roof designer">
+    <section id="solar-hybrid-controls" className="solar-panel mt-4" aria-label="Hybrid flat roof designer">
       <h2>Survey boundary & south-facing arrays</h2>
       <label>
         Active design

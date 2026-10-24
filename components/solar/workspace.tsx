@@ -239,6 +239,28 @@ export default function Workspace({ id }: { id: string }) {
           </div>
         </aside>
         <section className="solar-drawing" aria-label="Design visualization">
+          <div className="solar-panel mb-3">
+            <label>
+              Layout shown on map / drawing
+              <select value={hybrid.mode} disabled={busy} onChange={event => edit(current => ({ ...current, settings: { ...current.settings, hybrid: { ...current.settings.hybrid, mode: event.target.value as "google" | "survey" } } }))}>
+                <option value="google">Google reference — follows detected roof angles</option>
+                <option value="survey">Custom survey array — editable true-south direction</option>
+              </select>
+            </label>
+            {surveyMode ? (
+              <p className="solar-canvas-caption" role="status">
+                {hybrid.layout ? `Showing applied custom array: ${hybrid.layout.settings.azimuth}° true azimuth. ${hybrid.layout.settings.azimuth === 180 ? "Rows run east–west; north–south panel edges align with north up." : "This array uses the saved custom direction."} ${hybridIssues.length ? "Settings changed: preview and apply again to update the displayed panels." : ""}` : "No custom array applied yet. Enter the survey boundary below, set azimuth to 180°, then Preview automatic layout and Apply preview. Google panels are hidden in this mode."}
+              </p>
+            ) : (
+              <div>
+                <p className="solar-canvas-caption" role="status">Showing Google’s roof-aligned reference panels. These are not a 180° south-facing custom array. The north arrow describes the map; it does not change Google’s panel directions.</p>
+                <Button variant="outline" className="mt-3" disabled={busy} onClick={() => {
+                  edit(current => ({ ...current, settings: { ...current.settings, hybrid: { ...current.settings.hybrid, mode: "survey", array: { ...current.settings.hybrid.array, azimuth: 180 } } } }));
+                  document.getElementById("solar-hybrid-controls")?.scrollIntoView({ behavior: "instant", block: "start" });
+                }}>Set up custom south-facing array — 180°</Button>
+              </div>
+            )}
+          </div>
           <div className="solar-tabs" aria-label="Design view">
             <Button variant="outline" aria-pressed={view === "2d"} onClick={() => setView("2d")}>2D satellite layout</Button>
             <Button variant="outline" aria-pressed={view === "survey"} onClick={() => { setView("survey"); setPinMode(false); }}>Survey drawing</Button>
@@ -262,7 +284,7 @@ export default function Workspace({ id }: { id: string }) {
             <Preview project={project} />
           )}
           <HybridControls project={project} disabled={busy} onChange={value => edit(current => ({ ...current, settings: { ...current.settings, hybrid: value } }))} />
-          <p className="solar-canvas-caption">Lime raster: Google's roof mask. Navy rectangles: Google's suggested panel positions with actual API reference dimensions. North is true north; measurements use local metres. Mask may include other buildings; no exact segment boundaries or obstacle polygons are available.</p>
+          <p className="solar-canvas-caption">{surveyMode ? "Navy rectangles: the applied custom survey array. White outlines: entered survey boundaries; dashed lime outlines: usable-area limits. Changing azimuth requires previewing and applying a new layout." : "Navy rectangles: Google's suggested roof-aligned panels, not the custom south-facing array. Lime raster: Google's roof mask; it may include other buildings."} North is true north; measurements use local metres.</p>
           {project.solar?.maskWarning && (
             <div role="status" className="solar-warning mt-3">
               <p>{project.solar.maskWarning} The suggested panel positions are available, but roof-mask alignment cannot be checked yet.</p>
