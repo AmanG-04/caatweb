@@ -1,6 +1,8 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "caat-powerbot",
+	// Preserve dashboard-managed variables that are not declared below.
+	"keep_vars": true,
 	"main": "custom-worker.ts",
 	"compatibility_date": "2026-07-23",
 	"compatibility_flags": [
@@ -11,7 +13,6 @@
 		"binding": "ASSETS"
 	},
 	"vars": {
-		"GOOGLE_MAPS_BROWSER_KEY": "",
 		"NEXT_PUBLIC_SITE_URL": "https://caatpowerbot.com",
 		"NEXT_PUBLIC_COMPANY_NAME": "CAAT PowerBot LLP",
 		"SOLAR_DAILY_REQUEST_LIMIT": "20",
