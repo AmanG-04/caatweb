@@ -8,7 +8,16 @@ import type { RoofMask } from "./model";
 export const AREA_TOLERANCE = 1e-7;
 const SCALE = 1000;
 export type UsableSection = { id: string; polygons: MultiPolygon; height: number; area: number };
-export function asPolygon(points: Point[]): Polygon { return [points.map(p => [p.x, p.y] as [number, number])]; }
+export function measuredRectangle(length: number, width: number, lengthBearing: number): Point[] {
+  if (![length, width, lengthBearing].every(Number.isFinite) || length <= 0 || width <= 0 || length > 2000 || width > 2000 || lengthBearing < 0 || lengthBearing > 360) throw new Error("Enter roof length/width above zero and at most 2000 m, and a direction between 0° and 360°.");
+  const az = radians(lengthBearing), along = { x: Math.sin(az), y: Math.cos(az) }, across = { x: Math.cos(az), y: -Math.sin(az) };
+  return [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([u, v]) => ({ x: u * width / 2 * across.x + v * length / 2 * along.x, y: u * width / 2 * across.y + v * length / 2 * along.y }));
+}
+export function asPolygon(points: Point[]): Polygon {
+  // Snap numerical trig noise below a micrometre before boolean operations;
+  // otherwise nearly coincident rotated edges can form unclosable rings.
+  return [points.map(p => [Math.round(p.x * 1e6) / 1e6, Math.round(p.y * 1e6) / 1e6] as [number, number])];
+}
 export function multipolygonArea(polygons: MultiPolygon) {
   return polygons.reduce((total, polygon) => total + polygon.reduce((sum, ring, index) => sum + (index === 0 ? 1 : -1) * polygonArea(ring.map(([x, y]) => ({ x, y }))), 0), 0);
 }
@@ -111,9 +120,9 @@ export function layoutIssues(design: HybridDesign, mask?: RoofMask | null, maskI
   return [...new Set(issues)];
 }
 export async function generateHybridLayout(design: HybridDesign, options: { mask?: RoofMask | null; maskIdentity?: string | null; cancelled?: () => boolean; yieldControl?: () => Promise<void> } = {}): Promise<HybridLayout> {
-  if (!design.origin || !design.sections.length) throw new Error("Set a geographic survey origin and at least one surveyed boundary first.");
+  if (!design.sections.length) throw new Error("Enter the measured roof dimensions or a surveyed boundary first.");
   const sections = usableSections(design), axes = arrayAxes(design.array.azimuth), dims = panelDimensions(design.array);
-  const maskTest = design.array.maskConstraint && options.mask ? maskFootprintTester(options.mask, design.origin) : null;
+  const maskTest = design.array.maskConstraint && options.mask && design.origin ? maskFootprintTester(options.mask, design.origin) : null;
   if (design.array.maskConstraint && !maskTest) throw new Error("A current decoded Google roof mask is required for mask-constrained placement.");
   const toArray = (p: Point) => ({ x: p.x * axes.across.x + p.y * axes.across.y, y: p.x * axes.facing.x + p.y * axes.facing.y });
   const fromArray = (x: number, y: number) => ({ x: x * axes.across.x + y * axes.facing.x, y: x * axes.across.y + y * axes.facing.y });

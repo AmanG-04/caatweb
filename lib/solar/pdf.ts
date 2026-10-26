@@ -94,7 +94,7 @@ export async function persistLayoutPdf(project: Project) {
   if (!project.settings.requestConfirmed || !project.settings.requestedBy.trim()) throw new SolarError("USER_REQUEST_REQUIRED", "Record who requested this address-specific design before permanently storing a PDF.", 422);
   const hybrid = project.settings.hybrid;
   if (hybrid.mode === "survey") {
-    if (!hybrid.layout || !hybrid.origin) throw new SolarError("NO_DESIGN", "Apply a surveyed layout before exporting.", 422);
+    if (!hybrid.layout) throw new SolarError("NO_DESIGN", "Apply a measured roof layout before exporting.", 422);
     const issues = layoutIssues(hybrid, project.solar?.mask, project.solar?.fetchedAt);
     if (issues.length) throw new SolarError("GEOMETRY_CONFLICT", issues[0], 422);
   } else if (!project.solar || project.settings.confirmedBuildingName !== project.solar.insights.name) throw new SolarError("BUILDING_CONFIRMATION_REQUIRED", "Confirm that Google's detected building is the intended house before saving its PDF.", 422);

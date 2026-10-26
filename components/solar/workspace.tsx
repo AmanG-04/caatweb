@@ -26,6 +26,7 @@ export default function Workspace({ id }: { id: string }) {
   const [searching, setSearching] = useState(false), [searchResults, setSearchResults] = useState<{ location: Location; label: string; approximate: boolean }[]>([]);
   const [searchLocation, setSearchLocation] = useState<Location | null>(null);
   const [showPanels, setShowPanels] = useState(true), [showMask, setShowMask] = useState(true);
+  const [positionRoof, setPositionRoof] = useState(false);
   const current = useRef<Project | null>(null), savedFingerprint = useRef(""), revision = useRef(0), inFlight = useRef<Promise<boolean> | null>(null), blocked = useRef(false), busyRef = useRef(false);
   const undoStack = useRef<ProjectInput[]>([]), redoStack = useRef<ProjectInput[]>([]);
   const [historyTick, setHistoryTick] = useState(0);
@@ -100,7 +101,7 @@ export default function Workspace({ id }: { id: string }) {
   useEffect(() => {
     const key = (event: KeyboardEvent) => {
       if ((event.target as HTMLElement).closest("input,textarea,select,[contenteditable=true]")) return;
-      if (event.key === "Escape") { setPinMode(false); return; }
+      if (event.key === "Escape") { setPinMode(false); setPositionRoof(false); return; }
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "z" && !event.altKey) {
         event.preventDefault(); historyRef.current(event.shiftKey ? "redo" : "undo");
       }
@@ -207,6 +208,8 @@ export default function Workspace({ id }: { id: string }) {
                 <p translate="no" className="solar-canvas-caption">Google Maps</p>
               </article>
             ))}
+            <details>
+              <summary className="font-bold">Enter coordinates instead</summary>
             <div className="solar-coordinates">
               <label>
                 Latitude
@@ -222,9 +225,10 @@ export default function Workspace({ id }: { id: string }) {
               if (!lat.trim() || !lng.trim() || !Number.isFinite(latitude) || !Number.isFinite(longitude) || Math.abs(latitude) > 85 || Math.abs(longitude) > 180) { setError("Enter latitude between -85 and 85 and longitude between -180 and 180."); return; }
               edit(value => ({ ...value, location: { latitude, longitude }, settings: { ...value.settings, confirmedBuildingName: "" } })); setSearchLocation(null);
             }}>Apply coordinates</Button>
+            </details>
             <Button variant="outline" aria-pressed={pinMode} disabled={busy || !configuration?.browserKey || view !== "2d"} onClick={() => setPinMode(value => !value)}>{pinMode ? "Cancel pin (Escape)" : "Choose map pin"}</Button>
             <p className="solar-canvas-caption">{pinMode ? "Click the building centre. Map gestures still pan; Escape cancels pin mode." : "Pan and zoom to inspect imagery. Satellite tracing is disabled."}</p>
-            <h3>2. Generate the design</h3>
+            <h3>Find Google’s building</h3>
             <label>
               Requested by
               <input value={project.settings.requestedBy} disabled={busy} maxLength={160} placeholder="Customer or requester name" onChange={event => edit(value => ({ ...value, settings: { ...value.settings, requestedBy: event.target.value } }))} />
@@ -240,30 +244,33 @@ export default function Workspace({ id }: { id: string }) {
         </aside>
         <section className="solar-drawing" aria-label="Design visualization">
           <div className="solar-panel mb-3">
-            <label>
-              Layout shown on map / drawing
-              <select value={hybrid.mode} disabled={busy} onChange={event => edit(current => ({ ...current, settings: { ...current.settings, hybrid: { ...current.settings.hybrid, mode: event.target.value as "google" | "survey" } } }))}>
-                <option value="google">Google reference — follows detected roof angles</option>
-                <option value="survey">Custom survey array — editable true-south direction</option>
-              </select>
-            </label>
+            <h2>Your next step</h2>
             {surveyMode ? (
               <p className="solar-canvas-caption" role="status">
-                {hybrid.layout ? `Showing applied custom array: ${hybrid.layout.settings.azimuth}° true azimuth. ${hybrid.layout.settings.azimuth === 180 ? "Rows run east–west; north–south panel edges align with north up." : "This array uses the saved custom direction."} ${hybridIssues.length ? "Settings changed: preview and apply again to update the displayed panels." : ""}` : "No custom array applied yet. Enter the survey boundary below, set azimuth to 180°, then Preview automatic layout and Apply preview. Google panels are hidden in this mode."}
+                {hybrid.layout ? `Your roof has ${count} panels facing ${hybrid.layout.settings.azimuth}°. ${hybridIssues.length ? "Roof or settings changed — preview panels again." : "Review the roof, then save your PDF."}` : hybrid.sections.length ? "Your roof is ready. Click Preview panels on my roof below." : "Enter your measured roof length and width below, then click Create my roof."}
               </p>
             ) : (
               <div>
-                <p className="solar-canvas-caption" role="status">Showing Google’s roof-aligned reference panels. These are not a 180° south-facing custom array. The north arrow describes the map; it does not change Google’s panel directions.</p>
+                <p className="solar-canvas-caption" role="status">This is Google’s initial reference layout. For a south-facing arrangement on your actual roof, set its measured size.</p>
                 <Button variant="outline" className="mt-3" disabled={busy} onClick={() => {
                   edit(current => ({ ...current, settings: { ...current.settings, hybrid: { ...current.settings.hybrid, mode: "survey", array: { ...current.settings.hybrid.array, azimuth: 180 } } } }));
                   document.getElementById("solar-hybrid-controls")?.scrollIntoView({ behavior: "instant", block: "start" });
-                }}>Set up custom south-facing array — 180°</Button>
+                }}>Design panels for my roof</Button>
               </div>
             )}
           </div>
+          {surveyMode && (
+            <div className="solar-actions mb-3">
+              <Button variant="outline" disabled={busy || !hybrid.sections.length || !configuration?.browserKey} onClick={() => {
+                setView("2d"); setPinMode(false); setPositionRoof(true);
+                if (!hybrid.origin && project.location) edit(current => ({ ...current, settings: { ...current.settings, hybrid: { ...current.settings.hybrid, origin: project.location } } }));
+              }}>Position measured roof on map</Button>
+              <Button variant="outline" disabled={busy} onClick={() => { setView("survey"); setPositionRoof(false); }}>Edit roof shape in drawing</Button>
+            </div>
+          )}
           <div className="solar-tabs" aria-label="Design view">
             <Button variant="outline" aria-pressed={view === "2d"} onClick={() => setView("2d")}>2D satellite layout</Button>
-            <Button variant="outline" aria-pressed={view === "survey"} onClick={() => { setView("survey"); setPinMode(false); }}>Survey drawing</Button>
+            <Button variant="outline" aria-pressed={view === "survey"} onClick={() => { setView("survey"); setPinMode(false); setPositionRoof(false); }}>Roof drawing</Button>
             <Button variant="outline" aria-pressed={view === "3d"} onClick={() => { setView("3d"); setPinMode(false); }}>3D geometry</Button>
           </div>
           <div className="solar-layer-controls">
@@ -277,9 +284,16 @@ export default function Workspace({ id }: { id: string }) {
             </label>
           </div>
           {view === "2d" ? (
-            <GoogleMap browserKey={configuration?.browserKey ?? null} project={project} pinMode={pinMode} searchLocation={searchLocation} showPanels={showPanels} showMask={showMask} onPin={location => { edit(value => ({ ...value, location, settings: { ...value.settings, confirmedBuildingName: "" } })); setLat(String(location.latitude)); setLng(String(location.longitude)); setPinMode(false); setSearchLocation(null); }} />
+            surveyMode && !hybrid.origin && !positionRoof ? (
+              <div>
+                <p className="solar-warning mb-3">Showing the dimension-based roof plan. Geographic alignment is optional and has not been set; this drawing is not satellite imagery.</p>
+                <SurveyCanvas design={hybrid} onChange={value => edit(current => ({ ...current, settings: { ...current.settings, hybrid: value } }))} />
+              </div>
+            ) : (
+              <GoogleMap browserKey={configuration?.browserKey ?? null} project={project} pinMode={pinMode} searchLocation={searchLocation} showPanels={showPanels} showMask={showMask} positionRoof={positionRoof} onPositionRoof={origin => edit(current => ({ ...current, settings: { ...current.settings, hybrid: { ...current.settings.hybrid, origin } } }))} onFinishPosition={() => setPositionRoof(false)} onPin={location => { edit(value => ({ ...value, location, settings: { ...value.settings, confirmedBuildingName: "" } })); setLat(String(location.latitude)); setLng(String(location.longitude)); setPinMode(false); setSearchLocation(null); }} />
+            )
           ) : view === "survey" ? (
-            <SurveyCanvas design={hybrid} />
+            <SurveyCanvas design={hybrid} onChange={surveyMode ? value => edit(current => ({ ...current, settings: { ...current.settings, hybrid: value } })) : undefined} />
           ) : (
             <Preview project={project} />
           )}
@@ -292,7 +306,7 @@ export default function Workspace({ id }: { id: string }) {
               <p className="solar-canvas-caption">Requests fresh Data Layers without regenerating panels. Uses the approved Google account quota.</p>
             </div>
           )}
-          {project.solar && (
+          {project.solar && !surveyMode && (
             <div className="solar-panel mt-4">
               <h2>3. Is this the correct house?</h2>
               <p className="text-sm">The dashed cyan box is Google’s detected building bounding box, not an exact roof boundary. Its centre is {buildingDistance?.toFixed(1)} m from the requested point.</p>
@@ -304,7 +318,8 @@ export default function Workspace({ id }: { id: string }) {
             </div>
           )}
           {potential && (
-            <div className="solar-panel solar-segments">
+            <details className="solar-panel solar-segments">
+              <summary className="font-bold">Google detected roof details</summary>
               <h2>Detected roof planes</h2>
               <table>
                 <caption className="mb-3 text-left">API-derived, not survey-verified. Azimuth clockwise from true north; height at segment centre.</caption>
@@ -336,7 +351,7 @@ export default function Workspace({ id }: { id: string }) {
                 </tbody>
               </table>
               <p className="solar-canvas-caption">Roof section numbers are shown on the map. Excluding a section removes its suggested panels from the summary, preview and future PDF; it does not redraw the roof or optimise the remaining layout. Height is elevation above sea level, not building height.</p>
-            </div>
+            </details>
           )}
         </section>
         <aside className="solar-panel solar-summary">

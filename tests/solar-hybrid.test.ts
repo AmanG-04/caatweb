@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { emptyHybrid, hybridFingerprint, hybridSchema } from "../lib/solar/hybrid-model";
-import { footprintContained, generateHybridLayout, hybridPanelCorners, layoutIssues, maskFootprintTester, panelDimensions, polygonIssue, usableSections } from "../lib/solar/hybrid-engine";
+import { footprintContained, generateHybridLayout, hybridPanelCorners, layoutIssues, maskFootprintTester, measuredRectangle, panelDimensions, polygonIssue, usableSections } from "../lib/solar/hybrid-engine";
 import { distance, polygonArea } from "../lib/solar/geometry";
 import { maskFixture } from "./solar-fixture";
 
@@ -8,6 +8,18 @@ function design() {
   return hybridSchema.parse({ ...emptyHybrid(), mode: "survey", origin: { latitude: 28.6139, longitude: 77.209 }, sections: [{ id: "roof", name: "Roof", points: [{ x: 0, y: 0 }, { x: 10, y: 0 }, { x: 10, y: 8 }, { x: 0, y: 8 }], verified: true }] });
 }
 describe("Hybrid surveyed flat-site placement", () => {
+  it("uses measured rectangle dimensions at any roof bearing without requiring invented geographic coordinates", async () => {
+    for (const bearing of [0, 37, 90, 180]) {
+      const points = measuredRectangle(10, 8, bearing);
+      expect(polygonArea(points)).toBeCloseTo(80);
+      expect(distance(points[0], points[1])).toBeCloseTo(8);
+      expect(distance(points[1], points[2])).toBeCloseTo(10);
+      const d = design(); d.origin = null; d.sections[0].points = points;
+      d.layout = await generateHybridLayout(d);
+      expect(d.layout.panels.length).toBeGreaterThan(0); expect(layoutIssues(d)).toEqual([]);
+    }
+    expect(() => measuredRectangle(0, 8, 0)).toThrow("length/width");
+  });
   it("defaults to true south independently of roof orientation and retains actual tilted surface dimensions", () => {
     const d = design(); expect(d.array.azimuth).toBe(180); d.array.tilt = 60;
     const dims = panelDimensions(d.array); expect(dims.depth).toBeCloseTo(1);

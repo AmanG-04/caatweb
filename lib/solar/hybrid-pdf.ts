@@ -7,7 +7,7 @@ import { distance, polygonArea, type Point } from "./geometry";
 const ascii = (text: string) => text.replace(/[^\x20-\x7e]/g, "?");
 export async function createHybridPdf(project: Project) {
   const design = project.settings.hybrid, layout = design.layout;
-  if (!layout || !design.origin) throw new Error("Apply a surveyed layout before exporting.");
+  if (!layout) throw new Error("Apply a measured roof layout before exporting.");
   const issues = layoutIssues(design, project.solar?.mask, project.solar?.fetchedAt);
   if (issues.length) throw new Error(issues[0]);
   const pdf = await PDFDocument.create(), font = await pdf.embedFont(StandardFonts.Helvetica), bold = await pdf.embedFont(StandardFonts.HelveticaBold);
@@ -17,7 +17,7 @@ export async function createHybridPdf(project: Project) {
   text("CAAT POWERBOT / SURVEYED SOLAR LAYOUT", 30, 560, 11, true);
   text(project.name.slice(0, 65), 30, 530, 22, true);
   text((project.address || "Survey-coordinate site").slice(0, 120), 30, 508);
-  text(`${design.origin.latitude.toFixed(6)}, ${design.origin.longitude.toFixed(6)} | ${project.settings.versionName.slice(0, 50)} | Revision ${project.revision}`, 30, 485);
+  text(`${design.origin ? `${design.origin.latitude.toFixed(6)}, ${design.origin.longitude.toFixed(6)}` : "Unpositioned dimension-based plan; map alignment not established"} | ${project.settings.versionName.slice(0, 50)} | Revision ${project.revision}`, 30, 485);
   const points = design.sections.flatMap(section => section.points), minX = Math.min(...points.map(p => p.x)), maxX = Math.max(...points.map(p => p.x)), minY = Math.min(...points.map(p => p.y)), maxY = Math.max(...points.map(p => p.y));
   const scale = Math.min(465 / Math.max(1, maxX - minX), 300 / Math.max(1, maxY - minY));
   const xy = (p: Point) => ({ x: 285 + (p.x - (minX + maxX) / 2) * scale, y: 280 + (p.y - (minY + maxY) / 2) * scale });

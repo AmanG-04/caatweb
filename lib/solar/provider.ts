@@ -82,13 +82,7 @@ export async function fetchRoofMask(location: Location) {
   return readRoofMask(result.data.maskUrl);
 }
 export async function readRoofMask(source: string): Promise<RoofMask> {
-  const url = new URL(source);
-  // Never follow user-controlled URLs, redirects, or log signed URLs/keys.
-  if (url.protocol !== "https:" || url.hostname !== "solar.googleapis.com" || !url.pathname.startsWith("/v1/geoTiff")) throw new SolarError("INVALID_MASK_URL", "Google returned an unsupported mask URL.", 502);
-  url.searchParams.set("key", config().key ?? "");
-  let response: Response;
-  try { response = await fetch(url, { redirect: "error", signal: AbortSignal.timeout(30000), cache: "no-store" }); }
-  catch { throw new SolarError("MASK_DOWNLOAD_FAILED", "Roof-mask download timed out or returned an unsupported redirect.", 502); }
+  const response = await downloadRoofMask(source);
   if (!response.ok) throw new SolarError("MASK_UNAVAILABLE", "Google roof mask request failed.", 502);
   const reader = response.body?.getReader();
   if (!reader) throw new SolarError("MASK_UNAVAILABLE", "Google roof mask is empty.", 502);
@@ -102,6 +96,34 @@ export async function readRoofMask(source: string): Promise<RoofMask> {
   const bytes = new Uint8Array(size); let offset = 0;
   for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
   return decodeRoofMask(bytes.buffer);
+}
+export async function downloadRoofMask(source: string): Promise<Response> {
+  let url: URL;
+  try { url = new URL(source); } catch { throw new SolarError("INVALID_MASK_URL", "Google returned an invalid mask URL.", 502); }
+  if (url.protocol !== "https:" || url.hostname !== "solar.googleapis.com" || url.pathname !== "/v1/geoTiff:get" || url.username || url.password || url.port) throw new SolarError("INVALID_MASK_URL", "Google returned an unsupported mask URL.", 502);
+  const signal = AbortSignal.timeout(60000);
+  for (let hop = 0; hop <= 3; hop++) {
+    if (url.hostname === "solar.googleapis.com") url.searchParams.set("key", config().key ?? "");
+    else url.searchParams.delete("key");
+    let response: Response;
+    try { response = await fetch(url, { redirect: "manual", signal, cache: "no-store" }); }
+    catch {
+      throw new SolarError(signal.aborted ? "MASK_DOWNLOAD_TIMEOUT" : "MASK_DOWNLOAD_NETWORK", signal.aborted ? "Roof-mask download exceeded 60 seconds. Retry the mask." : "The Worker could not reach Google's roof-mask download endpoint. Retry; check Worker network errors if it repeats.", 502);
+    }
+    if (![301, 302, 303, 307, 308].includes(response.status)) return response;
+    const location = response.headers.get("location");
+    await response.body?.cancel();
+    if (!location || hop === 3) throw new SolarError("MASK_REDIRECT_FAILED", "Google's roof-mask download returned too many redirects or no destination.", 502);
+    let next: URL;
+    try { next = new URL(location, url); } catch { throw new SolarError("MASK_REDIRECT_FAILED", "Google returned an invalid download destination.", 502); }
+    // Permit only documented API continuation or Google Cloud Storage. Never
+    // follow arbitrary hosts, downgrade HTTPS, or forward our API credential.
+    const api = next.hostname === "solar.googleapis.com" && next.pathname === "/v1/geoTiff:get";
+    const storage = next.hostname === "storage.googleapis.com" || /^[a-z0-9][a-z0-9._-]*\.storage\.googleapis\.com$/.test(next.hostname);
+    if (next.protocol !== "https:" || next.username || next.password || next.port || !api && !storage) throw new SolarError("MASK_REDIRECT_BLOCKED", "Google's mask redirected to an unsupported host. The download was blocked; check provider integration.", 502);
+    url = next;
+  }
+  throw new SolarError("MASK_REDIRECT_FAILED", "Roof-mask redirect limit exceeded.", 502);
 }
 export async function decodeRoofMask(bytes: ArrayBuffer): Promise<RoofMask> {
   let stage = "load-decoder";

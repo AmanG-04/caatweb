@@ -31,7 +31,7 @@ describe("Solar fixed-media PDF", () => {
   });
   it("exports an independently surveyed south-facing layout without Google data and rejects stale geometry", async () => {
     const project = fixture(); project.solar = null;
-    const hybrid = hybridSchema.parse({ ...emptyHybrid(), mode: "survey", origin: { latitude: 28.6, longitude: 77.2 }, sections: [{ id: "roof", name: "Roof", points: [{ x: 0, y: 0 }, { x: 10, y: 0 }, { x: 10, y: 8 }, { x: 0, y: 8 }], verified: true }] });
+    const hybrid = hybridSchema.parse({ ...emptyHybrid(), mode: "survey", origin: null, sections: [{ id: "roof", name: "Roof", points: [{ x: 0, y: 0 }, { x: 10, y: 0 }, { x: 10, y: 8 }, { x: 0, y: 8 }], verified: true }] });
     hybrid.layout = await generateHybridLayout(hybrid); project.settings.hybrid = hybrid;
     expect((await PDFDocument.load(await createLayoutPdf(project))).getPageCount()).toBe(1);
     hybrid.array.azimuth = 150;

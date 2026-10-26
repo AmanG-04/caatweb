@@ -5,6 +5,7 @@ import type { Location, Project } from "@/lib/solar/model";
 import { selectedPanels } from "@/lib/solar/model";
 import { localFrame, maskGeo, panelCorners } from "@/lib/solar/geometry";
 import { hybridPanelCorners, usableSections } from "@/lib/solar/hybrid-engine";
+import type { HybridDesign } from "@/lib/solar/hybrid-model";
 
 let loader: Promise<void> | undefined;
 function loadMaps(key: string) {
@@ -22,10 +23,12 @@ function loadMaps(key: string) {
   return loader;
 }
 
-export default function GoogleMap({ browserKey, project, pinMode, onPin, searchLocation, showPanels, showMask }: { browserKey: string | null; project: Project; pinMode: boolean; onPin: (location: Location) => void; searchLocation: Location | null; showPanels: boolean; showMask: boolean }) {
+export default function GoogleMap({ browserKey, project, pinMode, onPin, searchLocation, showPanels, showMask, positionRoof, onPositionRoof, onFinishPosition }: { browserKey: string | null; project: Project; pinMode: boolean; onPin: (location: Location) => void; searchLocation: Location | null; showPanels: boolean; showMask: boolean; positionRoof?: boolean; onPositionRoof?: (origin: Location) => void; onFinishPosition?: () => void }) {
   const host = useRef<HTMLDivElement>(null), mapRef = useRef<google.maps.Map | null>(null), projectRef = useRef(project), pinRef = useRef(onPin);
   const [status, setStatus] = useState("Loading Google satellite imagery…"), [ready, setReady] = useState(false), [retry, setRetry] = useState(0);
   projectRef.current = project; pinRef.current = onPin;
+  const positionCallback = useRef(onPositionRoof), finishCallback = useRef(onFinishPosition);
+  positionCallback.current = onPositionRoof; finishCallback.current = onFinishPosition;
   useEffect(() => {
     if (!browserKey || !host.current) return;
     let cancelled = false;
@@ -46,11 +49,28 @@ export default function GoogleMap({ browserKey, project, pinMode, onPin, searchL
   useEffect(() => {
     const map = mapRef.current; if (!map || !ready) return;
     const listener = map.addListener("click", (event: google.maps.MapMouseEvent) => {
-      if (pinMode && event.latLng) pinRef.current({ latitude: event.latLng.lat(), longitude: event.latLng.lng() });
+      if (positionRoof && event.latLng) { positionCallback.current?.({ latitude: event.latLng.lat(), longitude: event.latLng.lng() }); finishCallback.current?.(); }
+      else if (pinMode && event.latLng) pinRef.current({ latitude: event.latLng.lat(), longitude: event.latLng.lng() });
     });
-    map.setOptions({ draggableCursor: pinMode ? "crosshair" : undefined });
+    map.setOptions({ draggableCursor: pinMode || positionRoof ? "crosshair" : undefined });
     return () => listener.remove();
-  }, [ready, pinMode]);
+  }, [ready, pinMode, positionRoof]);
+  useEffect(() => {
+    const map = mapRef.current, hybrid = project.settings.hybrid;
+    if (!map || !ready || hybrid.mode !== "survey" || !hybrid.origin || !hybrid.sections.length || !positionRoof) return;
+    const frame = localFrame(hybrid.origin);
+    // Position-only manipulation: dimensions remain measured and unchanged.
+    // No resize/vertex handles are enabled over Google satellite imagery.
+    const polygon = new google.maps.Polygon({ map, paths: hybrid.sections[0].points.map(p => { const ll = frame.toGeo(p); return { lat: ll.latitude, lng: ll.longitude }; }), draggable: true, editable: false, fillColor: "#d8f36a", fillOpacity: 0.18, strokeColor: "#ffffff", strokeWeight: 3, zIndex: 10 });
+    const start = frame.toGeo(hybrid.sections[0].points[0]);
+    const listener = polygon.addListener("dragend", () => {
+      const first = polygon.getPath().getAt(0);
+      if (!first) return;
+      const translated = { latitude: hybrid.origin!.latitude + first.lat() - start.latitude, longitude: hybrid.origin!.longitude + first.lng() - start.longitude };
+      positionCallback.current?.(translated); finishCallback.current?.();
+    });
+    return () => { listener.remove(); polygon.setMap(null); };
+  }, [ready, project.settings.hybrid.origin, project.settings.hybrid.sections, project.settings.hybrid.mode, positionRoof]);
   useEffect(() => {
     const map = mapRef.current; if (!map || !ready) return;
     const location = searchLocation ?? project.location ?? project.solar?.insights.center;
@@ -131,6 +151,12 @@ export default function GoogleMap({ browserKey, project, pinMode, onPin, searchL
     <div className="solar-canvas" aria-label="Google satellite site map">
       <div ref={host} className="solar-map-host" />
       <div className="solar-map-north" aria-label="True north up">↑ N</div>
+      {positionRoof && browserKey && !status && (
+        <div className="solar-map-status" role="status">
+          <p>Click the measured roof’s reference point, or drag the highlighted roof into position. Its measured size stays unchanged. For a centred rectangle, click its centre.</p>
+          <button type="button" className="solar-link-button mt-2" onClick={onFinishPosition}>Done positioning</button>
+        </div>
+      )}
       {(!browserKey || status) && (
         <div className="solar-map-status" role="status">
           <p>{!browserKey ? "Satellite imagery is not configured. Set the approved Google Maps browser key and enable the integration. This is an empty workspace, not a satellite map." : status}</p>

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui";
 import { emptyHybrid, hybridSchema, type HybridDesign, type HybridLayout } from "@/lib/solar/hybrid-model";
-import { generateHybridLayout, layoutIssues, polygonIssue, usableSections } from "@/lib/solar/hybrid-engine";
+import { generateHybridLayout, layoutIssues, measuredRectangle, polygonIssue, usableSections } from "@/lib/solar/hybrid-engine";
 import { distance, polygonArea, type Point } from "@/lib/solar/geometry";
 import type { Project } from "@/lib/solar/model";
 import SurveyCanvas from "./survey-canvas";
@@ -15,6 +15,7 @@ export default function HybridControls({ project, disabled, onChange }: { projec
   const [editing, setEditing] = useState<string | null>(null), [message, setMessage] = useState("");
   const [originLat, setOriginLat] = useState(design.origin ? String(design.origin.latitude) : ""), [originLng, setOriginLng] = useState(design.origin ? String(design.origin.longitude) : "");
   const [preview, setPreview] = useState<HybridLayout | null>(null), [generating, setGenerating] = useState(false);
+  const [roofLength, setRoofLength] = useState(""), [roofWidth, setRoofWidth] = useState(""), [roofBearing, setRoofBearing] = useState("0"), [dimensionsVerified, setDimensionsVerified] = useState(false);
   const cancel = useRef(false), generation = useRef(0);
   useEffect(() => { const key = (event: KeyboardEvent) => { if (event.key === "Escape") { cancel.current = true; setPreview(null); } }; window.addEventListener("keydown", key); return () => { window.removeEventListener("keydown", key); cancel.current = true; }; }, []);
   function change(next: HybridDesign) { setPreview(null); cancel.current = true; generation.current++; onChange(next); }
@@ -40,19 +41,47 @@ export default function HybridControls({ project, disabled, onChange }: { projec
   const issues = (() => { try { return layoutIssues(design, project.solar?.mask, project.solar?.fetchedAt); } catch (error) { return [String(error)]; } })();
   return (
     <section id="solar-hybrid-controls" className="solar-panel mt-4" aria-label="Hybrid flat roof designer">
-      <h2>Survey boundary & south-facing arrays</h2>
-      <label>
-        Active design
-        <select value={design.mode} disabled={disabled || generating} onChange={event => change({ ...design, mode: event.target.value as HybridDesign["mode"] })}>
-          <option value="google">Google reference layout</option>
-          <option value="survey">Surveyed flat-roof / ground layout</option>
-        </select>
-      </label>
-      <p className="solar-canvas-caption">True south (180°) is the default for fixed arrays in India. Site shading, roof constraints and usage can favour other directions; this tool calculates geometry, not annual generation. Array direction is independent of Google’s roof azimuth.</p>
+      <h2>2. Set the roof size</h2>
+      <p className="solar-canvas-caption">Enter real roof measurements. The drawing and panels use these sizes, not the size of Google’s detected box.</p>
       {design.mode === "survey" && (
         <div className="solar-fields mt-4">
-          <h3>1. Geographic survey origin</h3>
-          <p className="solar-canvas-caption">Enter a surveyed WGS84 origin. Vertices below are horizontal East/North offsets in metres from this origin. Do not derive these boundary vertices by tracing Google satellite imagery.</p>
+          <fieldset className="solar-survey-form" disabled={disabled || generating}>
+            <legend>Rectangular roof</legend>
+            <div className="solar-coordinates">
+              <label>
+                Measured roof length (m)
+                <input type="number" min={0.01} max={2000} step="any" value={roofLength} placeholder="e.g. 10" onChange={event => setRoofLength(event.target.value)} />
+              </label>
+              <label>
+                Measured roof width (m)
+                <input type="number" min={0.01} max={2000} step="any" value={roofWidth} placeholder="e.g. 8" onChange={event => setRoofWidth(event.target.value)} />
+              </label>
+            </div>
+            <label>
+              Roof length direction from true north (°)
+              <input type="number" min={0} max={360} step="any" value={roofBearing} onChange={event => setRoofBearing(event.target.value)} />
+            </label>
+            <p className="solar-canvas-caption">0° means the length runs north–south; 90° means east–west. Enter the measured orientation if known. This is the roof direction, separate from the panels’ 180° south-facing direction. The initial 0° is an assumption, not a detected direction.</p>
+            <label className="solar-checkbox">
+              <input type="checkbox" checked={dimensionsVerified} onChange={event => setDimensionsVerified(event.target.checked)} />
+              I verified these roof dimensions and orientation on site.
+            </label>
+            <p role="status">{Number(roofLength) > 0 && Number(roofWidth) > 0 ? `Horizontal roof area: ${(Number(roofLength) * Number(roofWidth)).toFixed(2)} m²` : "Enter both measured dimensions to calculate roof area."}</p>
+            <Button disabled={!roofLength.trim() || !roofWidth.trim()} onClick={() => {
+              try {
+                if (!roofBearing.trim()) throw new Error("Enter the roof direction or retain the explicit 0° assumption.");
+                const points = measuredRectangle(Number(roofLength), Number(roofWidth), Number(roofBearing));
+                const old = design.sections[0];
+                if (design.sections.length && !window.confirm("Replace the first roof section with these measured dimensions? The applied panel layout will need recalculation.")) return;
+                const next = hybridSchema.parse({ ...design, sections: [{ id: old?.id ?? crypto.randomUUID(), name: old?.name ?? "My roof", type: "flat-roof", points, setback: old?.setback ?? 0, height: old?.height ?? 0, verified: dimensionsVerified }, ...design.sections.slice(1)] });
+                usableSections(next); change(next); setMessage("Measured roof added, centred on the local drawing origin. Add setbacks and obstacles, then preview panels. Geographic position is optional.");
+              } catch (error) { setMessage(error instanceof Error ? error.message : "Check roof dimensions."); }
+            }}>{design.sections.length ? "Update roof size" : "Create my roof"}</Button>
+            <p className="solar-canvas-caption">Each rectangle is centred on the local origin. For separate wings, use the advanced vertex editor to specify their relative positions; overlapping sections are not counted twice for usable placement.</p>
+          </fieldset>
+          <details>
+            <summary className="font-bold">Advanced: exact geographic coordinates</summary>
+          <p className="solar-canvas-caption">Only needed to place your measured geometry on the satellite map or require a raster-mask check. For a dimension-based plan, leave these blank and use Survey drawing. A centred rectangle’s origin represents its centre; advanced vertices are East/North metre offsets. Do not trace Google satellite boundaries.</p>
           <div className="solar-coordinates">
             <label>
               Survey origin latitude
@@ -66,7 +95,19 @@ export default function HybridControls({ project, disabled, onChange }: { projec
           <Button variant="outline" disabled={disabled || generating} onClick={() => {
             try { if (!originLat.trim() || !originLng.trim()) throw new Error("Enter both surveyed origin coordinates."); const next = hybridSchema.parse({ ...design, origin: { latitude: Number(originLat), longitude: Number(originLng) } }); change(next); setMessage("Origin applied. Existing offsets stay unchanged."); } catch { setMessage("Enter valid survey latitude/longitude."); }
           }}>Apply surveyed origin</Button>
-          <h3>2. Boundaries, obstacles & access paths</h3>
+          </details>
+          {!design.origin && <p className="solar-warning">Dimension-based plan: map position is not established. Panel sizes and roof measurements remain valid in the local drawing; no satellite alignment is claimed.</p>}
+          {design.sections.length > 0 && (
+            <div>
+              <p className="solar-canvas-caption">To adjust the shape, open <strong>Roof drawing</strong> and drag its white corners. Recheck edge measurements after each change.</p>
+              <label>
+                Keep panels this far from the roof edge (m)
+                <input type="number" min={0} max={30} step="0.1" value={design.sections[0].setback} disabled={disabled || generating} onChange={event => { const setback = Number(event.target.value); if (Number.isFinite(setback) && setback >= 0 && setback <= 30) change({ ...design, sections: design.sections.map((section, i) => i === 0 ? { ...section, setback } : section) }); }} />
+              </label>
+            </div>
+          )}
+          <details>
+            <summary className="font-bold">Advanced: roof sections, obstacles & access paths</summary>
           <div className="solar-survey-list">
             {[...design.sections, ...design.exclusions].map(item => (
               <article className="solar-version" key={item.id}>
@@ -119,7 +160,11 @@ export default function HybridControls({ project, disabled, onChange }: { projec
               {editing && <Button variant="outline" onClick={() => { setEditing(null); setVertices(""); setName(""); }}>Cancel edit</Button>}
             </div>
           </fieldset>
-          <h3>3. Module & array settings</h3>
+          </details>
+          <h3>3. Arrange panels</h3>
+          <p className="solar-canvas-caption">Panels face true south (180°) by default. Preview first, then apply the arrangement you want.</p>
+          <details>
+            <summary className="font-bold">Panel specification & spacing</summary>
           <label>
             Module manufacturer / model label
             <input value={design.array.label} maxLength={120} onChange={event => { if (event.target.value.trim()) change({ ...design, array: { ...design.array, label: event.target.value } }); }} />
@@ -145,8 +190,9 @@ export default function HybridControls({ project, disabled, onChange }: { projec
             Also require the complete panel footprint to lie on Google’s current raster roof mask (preliminary).
           </label>
           <p className="solar-canvas-caption">Starter module dimensions are examples. Setbacks and row gaps are configurable, not universal rules. Row spacing is a horizontal clear gap; no shadow-free spacing or generation optimum is claimed. Ground terrain is treated as flat.</p>
+          </details>
           <div className="solar-actions">
-            <Button disabled={disabled || generating || !design.origin || !design.sections.length} onClick={() => void previewLayout()}>{generating ? "Calculating alternatives…" : "Preview automatic layout"}</Button>
+            <Button disabled={disabled || generating || !design.sections.length} onClick={() => void previewLayout()}>{generating ? "Arranging panels…" : "Preview panels on my roof"}</Button>
             {generating && <Button variant="outline" onClick={() => { cancel.current = true; }}>Cancel preview</Button>}
           </div>
           {preview && (
